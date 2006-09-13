@@ -1,0 +1,190 @@
+/*
+ * MS	06-04-04	added DebugEnabled web.config property <debug enabled="true"/>
+ * MS	06-04-05	added oldStyle section in web.config
+ * MS	06-04-12	added urlNamespaceMappings/@useAssemblyQualifiedName
+ * MS	06-04-25	using String.IsNullOrEmpty
+ * MS	06-05-09	added all child nodes to oldStyle settings
+ * MS	06-05-29	fixed wrong jsonConverters handling
+ * MS	06-06-07	added urlNamespaceMappings/allowListOnly
+ * 
+ * 
+ */
+using System;
+using System.Xml;
+using System.Configuration;
+using System.Collections;
+using System.Collections.Specialized;
+#if(NET20)
+using System.Collections.Generic;
+#endif
+
+namespace AjaxPro
+{
+	internal class AjaxSettingsSectionHandler : IConfigurationSectionHandler
+	{
+		#region IConfigurationSectionHandler Members
+
+		public object Create(object parent, object configContext, System.Xml.XmlNode section)
+		{
+			AjaxSettings settings = new AjaxSettings();
+			Utility.AddDefaultConverter(settings);
+
+			foreach(XmlNode n in section.ChildNodes)
+			{
+#if(!JSONLIB)
+				if(n.Name == "coreScript")
+				{
+					if(n.InnerText != null && n.InnerText.Length > 0) 
+					{
+						settings.ScriptReplacements.Add("core", n.InnerText);
+					}
+				}
+				else if(n.Name == "scriptReplacements")
+				{
+					foreach(XmlNode file in n.SelectNodes("file"))
+					{
+						string name = "";
+						string path = "";
+
+						if(file.Attributes["name"] != null)
+						{
+							name = file.Attributes["name"].InnerText;
+							if(file.Attributes["path"] != null) path = file.Attributes["path"].InnerText;
+
+							if(settings.ScriptReplacements.ContainsKey(name))
+								settings.ScriptReplacements[name] = path;
+							else
+								settings.ScriptReplacements.Add(name, path);
+						}
+					}
+				}
+				else if(n.Name == "urlNamespaceMappings")
+				{
+					settings.OnlyAllowTypesInList = n.SelectSingleNode("@allowListOnly[.='true']") != null;
+					settings.UseAssemblyQualifiedName = n.SelectSingleNode("@useAssemblyQualifiedName[.='true']") != null;
+
+					XmlNode ns, url;
+
+					foreach(XmlNode e in n.SelectNodes("add"))
+					{
+						ns = e.SelectSingleNode("@type");
+						url = e.SelectSingleNode("@path");
+#if(NET20)
+						if(ns == null || String.IsNullOrEmpty(ns.InnerText) || url == null || String.IsNullOrEmpty(url.InnerText))
+#else
+						if(ns == null || ns.InnerText.Length == 0 || url == null || url.InnerText.Length == 0)
+#endif
+							continue;
+
+						if(settings.UrlNamespaceMappings.Contains(url.InnerText))
+							throw new Exception("Duplicate namespace mapping '" + url.InnerText + "'.");
+
+						settings.UrlNamespaceMappings.Add(url.InnerText, ns.InnerText);
+					}
+				}
+				else if(n.Name == "encryption")
+				{
+					string cryptType = n.SelectSingleNode("@cryptType") != null ? n.SelectSingleNode("@cryptType").InnerText : null;
+					string keyType = n.SelectSingleNode("@keyType") != null ? n.SelectSingleNode("@keyType").InnerText : null;
+
+					if(cryptType == null || keyType == null)
+						continue;
+					
+
+					AjaxEncryption enc = new AjaxEncryption(cryptType, keyType);
+					
+					if(!enc.Init())
+						throw new Exception("Ajax.NET Professional encryption configuration failed.");
+
+					settings.Encryption = enc;
+				}
+				else if(n.Name == "token")
+				{
+					settings.TokenEnabled = n.SelectSingleNode("@enabled") != null && n.SelectSingleNode("@enabled").InnerText == "true";
+					settings.TokenSitePassword = n.SelectSingleNode("@sitePassword") != null ? n.SelectSingleNode("@sitePassword").InnerText : settings.TokenSitePassword;
+				}
+				else if (n.Name == "debug")
+				{
+					if (n.SelectSingleNode("@enabled") != null && n.SelectSingleNode("@enabled").InnerText == "true")
+						settings.DebugEnabled = true;
+				}
+				else if (n.Name == "oldStyle")
+				{
+					foreach (XmlNode sn in n.ChildNodes)
+						settings.OldStyle.Add(sn.Name);
+
+					//if (n.SelectSingleNode("objectExtendPrototype") != null)
+					//{
+					//    if (!settings.OldStyle.Contains("objectExtendPrototype"))
+					//        settings.OldStyle.Add("objectExtendPrototype");
+					//}
+				}
+                else
+#endif
+                    if (n.Name == "jsonConverters")
+                {
+                    XmlNodeList jsonConverters = n.SelectNodes("add");
+
+                    foreach (XmlNode j in jsonConverters)
+                    {
+                        XmlNode t = j.SelectSingleNode("@type");
+
+                        if (t == null)
+                            continue;
+
+                        Type type = Type.GetType(t.InnerText);
+
+                        if (type == null)
+                        {
+                            // throw new ArgumentException("Could not find type " + t.InnerText + ".");
+                            continue;
+                        }
+
+                        if (!typeof(IJavaScriptConverter).IsAssignableFrom(type))
+                        {
+                            // throw new ArgumentException("Type " + t.InnerText + " does not inherit from JavaScriptObjectConverter.");
+                            continue;
+                        }
+
+                        StringDictionary d = new StringDictionary();
+                        foreach (XmlAttribute a in j.Attributes)
+                        {
+                            if (d.ContainsKey(a.Name)) continue;
+                            d.Add(a.Name, a.Value);
+                        }
+
+                        IJavaScriptConverter c = (IJavaScriptConverter)Activator.CreateInstance(type);
+                        c.Initialize(d);
+
+                        Utility.AddConverter(settings, c, true);
+                    }
+
+
+                    jsonConverters = n.SelectNodes("remove");
+
+                    foreach (XmlNode j in jsonConverters)
+                    {
+                        XmlNode t = j.SelectSingleNode("@type");
+
+                        if (t == null)
+                            continue;
+
+                        Type type = Type.GetType(t.InnerText);
+
+                        if (type == null)
+                        {
+                            // throw new ArgumentException("Could not find type " + t.InnerText + ".");
+                            continue;
+                        }
+
+                        Utility.RemoveConverter(settings, type);
+                    }
+                }
+			}
+
+			return settings;
+		}
+
+		#endregion
+	}
+}
