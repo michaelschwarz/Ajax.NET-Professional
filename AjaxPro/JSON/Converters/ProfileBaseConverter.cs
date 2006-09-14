@@ -1,7 +1,9 @@
+#if(NET20)
 /*
  * MS	06-04-26	initial version
  * MS	06-05-23	using local variables instead of "new Type()" for get De-/SerializableTypes
  * MS	06-06-09	removed addNamespace use
+ * MS	06-09-14	mark for NET20 only
  * 
  */
 using System;
@@ -69,3 +71,4 @@ namespace AjaxPro
 		}
 	}
 }
+#endif
