@@ -1,6 +1,7 @@
+#if(NET20)
 /*
  * MS	06-05-22	inital version
- * 
+ * MS	06-09-14	mark for NET20 only
  * 
  * 
  */
@@ -65,3 +66,4 @@ namespace AjaxPro.Web.UI
 		#endregion
 	}
 }
+#endif

@@ -87,9 +87,13 @@ using System.Runtime.CompilerServices;
 //       documentation for more information on this.
 //
 [assembly: AssemblyDelaySign(false)]
+[assembly: AssemblyKeyName("")]
+
+
+// Remove following lines to compile!!
+
 #if(NET20)
 [assembly: AssemblyKeyFile("michael.schwarz.snk")]
 #else
 [assembly: AssemblyKeyFile("michael.schwarz.snk")]
 #endif
-[assembly: AssemblyKeyName("")]
