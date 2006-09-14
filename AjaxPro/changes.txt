@@ -1,6 +1,12 @@
 Ajax.NET Professional Changes
 =============================
 
+
+Version 6.9.14.1
+
+ - Using StringBuilder in JavaScriptNumber/String for performance reasons.
+
+
 Version 6.7.20.1
 
  - Fixed JavaScriptArray bug when deserializing json [["..."],["..."]].

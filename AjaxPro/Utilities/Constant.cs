@@ -27,6 +27,6 @@ namespace AjaxPro
         /// <summary>
 		/// The assembly version.
 		/// </summary>
-		public const string AssemblyVersion = "6.7.20.1";
+		public const string AssemblyVersion = "6.9.14.1";
 	}
 }
