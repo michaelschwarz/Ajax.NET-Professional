@@ -284,6 +284,7 @@
     <None Include="web.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="build.bat" />
     <None Include="build_json.bat" />
     <None Include="changes.txt" />
     <EmbeddedResource Include="ms.js" />
