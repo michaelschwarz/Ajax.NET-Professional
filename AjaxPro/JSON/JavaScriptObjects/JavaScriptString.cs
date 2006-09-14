@@ -2,9 +2,11 @@
  * MS	06-04-03	return the correct .Value
  * MS	06-04-29	fixed ToString and Value properties
  * MS	06-05-31	added ctor for string and char
+ * BT	06-09-13	changed underlying string to StringBuilder object
  * 
  */
 using System;
+using System.Text;
 using System.Collections;
 
 namespace AjaxPro
@@ -14,7 +16,7 @@ namespace AjaxPro
 	/// </summary>
 	public class JavaScriptString : IJavaScriptObject
 	{
-		private string _value = string.Empty;
+		private StringBuilder _value = new StringBuilder();
 
 		/// <summary>
 		/// Initializes a new JavaScript string instance.
@@ -43,7 +45,7 @@ namespace AjaxPro
 		{
 			get
 			{
-				return JavaScriptSerializer.Serialize(_value);
+				return JavaScriptSerializer.Serialize(_value.ToString());
 			}
 		}
 
@@ -51,21 +53,21 @@ namespace AjaxPro
 
 		internal void Append(string s)
 		{
-			_value += s;
+			_value.Append(s);
 		}
 
 		internal void Append(char c)
 		{
-			_value += c;
+			_value.Append(c);
 		}
 
 		#endregion
 
 		#region Public Operators
-		
+
 		public override string ToString()
 		{
-			return _value;
+			return _value.ToString();
 		}
 
 		public static implicit operator string(JavaScriptString o)
@@ -90,3 +92,4 @@ namespace AjaxPro
 		#endregion
 	}
 }
+

@@ -9,6 +9,18 @@
 		<generator>MSchwarzRSSGenerator</generator>
 
 		<item>
+			<title>Release 6.9.14.1</title>
+			<link>http://weblogs.asp.net/mschwarz/</link>
+			<pubDate>Thu, 6 Sep 2006 09:21:00 GMT</pubDate>
+			<dc:creator>Michael Schwarz</dc:creator>
+			<description>
+				&lt;ol&gt;
+				&lt;li&gt;Using StringBuilder in JavaScriptNumber/String for performance reasons.&lt;/li&gt;
+				&lt;/ol&gt;
+			</description>
+			<category domain="http://weblogs.asp.net/mschwarz/archive/tags/Ajax.NET+Release/default.aspx">Ajax.NET Release</category>
+		</item>
+		<item>
 			<title>Release 6.7.20.1</title>
 			<link>http://weblogs.asp.net/mschwarz/</link>
 			<pubDate>Thu, 20 Jul 2006 16:20:00 GMT</pubDate>

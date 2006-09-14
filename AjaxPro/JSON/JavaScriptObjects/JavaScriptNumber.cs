@@ -1,10 +1,12 @@
 /*
  * MS	06-04-26	added implicit operators for short,int,long
  * MS	06-05-31	added cstor for primitive types
+ * BT	06-09-13	changed underlying string to StringBuilder object
  * 
  * 
  */
 using System;
+using System.Text;
 using System.Collections;
 
 namespace AjaxPro
@@ -14,7 +16,7 @@ namespace AjaxPro
 	/// </summary>
 	public class JavaScriptNumber : IJavaScriptObject
 	{
-		private string _value = string.Empty;
+		private StringBuilder _value = new StringBuilder();
 
 		/// <summary>
 		/// Initializes a new JavaScript number instance.
@@ -61,7 +63,7 @@ namespace AjaxPro
 		{
 			get
 			{
-				return _value;
+				return _value.ToString();
 			}
 		}
 
@@ -69,17 +71,17 @@ namespace AjaxPro
 
 		internal void Append(string s)
 		{
-			_value += s;
+			_value.Append(s);
 		}
 
 		internal void Append(char c)
 		{
-			_value += c;
+			_value.Append(c);
 		}
 
 		internal int IndexOf(string s)
 		{
-			return _value.IndexOf(s);
+			return _value.ToString().IndexOf(s);
 		}
 
 		#endregion
