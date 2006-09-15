@@ -7,7 +7,7 @@
  *					added QuoteHtmlAttribute
  * MS	06-06-09	removed addNamespace use, added new GetClientNamespaceRepresentation method
  * MS	06-60-19	added GetIJavaScriptObjectFromXmlNode
- * 
+ * MS	06-09-15	fixed bug when using special chars in a string below ASCII 32
  * 
  */
 using System;
@@ -84,7 +84,9 @@ namespace AjaxPro
 						default:
 							if (c < ' ')
 							{
-								us = "000" + int.Parse(new string(c, 1), System.Globalization.NumberStyles.HexNumber);
+								// us = "000" + int.Parse(new string(c, 1), System.Globalization.NumberStyles.HexNumber);
+								us = "000" + (byte)c;
+
 								sb.Append("\\u" + us.Substring(us.Length - 4));
 							}
 							else
