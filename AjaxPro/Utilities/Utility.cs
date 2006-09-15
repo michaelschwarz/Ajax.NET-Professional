@@ -18,6 +18,10 @@
  *					removed HtmlControlConverter from default
  * MS	06-06-07	removed Obsolete(true) for RegisterConverterForAjax
  * MS	06-06-09	fixed check if converter is already in list
+ * MS	06-09-15	fixed IDictionary bug, wrong sequence for converters
+ * 
+ * 
+ * 
  * 
  * 
  */
@@ -206,8 +210,8 @@ namespace AjaxPro
 			AddConverter(settings, new ProfileBaseConverter());
 #endif
 
-			AddConverter(settings, new IListConverter());
 			AddConverter(settings, new IDictionaryConverter());
+			AddConverter(settings, new IListConverter());
 			AddConverter(settings, new HashtableConverter());
 			AddConverter(settings, new IEnumerableConverter());
 
