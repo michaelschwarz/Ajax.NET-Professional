@@ -3,6 +3,7 @@
  * MS	06-04-29	fixed ToString and Value properties
  * MS	06-05-31	added new ctor for initial array
  * MS	06-07-20	fixed Add method, removed second ambigous one
+ * MS	06-09-20	fixed allowing null values
  * 
  */
 using System;
@@ -40,7 +41,7 @@ namespace AjaxPro
 
 		public override int Add(object value)
 		{
-			if (value is IJavaScriptObject)
+			if (value is IJavaScriptObject || value == null)
 				return base.Add(value);
 
 			throw new NotSupportedException();
