@@ -2,6 +2,9 @@
  * MS	06-04-25	removed unnecessarily used cast
  * MS	06-05-23	using local variables instead of "new Type()" for get De-/SerializableTypes
  * MS   06-07-09    added new Date and new Date(Date.UTC parsing
+ * MS	06-09-22	added UniversalSortableDateTimePattern parsing
+ *					added new oldStyle/renderDateTimeAsString configruation to enable string output of DateTime
+ *					changed JSONLIB stand-alone library will return DateTimes as UniversalSortableDateTimePattern
  * 
  */
 using System;
@@ -67,6 +70,34 @@ namespace AjaxPro
 					return d1.AddMinutes(TimeZone.CurrentTimeZone.GetUtcOffset(d1).TotalMinutes);
 				}
 			}
+			else if(o is JavaScriptString)
+			{
+#if(NET20)
+				DateTime d2;
+
+				if (DateTime.TryParseExact(o.ToString(),
+					System.Globalization.DateTimeFormatInfo.InvariantInfo.UniversalSortableDateTimePattern,
+					System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AllowWhiteSpaces, out d2
+					) == true)
+				{
+					return d2.AddMinutes(TimeZone.CurrentTimeZone.GetUtcOffset(d2).TotalMinutes);
+				}
+#else
+				try
+				{
+					DateTime d4 = DateTime.ParseExact(o.ToString(),
+						System.Globalization.DateTimeFormatInfo.InvariantInfo.UniversalSortableDateTimePattern,
+						System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AllowWhiteSpaces
+					);
+
+					return d4.AddMinutes(TimeZone.CurrentTimeZone.GetUtcOffset(d4).TotalMinutes);
+				}
+				catch(FormatException)
+				{
+				}
+#endif
+			}
+			
 
 			if (ht == null)
 				throw new NotSupportedException();
@@ -79,8 +110,8 @@ namespace AjaxPro
 			int Second2 = (int)JavaScriptDeserializer.Deserialize(ht["Second"], typeof(int));
 			int Millisecond2 = (int)JavaScriptDeserializer.Deserialize(ht["Millisecond"], typeof(int));
 
-			DateTime d2 = new DateTime(Year2, Month2, Day2, Hour2, Minute2, Second2, Millisecond2);
-			return d2.AddMinutes(TimeZone.CurrentTimeZone.GetUtcOffset(d2).TotalMinutes);
+			DateTime d3 = new DateTime(Year2, Month2, Day2, Hour2, Minute2, Second2, Millisecond2);
+			return d3.AddMinutes(TimeZone.CurrentTimeZone.GetUtcOffset(d3).TotalMinutes);
 		}
 
 		public override string Serialize(object o)
@@ -91,6 +122,14 @@ namespace AjaxPro
 			DateTime dt = Convert.ToDateTime(o);
 			dt = dt.ToUniversalTime();
 
+#if(JSONLIB)
+			return JavaScriptUtil.QuoteString(dt.ToString(System.Globalization.DateTimeFormatInfo.InvariantInfo.UniversalSortableDateTimePattern));
+#else
+			if (AjaxPro.Utility.Settings.OldStyle.Contains("renderDateTimeAsString"))
+			{
+				return JavaScriptUtil.QuoteString(dt.ToString(System.Globalization.DateTimeFormatInfo.InvariantInfo.UniversalSortableDateTimePattern));
+			}
+
 			return String.Format("new Date(Date.UTC({0},{1},{2},{3},{4},{5},{6}))",
 				dt.Year,
 				dt.Month - 1,
@@ -99,6 +138,7 @@ namespace AjaxPro
 				dt.Minute,
 				dt.Second,
 				dt.Millisecond);
+#endif
 		}
 	}
 }

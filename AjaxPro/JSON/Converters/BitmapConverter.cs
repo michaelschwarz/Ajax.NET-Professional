@@ -1,6 +1,8 @@
 /*
  * MS	06-06-01	initial version
  * MS	06-06-09	removed addNamespace use
+ * MS	06-09-22	fixed disposing Bitmap after removed from cache
+ * 
  * 
  */
 using System;
@@ -100,15 +102,10 @@ Object.extend(" + clientType + @".prototype,  {
 
 		public static void RemoveBitmapFromCache(string key, object o, System.Web.Caching.CacheItemRemovedReason reason)
 		{
-			if (System.Web.HttpContext.Current.Cache[key] != null)
+			if(o != null)
 			{
-				try
-				{
-					AjaxBitmap b = System.Web.HttpContext.Current.Cache[key] as AjaxBitmap;
-					if (b != null && b.bmp != null) b.bmp.Dispose();
-				}
-				catch (Exception) { }
-				System.Web.HttpContext.Current.Cache.Remove(key);
+				AjaxBitmap b = o as AjaxBitmap;
+				if (b != null && b.bmp != null) b.bmp.Dispose();
 			}
 		}
 	}
