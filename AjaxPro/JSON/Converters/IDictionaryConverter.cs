@@ -28,7 +28,7 @@ namespace AjaxPro
 		{
 			m_AllowInheritance = true;
 #if(NET20)
-			m_serializableTypes = new Type[] { typeof(IDictionary), typeof(NameValueCollection), typeof(System.Collections.Generic.IDictionary<,>) };
+			m_serializableTypes = new Type[] { typeof(IDictionary), typeof(System.Collections.Generic.IDictionary<,>) };
 			m_deserializableTypes = m_serializableTypes;
 #else
 			m_serializableTypes = new Type[] { typeof(IDictionary), typeof(NameValueCollection) };
