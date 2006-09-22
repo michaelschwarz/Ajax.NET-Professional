@@ -6,6 +6,7 @@
  *					fixed __type is not a key
  *					fixed missing initial values (for AjaxMethod invoke return value!!)
  * MS	06-06-14	changed access to keys and values
+ * MS	06-09-22	added inheritance to get HttpValueCollection working again
  * 
  * 
  */
@@ -28,6 +29,8 @@ namespace AjaxPro
 		{
 			m_serializableTypes = new Type[] { typeof(NameValueCollection) };
 			m_deserializableTypes = new Type[] { typeof(NameValueCollection) };
+
+			m_AllowInheritance = true;
 		}
 
 		public override string GetClientScript()
