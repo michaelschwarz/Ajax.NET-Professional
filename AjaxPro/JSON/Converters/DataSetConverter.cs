@@ -3,6 +3,11 @@
  * MS	06-05-23	using local variables instead of "new Type()" for get De-/SerializableTypes
  * MS	06-06-09	removed addNamespace use
  * MS	06-06-22	added AllowInheritance=true
+ * MS	06-09-26	improved performance using StringBuilder
+ * 
+ * 
+ * 
+ * 
  */
 using System;
 using System.Text;
@@ -71,12 +76,17 @@ namespace AjaxPro
 
 		public override string Serialize(object o)
 		{
+			StringBuilder sb = new StringBuilder();
+			Serialize(o, sb);
+			return sb.ToString();
+		}
+
+		public override void Serialize(object o, StringBuilder sb)
+		{
 			DataSet ds = o as DataSet;
 
 			if(ds == null)
 				throw new NotSupportedException();
-			
-			StringBuilder sb = new StringBuilder();
 			
 			bool b = true;
 
@@ -89,12 +99,10 @@ namespace AjaxPro
 				if(b){ b = false; }
 				else{ sb.Append(","); }
 
-				sb.Append(JavaScriptSerializer.Serialize(dt));
+				JavaScriptSerializer.Serialize(dt, sb);
 			}
 
 			sb.Append("])");
-
-			return sb.ToString();
 		}
 	}
 }

@@ -3,6 +3,9 @@
  * MS	06-05-23	using local variables instead of "new Type()" for get De-/SerializableTypes
  * MS	06-07-19	fixed if method argument is from type IJavaScriptObject, now done in IAjaxProcessor
  * MS	06-07-20	added missing deserialize method
+ * MS	06-09-24	use QuoteString instead of Serialize
+ * MS	06-09-26	improved performance using StringBuilder
+ * 
  * 
  */
 using System;
@@ -38,14 +41,20 @@ namespace AjaxPro
 
 		public override string Serialize(object o)
 		{
+			StringBuilder sb = new StringBuilder();
+			Serialize(o, sb);
+			return sb.ToString();
+		}
+
+		public override void Serialize(object o, StringBuilder sb)
+		{
 			JavaScriptObject j = o as JavaScriptObject;
 
 			if (j == null)
 			{
-				return ((IJavaScriptObject)o).Value;
+				sb.Append(((IJavaScriptObject)o).Value);
+				return;
 			}
-
-			StringBuilder sb = new StringBuilder();
 
 			bool b = true;
 
@@ -56,15 +65,13 @@ namespace AjaxPro
 				if(b){ b = false; }
 				else{ sb.Append(","); }
 
-				sb.Append(JavaScriptSerializer.Serialize(key));
+				JavaScriptUtil.QuoteString(key, sb);
 				sb.Append(":");
 
 				sb.Append(JavaScriptSerializer.Serialize((IJavaScriptObject)j[key]));
 			}
 
 			sb.Append("}");
-
-			return sb.ToString();
 		}
 
 		//public override bool TryDeserializeValue(IJavaScriptObject jso, Type t, out object o)

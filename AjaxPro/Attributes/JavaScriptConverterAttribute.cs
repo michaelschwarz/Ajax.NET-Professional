@@ -6,7 +6,7 @@ namespace AjaxPro
 	/// Represents an attribute to mark a class to be converted by a specified IJavaScriptConverter.
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-	[Obsolete("The recommended alternative is adding the converter to web.config/ajaxNet/ajaxSettings/jsonConverters.", true)]
+	[Obsolete("The recommended alternative is adding the converter to ajaxNet/ajaxSettings/jsonConverters.", true)]
 	public class JavaScriptConverterAttribute : Attribute
 	{
 		private Type type = null;

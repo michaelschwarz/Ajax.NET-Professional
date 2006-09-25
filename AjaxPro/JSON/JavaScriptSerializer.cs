@@ -7,6 +7,8 @@
  * MS	06-05-17	fixed enum support for other types (insted of int we use Enum.GetUnderlyingType)
  * MS	06-05-30	changed to new converter usage
  * MS   06-07-10    fixed comma between fields and properties
+ * MS	06-09-22	put some variable declarations outside of for statements
+ * MS	06-09-26	improved performance using StringBuilder
  * 
  * 
  */
@@ -22,10 +24,18 @@ namespace AjaxPro
 	/// </summary>
 	public sealed class JavaScriptSerializer
 	{
+		public static string Serialize(object o)
+		{
+			StringBuilder sb = new StringBuilder();
+			Serialize(o, sb);
+			return sb.ToString();
+		}
+
 		/// <summary>
 		/// Converts a .NET object into a JSON string.
 		/// </summary>
 		/// <param name="o">The object to convert.</param>
+		/// <param name="sb">A StringBuilder object.</param>
 		/// <returns>Returns a JSON string.</returns>
 		/// <example>
 		/// using System;
@@ -45,11 +55,12 @@ namespace AjaxPro
 		///		}
 		/// }
 		/// </example>
-		public static string Serialize(object o)
+		public static void Serialize(object o, StringBuilder sb)
 		{
 			if (o == null || o is System.DBNull)
 			{
-				return "null";
+				sb.Append("null");
+				return;
 			}
 
 			IJavaScriptConverter c = null;
@@ -63,28 +74,39 @@ namespace AjaxPro
 			{
 				c = (IJavaScriptConverter)Utility.Settings.SerializableConverters[type];
 #endif
-				return c.Serialize(o);
+				c.Serialize(o, sb);
+				return;
 			}
 
-			string json;
-
+#if(NET20)
+			foreach (IJavaScriptConverter c2 in Utility.Settings.SerializableConverters.Values)
+			{
+				if (c2.TrySerializeValue(o, type, sb))
+					return;
+			}
+#else
 			IEnumerator m = Utility.Settings.SerializableConverters.Values.GetEnumerator();
 			while (m.MoveNext())
 			{
-				if (((IJavaScriptConverter)m.Current).TrySerializeValue(o, type, out json))
-					return json;
+				if (((IJavaScriptConverter)m.Current).TrySerializeValue(o, type, sb))
+				{
+					sb.ToString();
+					return;
+				}
 			}
+#endif
 
 			try
 			{
-				json = SerializeCustomObject(o);
+				SerializeCustomObject(o, sb);
+				return;
 			}
 			catch (StackOverflowException)
 			{
-				throw new Exception(Constant.AjaxID + " exception while trying to serialize type '" + type.Name + "'.");
+				throw new Exception(Constant.AjaxID + " stack overflow exception while trying to serialize type '" + type.Name + "'.");
 			}
 
-			return json;
+			throw new Exception(Constant.AjaxID + " exception while trying to serialize type '" + type.Name + "'.");
 		}
 
 		/// <summary>
@@ -92,74 +114,99 @@ namespace AjaxPro
 		/// </summary>
 		/// <param name="s">The string to convert.</param>
 		/// <returns>Returns a JSON string.</returns>
-		[Obsolete("The recommended alternative is JavaScriptSerializer.Serialize(object).", false)]
+		[Obsolete("The recommended alternative is JavaScriptUtil.QuoteString(string).", false)]
 		public static string SerializeString(string s)
 		{
-			return Serialize(s);
+			return JavaScriptUtil.QuoteString(s);
 		}
 
 		#region Internal Methods
 
+		[Obsolete("The recommended alternative is JavaScriptSerializer.SerializeCustomObject(object, StringBuilder).", true)]
 		internal static string SerializeCustomObject(object o)
+		{
+			StringBuilder sb = new StringBuilder();
+			SerializeCustomObject(o, sb);
+			return sb.ToString();
+		}
+
+		internal static void SerializeCustomObject(object o, StringBuilder sb)
 		{
 			Type t = o.GetType();
 
-			AjaxNonSerializableAttribute[] nsa = (AjaxNonSerializableAttribute[])t.GetCustomAttributes(typeof(AjaxNonSerializableAttribute), true);
-			AjaxNoTypeUsageAttribute[] roa = (AjaxNoTypeUsageAttribute[])t.GetCustomAttributes(typeof(AjaxNoTypeUsageAttribute), true);
+			//AjaxNonSerializableAttribute[] nsa = (AjaxNonSerializableAttribute[])t.GetCustomAttributes(typeof(AjaxNonSerializableAttribute), true);
+			//AjaxNoTypeUsageAttribute[] roa = (AjaxNoTypeUsageAttribute[])t.GetCustomAttributes(typeof(AjaxNoTypeUsageAttribute), true);
 
-			StringBuilder sb = new StringBuilder();
+			bool nsa = false;
+			bool roa = false;
+
+			foreach (object attr in t.GetCustomAttributes(true))
+			{
+				if (attr is AjaxNonSerializableAttribute) nsa = true;
+				else if (attr is AjaxNoTypeUsageAttribute) roa = true;
+			}
+
 			bool b = true;
 
 			sb.Append('{');
 
-			if (roa.Length == 0)
+			if (!roa)
 			{
 				sb.Append("\"__type\":");
-				sb.Append(Serialize(t.AssemblyQualifiedName));
+				JavaScriptUtil.QuoteString(t.AssemblyQualifiedName, sb);
+
 				b = false;
 			}
 
-			FieldInfo[] fields = t.GetFields(BindingFlags.Public | BindingFlags.Instance);
-			for (int i = 0; i < fields.Length; i++)
+			foreach(FieldInfo fi in t.GetFields(BindingFlags.Public | BindingFlags.Instance))
 			{
-				FieldInfo fi = fields[i];
-
-				if ((nsa.Length > 0 && fi.GetCustomAttributes(typeof(AjaxPropertyAttribute), true).Length > 0) ||
-					(nsa.Length == 0 && fi.GetCustomAttributes(typeof(AjaxNonSerializableAttribute), true).Length == 0))
+				if (
+#if(NET20)
+					(!nsa && !fi.IsDefined(typeof(AjaxNonSerializableAttribute), true)) ||
+					(nsa && fi.IsDefined(typeof(AjaxPropertyAttribute), true))
+#else
+					(!nsa && fi.GetCustomAttributes(typeof(AjaxNonSerializableAttribute), true).Length == 0) ||
+					(nsa && fi.GetCustomAttributes(typeof(AjaxPropertyAttribute), true).Length > 0)
+#endif
+)
 				{
-					if (b) { b = false; }
-					else { sb.Append(','); }
+					if (!b) sb.Append(",");
 
-					sb.Append(Serialize(fi.Name));
+					JavaScriptUtil.QuoteString(fi.Name, sb);
 					sb.Append(':');
-					sb.Append(Serialize(fi.GetValue(o)));
+					Serialize(fi.GetValue(o), sb);
+
+					b = false;
 				}
 			}
 
-			PropertyInfo[] properties = t.GetProperties(BindingFlags.GetProperty | (BindingFlags.Public | BindingFlags.Instance));
-			for (int i = 0; i < properties.Length; i++)
+			foreach(PropertyInfo prop in t.GetProperties(BindingFlags.GetProperty | BindingFlags.Public | BindingFlags.Instance))
 			{
-				PropertyInfo prop = properties[i];
-
 				MethodInfo mi = prop.GetGetMethod();
 				if (mi.GetParameters().Length <= 0)
 				{
-					if ((nsa.Length > 0 && mi.GetCustomAttributes(typeof(AjaxPropertyAttribute), true).Length > 0) ||
-						(nsa.Length == 0 && mi.GetCustomAttributes(typeof(AjaxNonSerializableAttribute), true).Length == 0))
+					if (
+#if(NET20)
+						(!nsa && !mi.IsDefined(typeof(AjaxNonSerializableAttribute), true)) ||
+						(nsa && mi.IsDefined(typeof(AjaxPropertyAttribute), true))
+#else
+						(!nsa && mi.GetCustomAttributes(typeof(AjaxPropertyAttribute), true).Length > 0) ||
+						(nsa && mi.GetCustomAttributes(typeof(AjaxNonSerializableAttribute), true).Length == 0)
+#endif
+						)
 					{
-						if (b) { b = false; }
-						else { sb.Append(","); }
+						if (!b) sb.Append(",");
 
-						sb.Append(Serialize(prop.Name));
+						JavaScriptUtil.QuoteString(prop.Name, sb);
 						sb.Append(':');
-						sb.Append(Serialize(mi.Invoke(o, null)));
+						Serialize(mi.Invoke(o, null), sb);
+
+						b = false;
 					}
 				}
 			}
 
 			sb.Append('}');
-
-			return sb.ToString();
 		}
 
 		#endregion

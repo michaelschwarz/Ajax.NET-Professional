@@ -1,6 +1,9 @@
 /*
  * MS	06-04-25	removed unnecessarily used cast
  * MS	06-05-23	using local variables instead of "new Type()" for get De-/SerializableTypes
+ * MS	06-09-26	improved performance using StringBuilder
+ * 
+ * 
  * 
  */
 using System;
@@ -25,13 +28,18 @@ namespace AjaxPro
 
 		public override string Serialize(object o)
 		{
+			StringBuilder sb = new StringBuilder();
+			Serialize(o, sb);
+			return sb.ToString();
+		}
+
+		public override void Serialize(object o, StringBuilder sb)
+		{
 			IEnumerable enumerable = o as IEnumerable;
 
 			if(enumerable == null)
 				throw new NotSupportedException();
 
-			StringBuilder sb = new StringBuilder();
-			
 			bool b = true;
 
 			sb.Append("[");
@@ -45,19 +53,16 @@ namespace AjaxPro
 			}
 
 			sb.Append("]");
-
-			return sb.ToString();
 		}
 
-		public override bool TrySerializeValue(object o, Type t, out string json)
+		public override bool TrySerializeValue(object o, Type t, StringBuilder sb)
 		{
 			if (typeof(IDictionary).IsAssignableFrom(t))
 			{
-				json = null;
 				return false;
 			}
 
-			return base.TrySerializeValue(o, t, out json);
+			return base.TrySerializeValue(o, t, sb);
 		}
 
 		public override bool TryDeserializeValue(IJavaScriptObject jso, Type t, out object o)

@@ -4,6 +4,9 @@
  * MS	06-05-23	using local variables instead of "new Type()" for get De-/SerializableTypes
  * MS	06-06-09	removed addNamespace use
  * MS	06-09-14	mark for NET20 only
+ * MS	06-09-24	use QuoteString instead of Serialize
+ * MS	06-09-26	improved performance using StringBuilder
+ * 
  * 
  */
 using System;
@@ -45,11 +48,17 @@ namespace AjaxPro
 
 		public override string Serialize(object o)
 		{
+			StringBuilder sb = new StringBuilder();
+			Serialize(o, sb);
+			return sb.ToString();
+		}
+
+		public override void Serialize(object o, StringBuilder sb)
+		{
 			if (!(o is ProfileBase))
 				throw new NotSupportedException();
 
 			ProfileBase profile = (ProfileBase)o;
-			StringBuilder sb = new StringBuilder();
 
 			bool b = true;
 
@@ -57,17 +66,16 @@ namespace AjaxPro
 
 			foreach (SettingsProperty property in ProfileBase.Properties)
 			{
-				if (b) { b = false; }
-				else { sb.Append(","); }
+				if (!b) sb.Append(",");
 
-				sb.Append(JavaScriptSerializer.Serialize(property.Name));
+				JavaScriptUtil.QuoteString(property.Name, sb);
 				sb.Append(":");
-				sb.Append(JavaScriptSerializer.Serialize(profile[property.Name]));
+				JavaScriptSerializer.Serialize(profile[property.Name], sb);
+
+				b = false;
 			}
 
 			sb.Append("})");
-
-			return sb.ToString();
 		}
 	}
 }

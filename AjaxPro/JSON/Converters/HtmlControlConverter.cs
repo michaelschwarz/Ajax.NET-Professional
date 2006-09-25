@@ -1,5 +1,6 @@
 /*
  * MS	06-05-23	using local variables instead of "new Type()" for get De-/SerializableTypes
+ * MS	06-09-26	improved performance using StringBuilder
  * 
  * 
  */
@@ -64,10 +65,17 @@ namespace AjaxPro
 
 		public override string Serialize(object o)
 		{
+			StringBuilder sb = new StringBuilder();
+			Serialize(o, sb);
+			return sb.ToString();
+		}
+
+		public override void Serialize(object o, StringBuilder sb)
+		{
 			if(!(o is Control))
 				throw new NotSupportedException();
 
-			return HtmlControlToString((HtmlControl)o);
+			sb.Append(HtmlControlToString((HtmlControl)o));
 		}
 
 		#region Internal Methods

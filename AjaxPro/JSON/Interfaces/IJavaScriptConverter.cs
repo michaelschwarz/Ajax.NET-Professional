@@ -2,6 +2,9 @@
  * MS	06-05-23	added de-/serialzableTypes variable instead of "new Type[]"
  * MS	06-05-30	added TrySerializeValue and TryDeserializeValue
  * MS	06-06-12	added StringDictionary argument for .Initialize
+ * MS	06-09-26	improved performance using StringBuilder, new Serialize and TrySerializeValue
+ * 
+ * 
  * 
  */
 using System;
@@ -47,6 +50,11 @@ namespace AjaxPro
 			throw new NotImplementedException("Converter for type '" + o.GetType().FullName + "'.");
 		}
 
+		public virtual void Serialize(object o, StringBuilder sb)
+		{
+			sb.Append(Serialize(o));
+		}
+
 		/// <summary>
 		/// Converts an IJavaScriptObject into an NET object.
 		/// </summary>
@@ -58,6 +66,8 @@ namespace AjaxPro
 			return null;
 		}
 
+		#region Try'nParse Methods
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -65,7 +75,22 @@ namespace AjaxPro
 		/// <param name="t"></param>
 		/// <param name="json"></param>
 		/// <returns></returns>
+		[Obsolete("The recommended alternative is IJavaScriptConverter.TrySerializeValue(object, t, sb).", true)]
 		public virtual bool TrySerializeValue(object o, Type t, out string json)
+		{
+			StringBuilder sb = new StringBuilder();
+			json = null;
+
+			if (TrySerializeValue(o, t, sb))
+			{
+				json = sb.ToString();
+				return true;
+			}
+
+			return false;
+		}
+
+		public virtual bool TrySerializeValue(object o, Type t, StringBuilder sb)
 		{
 			if (m_AllowInheritance)
 			{
@@ -73,13 +98,12 @@ namespace AjaxPro
 				{
 					if (m_serializableTypes[i].IsAssignableFrom(t))
 					{
-						json = this.Serialize(o);
+						this.Serialize(o, sb);
 						return true;
 					}
 				}
 			}
 
-			json = null;
 			return false;
 		}
 
@@ -107,6 +131,10 @@ namespace AjaxPro
 			o = null;
 			return false;
 		}
+
+		#endregion
+
+		#region Properties
 
 		/// <summary>
 		/// Returns every type that can be used with this converter to serialize an object.
@@ -137,5 +165,7 @@ namespace AjaxPro
 				return this.GetType().Name;
 			}
 		}
+
+		#endregion
 	}
 }

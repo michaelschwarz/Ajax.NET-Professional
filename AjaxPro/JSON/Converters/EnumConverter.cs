@@ -1,5 +1,8 @@
 /*
  * MS	06-05-24	initial version
+ * MS	06-09-26	improved performance using StringBuilder
+ * 
+ * 
  * 
  */
 using System;
@@ -21,15 +24,22 @@ namespace AjaxPro
 			};
 			m_deserializableTypes = m_serializableTypes;
 		}
-	
+
 		public override string Serialize(object o)
+		{
+			StringBuilder sb = new StringBuilder();
+			Serialize(o, sb);
+			return sb.ToString();
+		}
+
+		public override void Serialize(object o, StringBuilder sb)
 		{
 			// this.SerializeValue(Decimal.GetBits(d), sb);
 
 			// The following code is not correct, but while JavaScript cannot
 			// handle the decimal value correct we are using double instead.
 
-			return JavaScriptSerializer.Serialize((Double)o);
+			JavaScriptSerializer.Serialize((Double)o, sb);
 		}
 
 		public override object Deserialize(IJavaScriptObject o, Type t)
@@ -44,15 +54,15 @@ namespace AjaxPro
 			return Enum.ToObject(t, enumValue);
 		}
 
-		public override bool TrySerializeValue(object o, Type t, out string json)
+		public override bool TrySerializeValue(object o, Type t, StringBuilder sb)
 		{
 			if (t.IsEnum)
 			{
-				json = JavaScriptSerializer.Serialize(Convert.ChangeType(o, Enum.GetUnderlyingType(t)));
+				JavaScriptSerializer.Serialize(Convert.ChangeType(o, Enum.GetUnderlyingType(t)), sb);
 				return true;
 			}
 
-			return base.TrySerializeValue(o, t, out json);
+			return base.TrySerializeValue(o, t, sb);
 		}
 
 		public override bool TryDeserializeValue(IJavaScriptObject jso, Type t, out object o)

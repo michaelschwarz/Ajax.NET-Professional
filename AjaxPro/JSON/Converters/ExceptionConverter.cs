@@ -1,5 +1,8 @@
 /*
  * MS	06-05-24	initial version
+ * MS	06-09-24	use QuoteString instead of Serialize
+ * MS	06-09-26	improved performance using StringBuilder
+ * 
  * 
  */
 using System;
@@ -26,11 +29,17 @@ namespace AjaxPro
 				typeof(System.Security.SecurityException)
 			};
 		}
-	
+
 		public override string Serialize(object o)
 		{
-			Exception ex = (Exception)o;
 			StringBuilder sb = new StringBuilder();
+			Serialize(o, sb);
+			return sb.ToString();
+		}
+	
+		public override void Serialize(object o, StringBuilder sb)
+		{
+			Exception ex = (Exception)o;
 
 			// The following line is NON-JSON format, it is used to 
 			// return null to res.value and have an additional property res.error
@@ -40,40 +49,38 @@ namespace AjaxPro
 			
 			
 			sb.Append("{\"Message\":");
-			sb.Append(JavaScriptSerializer.Serialize(ex.Message));
+			JavaScriptUtil.QuoteString(ex.Message, sb);
 			sb.Append(",\"Type\":");
-			sb.Append(JavaScriptSerializer.Serialize(o.GetType().FullName));
+			JavaScriptUtil.QuoteString(o.GetType().FullName, sb);
 #if(!JSONLIB)
 			if (AjaxPro.Utility.Settings.DebugEnabled)
 			{
 				sb.Append(",\"Stack\":");
-				sb.Append(JavaScriptSerializer.Serialize(ex.StackTrace));
+				JavaScriptUtil.QuoteString(ex.StackTrace, sb);
 
 				if (ex.TargetSite != null)
 				{
 					sb.Append(",\"TargetSite\":");
-					sb.Append(JavaScriptSerializer.Serialize(ex.TargetSite.ToString()));
+					JavaScriptUtil.QuoteString(ex.TargetSite.ToString(), sb);
 				}
 
 				sb.Append(",\"Source\":");
-				sb.Append(JavaScriptSerializer.Serialize(ex.Source));
+				JavaScriptUtil.QuoteString(ex.Source, sb);
 			}
 #endif
 			sb.Append("}");
-
-			return sb.ToString();
 		}
 
-		public override bool TrySerializeValue(object o, Type t, out string json)
+		public override bool TrySerializeValue(object o, Type t, StringBuilder sb)
 		{
 			Exception ex = o as Exception;
 			if (ex != null)
 			{
-				json = this.Serialize(ex);
+				this.Serialize(ex, sb);
 				return true;
 			}
 
-			return base.TrySerializeValue(o, t, out json);
+			return base.TrySerializeValue(o, t, sb);
 		}
 	}
 }

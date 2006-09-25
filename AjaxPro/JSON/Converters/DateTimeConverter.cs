@@ -5,9 +5,11 @@
  * MS	06-09-22	added UniversalSortableDateTimePattern parsing
  *					added new oldStyle/renderDateTimeAsString configruation to enable string output of DateTime
  *					changed JSONLIB stand-alone library will return DateTimes as UniversalSortableDateTimePattern
+ * MS	06-09-26	improved performance using StringBuilder
  * 
  */
 using System;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace AjaxPro
@@ -17,6 +19,9 @@ namespace AjaxPro
 	/// </summary>
 	public class DateTimeConverter : IJavaScriptConverter
 	{
+		private Regex r = new Regex(@"(\d{4}),(\d{1,2}),(\d{1,2}),(\d{1,2}),(\d{1,2}),(\d{1,2}),(\d{1,3})", RegexOptions.Compiled);
+		private double UtcOffsetMinutes = TimeZone.CurrentTimeZone.GetUtcOffset(DateTime.Now).TotalMinutes;
+
 		public DateTimeConverter()
 			: base()
 		{
@@ -38,23 +43,24 @@ namespace AjaxPro
 				{
 					s = s.Substring(18, s.Length - 20);
 
-					// add more checks 0...2000, 0..11, 1..31, 0..23, 0..59, 0..59, 0..999
-					Regex r = new Regex(@"(\d{4}),(\d{1,2}),(\d{1,2}),(\d{1,2}),(\d{1,2}),(\d{1,2}),(\d{1,3})");
-					Match m = r.Match(s);
+					//Regex r = new Regex(@"(\d{4}),(\d{1,2}),(\d{1,2}),(\d{1,2}),(\d{1,2}),(\d{1,2}),(\d{1,3})", RegexOptions.Compiled);
+					//Match m = r.Match(s);
 
-					if (m.Groups.Count != 8)
-						throw new NotSupportedException();
+					//if (m.Groups.Count != 8)
+					//    throw new NotSupportedException();
 
-					int Year = int.Parse(m.Groups[1].Value);
-					int Month = int.Parse(m.Groups[2].Value) + 1;
-					int Day = int.Parse(m.Groups[3].Value);
-					int Hour = int.Parse(m.Groups[4].Value);
-					int Minute = int.Parse(m.Groups[5].Value);
-					int Second = int.Parse(m.Groups[6].Value);
-					int Millisecond = int.Parse(m.Groups[7].Value);
+					//int Year = int.Parse(m.Groups[1].Value);
+					//int Month = int.Parse(m.Groups[2].Value) + 1;
+					//int Day = int.Parse(m.Groups[3].Value);
+					//int Hour = int.Parse(m.Groups[4].Value);
+					//int Minute = int.Parse(m.Groups[5].Value);
+					//int Second = int.Parse(m.Groups[6].Value);
+					//int Millisecond = int.Parse(m.Groups[7].Value);
 
-					DateTime d = new DateTime(Year, Month, Day, Hour, Minute, Second, Millisecond);
-					return d.AddMinutes(TimeZone.CurrentTimeZone.GetUtcOffset(d).TotalMinutes);
+					//DateTime d = new DateTime(Year, Month, Day, Hour, Minute, Second, Millisecond);
+
+					string[] p = s.Split(',');
+					return new DateTime(int.Parse(p[0]), int.Parse(p[1])+1, int.Parse(p[2]), int.Parse(p[3]), int.Parse(p[4]), int.Parse(p[5]), int.Parse(p[6])).AddMinutes(UtcOffsetMinutes);
 				}
 				else if (s.StartsWith("new Date(") && s.EndsWith(")"))
 				{
@@ -67,7 +73,7 @@ namespace AjaxPro
                     DateTime d1 = new DateTime(nanosecs);
 #endif
 
-					return d1.AddMinutes(TimeZone.CurrentTimeZone.GetUtcOffset(d1).TotalMinutes);
+					return d1.AddMinutes(UtcOffsetMinutes); // TimeZone.CurrentTimeZone.GetUtcOffset(d1).TotalMinutes);
 				}
 			}
 			else if(o is JavaScriptString)
@@ -80,7 +86,7 @@ namespace AjaxPro
 					System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AllowWhiteSpaces, out d2
 					) == true)
 				{
-					return d2.AddMinutes(TimeZone.CurrentTimeZone.GetUtcOffset(d2).TotalMinutes);
+					return d2.AddMinutes(UtcOffsetMinutes); // TimeZone.CurrentTimeZone.GetUtcOffset(d2).TotalMinutes);
 				}
 #else
 				try
@@ -90,7 +96,7 @@ namespace AjaxPro
 						System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AllowWhiteSpaces
 					);
 
-					return d4.AddMinutes(TimeZone.CurrentTimeZone.GetUtcOffset(d4).TotalMinutes);
+					return d4.AddMinutes(UtcOffsetMinutes); // TimeZone.CurrentTimeZone.GetUtcOffset(d4).TotalMinutes);
 				}
 				catch(FormatException)
 				{
@@ -110,27 +116,33 @@ namespace AjaxPro
 			int Second2 = (int)JavaScriptDeserializer.Deserialize(ht["Second"], typeof(int));
 			int Millisecond2 = (int)JavaScriptDeserializer.Deserialize(ht["Millisecond"], typeof(int));
 
-			DateTime d3 = new DateTime(Year2, Month2, Day2, Hour2, Minute2, Second2, Millisecond2);
-			return d3.AddMinutes(TimeZone.CurrentTimeZone.GetUtcOffset(d3).TotalMinutes);
+			return new DateTime(Year2, Month2, Day2, Hour2, Minute2, Second2, Millisecond2).AddMinutes(UtcOffsetMinutes); // TimeZone.CurrentTimeZone.GetUtcOffset(d3).TotalMinutes);
 		}
 
 		public override string Serialize(object o)
 		{
+			StringBuilder sb = new StringBuilder();
+			Serialize(o, sb);
+			return sb.ToString();
+		}
+
+		public override void Serialize(object o, StringBuilder sb)
+		{
 			if (!(o is DateTime))
 				throw new NotSupportedException();
 
-			DateTime dt = Convert.ToDateTime(o);
+			DateTime dt = (DateTime)o;
 			dt = dt.ToUniversalTime();
 
 #if(JSONLIB)
-			return JavaScriptUtil.QuoteString(dt.ToString(System.Globalization.DateTimeFormatInfo.InvariantInfo.UniversalSortableDateTimePattern));
+			JavaScriptUtil.QuoteString(dt.ToString(System.Globalization.DateTimeFormatInfo.InvariantInfo.UniversalSortableDateTimePattern), sb);
 #else
 			if (AjaxPro.Utility.Settings.OldStyle.Contains("renderDateTimeAsString"))
 			{
-				return JavaScriptUtil.QuoteString(dt.ToString(System.Globalization.DateTimeFormatInfo.InvariantInfo.UniversalSortableDateTimePattern));
+				JavaScriptUtil.QuoteString(dt.ToString(System.Globalization.DateTimeFormatInfo.InvariantInfo.UniversalSortableDateTimePattern), sb);
 			}
 
-			return String.Format("new Date(Date.UTC({0},{1},{2},{3},{4},{5},{6}))",
+			sb.AppendFormat("new Date(Date.UTC({0},{1},{2},{3},{4},{5},{6}))",
 				dt.Year,
 				dt.Month - 1,
 				dt.Day,
