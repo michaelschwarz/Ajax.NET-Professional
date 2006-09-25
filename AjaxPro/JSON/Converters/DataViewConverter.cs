@@ -2,7 +2,7 @@
  * MS	06-04-28	fixed wrong DataView usage
  * MS	06-05-23	using local variables instead of "new Type()" for get De-/SerializableTypes
  * MS	06-06-22	added AllowInheritance=true
- * 
+ * MS	06-09-26	improved performance using StringBuilder
  * 
  * 
  * 
@@ -27,6 +27,13 @@ namespace AjaxPro
 
 		public override string Serialize(object o)
 		{
+			StringBuilder sb = new StringBuilder();
+			Serialize(o, sb);
+			return sb.ToString();
+		}
+
+		public override void Serialize(object o, StringBuilder sb)
+		{
 			DataView dv = o as DataView;
 
 			if(dv == null)
@@ -34,7 +41,7 @@ namespace AjaxPro
 			
 			DataTableConverter dtc = new DataTableConverter();
 #if(NET20)
-			return dtc.Serialize(dv.ToTable());
+			dtc.Serialize(dv.ToTable(), sb);
 #else
 			DataTable dt = dv.Table.Clone();
 			//dt.Locale = dv.Table.Locale;
@@ -48,7 +55,7 @@ namespace AjaxPro
 				dt.ImportRow(dv[i].Row);
 			}
 
-			return dtc.Serialize(dt);
+			dtc.Serialize(dt, sb);
 #endif
 		}
 	}

@@ -1,6 +1,8 @@
 /*
  * MS	06-05-24	initial version
  *					allowNumberBooleanAsString
+ * MS	06-09-26	improved performance using StringBuilder
+ * 
  * 
  */
 using System;
@@ -23,10 +25,17 @@ namespace AjaxPro
 			};
 			m_deserializableTypes = m_serializableTypes;
 		}
-	
+
 		public override string Serialize(object o)
 		{
-			return JavaScriptUtil.QuoteString(o.ToString());
+			StringBuilder sb = new StringBuilder();
+			Serialize(o, sb);
+			return sb.ToString();
+		}
+
+		public override void Serialize(object o, StringBuilder sb)
+		{
+			JavaScriptUtil.QuoteString(o.ToString(), sb);
 		}
 
 		public override object Deserialize(IJavaScriptObject o, Type t)

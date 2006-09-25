@@ -8,6 +8,9 @@
  * MS	06-06-09	removed addNamespace use, added new GetClientNamespaceRepresentation method
  * MS	06-60-19	added GetIJavaScriptObjectFromXmlNode
  * MS	06-09-15	fixed bug when using special chars in a string below ASCII 32
+ * MS	06-09-26	improved performance using StringBuilder for quotestring methods
+ * 
+ * 
  * 
  */
 using System;
@@ -55,50 +58,59 @@ namespace AjaxPro
 		/// <returns>Returns the quoted string.</returns>
 		internal static string QuoteString(string s, char quoteChar)
 		{
-			if (s == null || (s.Length == 1 && s[0] == '\0'))
-				return new String(quoteChar, 2);
+			StringBuilder sb = new StringBuilder();
+			QuoteString(s, quoteChar, sb);
+			return sb.ToString();
+		}
 
-			int len = s.Length;
+		internal static void QuoteString(string s, char quoteChar, StringBuilder sb)
+		{
+			if (s == null || (s.Length == 1 && s[0] == '\0'))
+			{
+				sb.Append(new String(quoteChar, 2));
+				return;
+			}
+
 			char c;
-			string us;
-			StringBuilder sb = new StringBuilder(len);
+			int len = s.Length;
+
+			sb.EnsureCapacity(sb.Length + s.Length + 2);
+
+			sb.Append(quoteChar);
 
 			for (int i = 0; i < len; i++)
 			{
 				c = s[i];
-
-				if (c == '\\' || c == quoteChar)
+				switch (c)
 				{
-					sb.Append('\\');
-					sb.Append(c);
-				}
-				else
-				{
-					switch (c)
-					{
-						case '\b': sb.Append("\\b"); break;
-						case '\t': sb.Append("\\t"); break;
-						case '\r': sb.Append("\\r"); break;
-						case '\n': sb.Append("\\n"); break;
-						case '\f': sb.Append("\\f"); break;
-						default:
-							if (c < ' ')
-							{
-								// us = "000" + int.Parse(new string(c, 1), System.Globalization.NumberStyles.HexNumber);
-								us = "000" + (byte)c;
+					case '\\': sb.Append("\\\\"); break;
+					case '\b': sb.Append("\\b"); break;
+					case '\t': sb.Append("\\t"); break;
+					case '\r': sb.Append("\\r"); break;
+					case '\n': sb.Append("\\n"); break;
+					case '\f': sb.Append("\\f"); break;
+					default:
+						if (c < ' ')
+						{
+							// string us = "000" + int.Parse(new string(c, 1), System.Globalization.NumberStyles.HexNumber);
+							string us = "000" + (byte)c;
 
-								sb.Append("\\u" + us.Substring(us.Length - 4));
-							}
-							else
-							{
-								sb.Append(c);
-							}
-							break;
-					}
+							sb.Append("\\u" + us.Substring(us.Length - 4));
+						}
+						else if (c == quoteChar)
+						{
+							sb.Append("\\");
+							sb.Append(c);
+						}
+						else
+						{
+							sb.Append(c);
+						}
+						break;
 				}
 			}
 
-			return quoteChar + sb.ToString() + quoteChar;
+			sb.Append(quoteChar);
 		}
 
 		/// <summary>
@@ -109,6 +121,11 @@ namespace AjaxPro
 		public static string QuoteString(string s)
 		{
 			return QuoteString(s, '"');
+		}
+
+		public static void QuoteString(string s, StringBuilder sb)
+		{
+			QuoteString(s, '"', sb);
 		}
 
 		/// <summary>
@@ -324,6 +341,7 @@ namespace AjaxPro
 			//if (xpath == "" || xpath == "/")
 			//    xpath = n.Name;
 
+			System.Text.RegularExpressions.Regex r = new System.Text.RegularExpressions.Regex(@"\w+|\W+", System.Text.RegularExpressions.RegexOptions.Compiled);
 			JavaScriptObject o = new JavaScriptObject();
 
 			if (n.NodeType == XmlNodeType.Element)
@@ -341,7 +359,7 @@ namespace AjaxPro
 					for (XmlNode e = n.FirstChild; e != null; e = e.NextSibling)
 					{
 						if (e.NodeType == XmlNodeType.Element) hasElementChild = true;
-						if (e.NodeType == XmlNodeType.Text && System.Text.RegularExpressions.Regex.IsMatch(e.InnerText, @"\w+|\W+")) textChild++;	// non-whitespace text
+						if (e.NodeType == XmlNodeType.Text && r.IsMatch(e.InnerText)) textChild++;	// non-whitespace text
 					}
 
 					if (hasElementChild)

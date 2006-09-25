@@ -10,6 +10,7 @@
  * MS	06-05-23	added support for Enum that are not integers
  * MS	06-05-30	changed to new converter usage
  * MS	06-07-11	added generic method for DeserializeFromJson
+ * MS	06-09-26	improved performance removing three-times cast
  * 
  * 
  */
@@ -101,9 +102,11 @@ namespace AjaxPro
 			// will allow us to use implemented classes where the method will use
 			// only the interface.
 
-			if ((o is JavaScriptObject) && ((JavaScriptObject)o).Contains("__type"))
+			JavaScriptObject jso = o as JavaScriptObject;
+
+			if (jso != null && jso.Contains("__type"))
 			{
-				Type t = Type.GetType(((JavaScriptObject)o)["__type"].ToString());
+				Type t = Type.GetType(jso["__type"].ToString());
 				if (type == null || type.IsAssignableFrom(t))
 					type = t;
 			}
@@ -122,12 +125,20 @@ namespace AjaxPro
 			}
 
 			object v;
+#if(NET20)
+			foreach(IJavaScriptConverter c2 in Utility.Settings.DeserializableConverters.Values)
+			{
+				if(c2.TryDeserializeValue(o, type, out v))
+					return v;
+			}
+#else
 			IEnumerator m = Utility.Settings.DeserializableConverters.Values.GetEnumerator();
 			while(m.MoveNext())
 			{
 				if (((IJavaScriptConverter)m.Current).TryDeserializeValue(o, type, out v))
 					return v;
 			}
+#endif
 
 
 #if(NET20)
@@ -142,28 +153,6 @@ namespace AjaxPro
 
 				return Activator.CreateInstance(type, val);
 			}
-			//else if (type.IsGenericType && type.GetGenericArguments().Length > 0)
-			//{
-			//    Type[] types = type.GetGenericArguments();
-
-			//    if (typeof(System.Collections.Generic.List<>).IsAssignableFrom(type.GetGenericTypeDefinition()) && o is JavaScriptArray)
-			//    {
-			//        object g = Activator.CreateInstance(type);
-			//        JavaScriptArray a = (JavaScriptArray)o;
-
-			//        System.Collections.IList list = (System.Collections.IList)g;
-
-			//        foreach (IJavaScriptObject item in a)
-			//            list.Add(Deserialize(item, types[0]));
-
-			//        return list;
-			//    }
-			//    else if (typeof(System.Collections.Generic.Dictionary<,>).IsAssignableFrom(type.GetGenericTypeDefinition()) && o is JavaScriptObject)
-			//    {
-			//        IDictionaryConverter conv = new IDictionaryConverter();
-			//        return conv.Deserialize(o, type);
-			//    }
-			//}
 #endif
 
 			if (typeof(IJavaScriptObject).IsAssignableFrom(type))

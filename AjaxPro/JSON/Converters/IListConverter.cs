@@ -2,6 +2,7 @@
  * MS	06-05-23	using local variables instead of "new Type()" for get De-/SerializableTypes
  * MS	06.06.09	added IEnumerable type
  * MS	06-06-09	removed addNamespace use
+ * MS	06-09-26	improved performance using StringBuilder
  * 
  */
 using System;
@@ -31,7 +32,8 @@ namespace AjaxPro
 #if(NET20)
 				typeof(IList<>),
 #endif
-				typeof(IList), typeof(IEnumerable)
+				typeof(IList), typeof(IEnumerable),
+				typeof(string[]), typeof(int[]), typeof(bool[])
 			};
 			m_deserializableTypes = m_serializableTypes;
 		}
@@ -39,6 +41,12 @@ namespace AjaxPro
 		public override string Serialize(object o)
 		{
 			StringBuilder sb = new StringBuilder();
+			Serialize(o, sb);
+			return sb.ToString();
+		}
+
+		public override void Serialize(object o, StringBuilder sb)
+		{
 			IEnumerable enumerable = (IEnumerable)o;
 			bool b = true;
 
@@ -46,15 +54,14 @@ namespace AjaxPro
 
 			foreach (object obj in enumerable)
 			{
-				if (b) { b = false; }
-				else { sb.Append(","); }
+				if (!b) sb.Append(",");
 
 				sb.Append(JavaScriptSerializer.Serialize(obj));
+
+				b = false;
 			}
 
 			sb.Append("]");
-
-			return sb.ToString();
 		}
 
 		public override object Deserialize(IJavaScriptObject o, Type t)
@@ -71,7 +78,6 @@ namespace AjaxPro
 
 				try
 				{
-
 					if (list != null)
 					{
 						for (int i = 0; i < list.Count; i++)
@@ -105,15 +111,15 @@ namespace AjaxPro
 			return l;
 		}
 
-		public override bool TrySerializeValue(object o, Type t, out string json)
+		public override bool TrySerializeValue(object o, Type t, StringBuilder sb)
 		{
 			if (t.IsArray) // || typeof(IEnumerable).IsAssignableFrom(t))
 			{
-				json = this.Serialize(o);
+				this.Serialize(o, sb);
 				return true;
 			}
 
-			return base.TrySerializeValue(o, t, out json);
+			return base.TrySerializeValue(o, t, sb);
 		}
 	}
 }

@@ -2,13 +2,14 @@
  * MS	06-06-01	initial version
  * MS	06-06-09	removed addNamespace use
  * MS	06-09-22	fixed disposing Bitmap after removed from cache
- * 
+ * MS	06-09-26	improved performance using StringBuilder
  * 
  */
 using System;
 using System.Web;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Text;
 
 namespace AjaxPro
 {
@@ -78,6 +79,13 @@ Object.extend(" + clientType + @".prototype,  {
 
 		public override string Serialize(object o)
 		{
+			StringBuilder sb = new StringBuilder();
+			Serialize(o, sb);
+			return sb.ToString();
+		}
+
+		public override void Serialize(object o, StringBuilder sb)
+		{
 			string id = Guid.NewGuid().ToString();
 
 			AjaxBitmap b = new AjaxBitmap();
@@ -97,7 +105,11 @@ Object.extend(" + clientType + @".prototype,  {
 #endif
 				);
 
-			return "new " + clientType + "('" + id + "')";
+			sb.Append("new ");
+			sb.Append(clientType);
+			sb.Append("('");
+			sb.Append(id);
+			sb.Append("')");
 		}
 
 		public static void RemoveBitmapFromCache(string key, object o, System.Web.Caching.CacheItemRemovedReason reason)
@@ -154,7 +166,7 @@ Object.extend(" + clientType + @".prototype,  {
 				ImageCodecInfo[] enc = ImageCodecInfo.GetImageEncoders();
 
 				EncoderParameters ep = new EncoderParameters(1);
-				ep.Param[0] = new EncoderParameter(Encoder.Quality, b.quality);
+				ep.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, b.quality);
 
 				b.bmp.Save(context.Response.OutputStream, enc[1], ep);
 				return;

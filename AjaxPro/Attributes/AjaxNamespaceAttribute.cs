@@ -1,3 +1,9 @@
+/*
+ * MS	06-09-26	put regex to private const
+ * 
+ * 
+ * 
+ */
 using System;
 
 namespace AjaxPro
@@ -9,6 +15,7 @@ namespace AjaxPro
 	public class AjaxNamespaceAttribute : Attribute
 	{
 		private string _clientNS = null;
+		private System.Text.RegularExpressions.Regex r = new System.Text.RegularExpressions.Regex("^[a-zA-Z_]{1}([a-zA-Z_]*([\\d]*)?)*((\\.)?[a-zA-Z_]+([\\d]*)?)*$", System.Text.RegularExpressions.RegexOptions.Compiled);
 
 		/// <summary>
 		/// This attribute can be used to specified a different namespace for the client-side representation.
@@ -16,9 +23,7 @@ namespace AjaxPro
 		/// <param name="clientNS">The namespace to be used on the client-side JavaScript.</param>
 		public AjaxNamespaceAttribute(string clientNS)
 		{
-			string pattern = "^[a-zA-Z_]{1}([a-zA-Z_]*([\\d]*)?)*((\\.)?[a-zA-Z_]+([\\d]*)?)*$";
-
-            if(!System.Text.RegularExpressions.Regex.IsMatch(clientNS, pattern) || clientNS.StartsWith(".") || clientNS.EndsWith("."))
+            if(!r.IsMatch(clientNS) || clientNS.StartsWith(".") || clientNS.EndsWith("."))
                 throw new NotSupportedException("The namespace '" + clientNS + "' is not supported.");
 
 			_clientNS = clientNS;

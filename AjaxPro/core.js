@@ -1,8 +1,9 @@
 Object.extend(Function.prototype, {
 	getArguments: function() {
 		var args = [];
-		for(var i=0; i<this.arguments.length; i++)
+		for(var i=0; i<this.arguments.length; i++) {
 			args.push(this.arguments[i]);
+		}
 		return args;
 	}
 }, false);
@@ -57,7 +58,9 @@ AjaxPro.IFrameXmlHttp.prototype = {
 			{
 				document.body.insertAdjacentHTML('beforeEnd', '<iframe name="' + iframeID + '" id="' + iframeID + '" style="border:1px solid black;display:none"></iframe>');
 			}
-			if (window.frames && window.frames[iframeID]) this.iframe = window.frames[iframeID];
+			if (window.frames && window.frames[iframeID]) {
+				this.iframe = window.frames[iframeID];
+			}
 			this.iframe.name = iframeID;
 			this.iframe.document.open();
 			this.iframe.document.write("<html><body></body></html>");
@@ -82,7 +85,9 @@ AjaxPro.IFrameXmlHttp.prototype = {
 	addInput: function(doc, form, name, value) {
 		var ele;
 		var tag = "input";
-		if(value.indexOf("\n") >= 0) tag = "textarea";
+		if(value.indexOf("\n") >= 0) {
+			tag = "textarea";
+		}
 		
 		if(doc.all) {
 			ele = doc.createElement("<" + tag + " name=\"" + name + "\" />");
@@ -119,24 +124,26 @@ AjaxPro.IFrameXmlHttp.prototype = {
 		}
 		this.addInput(doc, form, "data", data);
 		form.submit();
-		setTimeout(this.readystatechanged.bind(this), 1);
+		
+		setTimeout(this.readystatechanged.bind(this), 0);
 	}
 };
 
 var progids = ["Msxml2.XMLHTTP", "Microsoft.XMLHTTP"];
-var _progid = null;
+var progid = null;
 
 if(typeof ActiveXObject != "undefined") {
 	var ie7xmlhttp = false;
 	if(typeof XMLHttpRequest == "object") {
 		try{ var o = new XMLHttpRequest(); ie7xmlhttp = true; }catch(e){}
 	}
-
 	if(typeof XMLHttpRequest == "undefined" || !ie7xmlhttp) {
 		XMLHttpRequest = function() {
 			var xmlHttp = null;
 			if(!AjaxPro.noActiveX) {
-				if(_progid) return new ActiveXObject(_progid);
+				if(progid != null) {
+					return new ActiveXObject(progid);
+				}
 				for(var i=0; i<progids.length && xmlHttp == null; i++) {
 					try {
 						xmlHttp = new ActiveXObject(progids[i]);
@@ -162,22 +169,26 @@ Object.extend(AjaxPro, {
 	cryptProvider: null,
 	queue: null,
 	token: "",
-	version: "6.9.22.2",
+	version: "6.9.26.1",
 	ID: "AjaxPro",
 	noActiveX: false,
 	timeoutPeriod: 10*1000,
 	queue: null,
 
-	toJSON: function(o) {
-		if(o == null)
+	toJSON: function(o) {	
+		if(o == null) {
 			return "null";
+		}
+		var v = [];
+		var i;
 		switch(o.constructor) {
 			case String:
-				var v = [];
-				for(var i=0; i<o.length; i++) {
+				for(i=0; i<o.length; i++) {
 					var c = o.charAt(i);
 					if(c >= " ") {
-						if(c == "\\" || c == '"') v.push("\\");
+						if(c == "\\" || c == '"') {
+							v.push("\\");
+						}
 						v.push(c);
 					} else {
 						switch(c) {
@@ -194,16 +205,16 @@ Object.extend(AjaxPro, {
 				}
 				return '"' + v.join('') + '"';
 			case Array:
-				var v = [];
-				for(var i=0; i<o.length; i++)
-					v.push(AjaxPro.toJSON(o[i])) ;
+				for(i=0; i<o.length; i++) {
+					v.push(AjaxPro.toJSON(o[i]));
+				}
 				return "[" + v.join(",") + "]";
 			case Number:
 				return isFinite(o) ? o.toString() : AjaxPro.toJSON(null);
 			case Boolean:
 				return o.toString();
 			case Date:
-				var d = new Object();
+				var d = {};
 				d.__type = "System.DateTime";
 				d.Year = o.getUTCFullYear();
 				d.Month = o.getUTCMonth() +1;
@@ -214,16 +225,18 @@ Object.extend(AjaxPro, {
 				d.Millisecond = o.getUTCMilliseconds();
 				return AjaxPro.toJSON(d);
 			default:
-				if(typeof o.toJSON == "function")
+				if(typeof o.toJSON == "function") {
 					return o.toJSON();
+				}
 				if(typeof o == "object") {
-					var v=[];
-					for(attr in o) {
-						if(typeof o[attr] != "function")
+					for(var attr in o) {
+						if(typeof o[attr] != "function") {
 							v.push('"' + attr + '":' + AjaxPro.toJSON(o[attr]));
+						}
 					}
-					if(v.length>0)
+					if(v.length>0) {
 						return "{" + v.join(",") + "}";
+					}
 					return "{}";		
 				}
 				return o.toString();
@@ -254,7 +267,9 @@ AjaxPro.Request.prototype = {
 	context: null,
 	isRunning: false,
 	abort: function() {
-		if(this.timeoutTimer != null) clearTimeout(this.timeoutTimer);
+		if(this.timeoutTimer != null) {
+			clearTimeout(this.timeoutTimer);
+		}
 		if(this.xmlHttp) {
 			this.xmlHttp.onreadystatechange = AjaxPro.noOperation;
 			this.xmlHttp.abort();
@@ -278,12 +293,18 @@ AjaxPro.Request.prototype = {
 	},
 	endRequest: function(res) {
 		this.abort();
-		if(res.error != null) this.onError(res.error, this);
-		if(typeof this.callback == "function")
-			this.callback(res, this);	
+		if(res.error != null) {
+			this.onError(res.error, this);
+		}
+
+		if(typeof this.callback == "function") {
+			this.callback(res, this);
+		}
 	},
 	mozerror: function() {
-		if(this.timeoutTimer != null) clearTimeout(this.timeoutTimer);
+		if(this.timeoutTimer != null) {
+			clearTimeout(this.timeoutTimer);
+		}
 		var res = this.getEmptyRes();
 		res.error = {Message:"Unknown",Type:"ConnectFailure",Status:0};
 		this.endRequest(res);
@@ -291,12 +312,15 @@ AjaxPro.Request.prototype = {
 	doStateChange: function() {
 		this.onStateChanged(this.xmlHttp.readyState, this);
 
-		if(this.xmlHttp.readyState != 4 || !this.isRunning)
+		if(this.xmlHttp.readyState != 4 || !this.isRunning) {
 			return;
+		}
 
 		this.duration = new Date().getTime() - this.__start;
 
-		if(this.timeoutTimer != null) clearTimeout(this.timeoutTimer);
+		if(this.timeoutTimer != null) {
+			clearTimeout(this.timeoutTimer);
+		}
 
 		var res = this.getEmptyRes();
 		if(this.xmlHttp.status == 200 && this.xmlHttp.statusText == "OK") {
@@ -308,16 +332,17 @@ AjaxPro.Request.prototype = {
 		
 		this.endRequest(res);
 	},
-	createResponse: function(r, noContent) {
+	createResponse: function(r, noContent) {	
 		if(!noContent) {
-			var responseText = new String(this.xmlHttp.responseText);
+			var responseText = "" + this.xmlHttp.responseText;
 
-			if(AjaxPro.cryptProvider != null && typeof AjaxPro.cryptProvider == "function")
+			if(AjaxPro.cryptProvider != null && typeof AjaxPro.cryptProvider == "function") {
 				responseText = AjaxPro.cryptProvider.decrypt(responseText);
+			}
 
-			if(this.xmlHttp.getResponseHeader("Content-Type") == "text/xml")
+			if(this.xmlHttp.getResponseHeader("Content-Type") == "text/xml") {
 				r.value = this.xmlHttp.responseXML;
-			else {
+			} else {
 				if(responseText != null && responseText.trim().length > 0) {
 					r.json = responseText;
 					eval("r.value = " + responseText + "*/");
@@ -341,8 +366,9 @@ AjaxPro.Request.prototype = {
 	invoke: function(method, args, callback, context) {
 		this.__start = new Date().getTime();
 
-		if(this.xmlHttp == null)
+		if(this.xmlHttp == null) {
 			this.xmlHttp = new XMLHttpRequest();
+		}
 
 		this.isRunning = true;
 		this.method = method;
@@ -350,12 +376,12 @@ AjaxPro.Request.prototype = {
 		this.callback = callback;
 		this.context = context;
 		
-		var async = typeof callback == "function" && callback != AjaxPro.noOperation;
+		var async = typeof(callback) == "function" && callback != AjaxPro.noOperation;
 		
 		if(async) {
-			if(MS.Browser.isIE)
+			if(MS.Browser.isIE) {
 				this.xmlHttp.onreadystatechange = this.doStateChange.bind(this);
-			else {
+			} else {
 				this.xmlHttp.onload = this.doStateChange.bind(this);
 				this.xmlHttp.onerror = this.mozerror.bind(this);
 			}
@@ -363,15 +389,17 @@ AjaxPro.Request.prototype = {
 		}
 		
 		var json = AjaxPro.toJSON(args) + "";
-		if(AjaxPro.cryptProvider != null)
+		if(AjaxPro.cryptProvider != null) {
 			json = AjaxPro.cryptProvider.encrypt(json);
+		}
 		
 		this.xmlHttp.open("POST", this.url, async);
 		this.xmlHttp.setRequestHeader("Content-Type", "text/plain; charset=utf-8");
 		this.xmlHttp.setRequestHeader("X-" + AjaxPro.ID + "-Method", method);
 		
-		if(AjaxPro.token != null && AjaxPro.token.length > 0)
+		if(AjaxPro.token != null && AjaxPro.token.length > 0) {
 			this.xmlHttp.setRequestHeader("X-" + AjaxPro.ID + "-Token", AjaxPro.token);
+		}
 
 		if(!MS.Browser.isIE) {
 			this.xmlHttp.setRequestHeader("Connection", "close");		// Mozilla Bug #246651
@@ -394,7 +422,7 @@ AjaxPro.RequestQueue = function(conc) {
 	this.requests = [];
 	this.timer = null;
 	
-	if(isNaN(conc)) conc = 2;
+	if(isNaN(conc)) { conc = 2; }
 
 	for(var i=0; i<conc; i++) {		// max 2 http connections
 		this.requests[i] = new AjaxPro.Request();
@@ -410,9 +438,11 @@ AjaxPro.RequestQueue = function(conc) {
 
 AjaxPro.RequestQueue.prototype = {
 	process: function() {
+	
 		this.timer = null;
-		if(this.queue.length == 0) return;
-
+		if(this.queue.length == 0) {
+			return;
+		}
 		for(var i=0; i<this.requests.length && this.queue.length > 0; i++) {
 			if(this.requests[i].isRunning == false) {
 				var r = this.queue.shift();
@@ -428,15 +458,20 @@ AjaxPro.RequestQueue.prototype = {
 			}
 		}
 		if(this.queue.length > 0 && this.timer == null) {
-			this.timer = setTimeout(this.process.bind(this), 10);
+			this.timer = setTimeout(this.process.bind(this), 0);
 		}
 	},
 	add: function(url, method, args, e) {
-		this.queue.push([url, method, args, e]);
 
+// txt += "\r\nqueue.add " + (new Date().getTime() - ss);
+
+		this.queue.push([url, method, args, e]);
+/*		
 		if(this.timer == null) {
-			this.timer = setTimeout(this.process.bind(this), 1);
+			this.timer = setTimeout(this.process.bind(this), 0);
 		}
+*/
+		this.process();
 	},
 	abort: function() {
 		this.queue.length = 0;
@@ -467,9 +502,12 @@ AjaxPro.AjaxClass = function(url) {
 
 AjaxPro.AjaxClass.prototype = {
 	invoke: function(method, args, e) {
+	
 		if(e != null) {
-			if(e.length != 6) for(;e.length<6;) e.push(null);
-			if(e[0] != null && typeof e[0] == "function") {
+			if(e.length != 6) {
+				for(;e.length<6;) { e.push(null); }
+			}
+			if(e[0] != null && typeof(e[0]) == "function") {
 				return AjaxPro.queue.add(this.url, method, args, e);
 			}
 		}

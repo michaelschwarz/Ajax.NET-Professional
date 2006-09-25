@@ -177,7 +177,7 @@ namespace AjaxPro
 		/// Register the specified converter to be used with Ajax.NET.
 		/// </summary>
 		/// <param name="converter">The IJavaScriptConverter.</param>
-		[Obsolete("The recommended alternative is to add the converter type to web.config ajaxNet/ajaxSettings/jsonConverters.", false)]
+		[Obsolete("The recommended alternative is to add the converter type to ajaxNet/ajaxSettings/jsonConverters.", false)]
 		public static void RegisterConverterForAjax(IJavaScriptConverter converter)
 		{
 			Utility.AddConverter(Utility.Settings, converter);

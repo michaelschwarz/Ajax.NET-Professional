@@ -4,6 +4,9 @@
  * MS	06-04-25	removed unnecessarily used cast
  * MS	06-05-17	copy of old IDictionaryConverter
  * MS	06-05-23	using local variables instead of "new Type()" for get De-/SerializableTypes
+ * MS	06-09-24	use QuoteString instead of Serialize
+ * MS	06-09-26	improved performance using StringBuilder
+ * 
  * 
  * 
  */
@@ -58,13 +61,17 @@ namespace AjaxPro
 
 		public override string Serialize(object o)
 		{
+			StringBuilder sb = new StringBuilder();
+			Serialize(o, sb);
+			return sb.ToString();
+		}
+
+		public override void Serialize(object o, StringBuilder sb)
+		{
 			IDictionary dic = o as IDictionary;
 
 			if (dic == null)
 				throw new NotSupportedException();
-
-			StringBuilder sb = new StringBuilder();
-
 
 			IDictionaryEnumerator enumerable = dic.GetEnumerator();
 
@@ -79,19 +86,17 @@ namespace AjaxPro
 				else { sb.Append(","); }
 
 				sb.Append('[');
-				sb.Append(JavaScriptSerializer.Serialize(enumerable.Key));
+				JavaScriptSerializer.Serialize(enumerable.Key, sb);
 				sb.Append(',');
-				sb.Append(JavaScriptSerializer.Serialize(enumerable.Value));
+				JavaScriptSerializer.Serialize(enumerable.Value, sb);
 				sb.Append(',');
-				sb.Append(JavaScriptSerializer.Serialize(enumerable.Key.GetType().FullName));
+				JavaScriptUtil.QuoteString(enumerable.Key.GetType().FullName, sb);
 				sb.Append(',');
-				sb.Append(JavaScriptSerializer.Serialize(enumerable.Value.GetType().FullName));
+				JavaScriptUtil.QuoteString(enumerable.Value.GetType().FullName, sb);
 				sb.Append(']');
 			}
 
 			sb.Append("]");
-
-			return sb.ToString();
 		}
 	}
 }

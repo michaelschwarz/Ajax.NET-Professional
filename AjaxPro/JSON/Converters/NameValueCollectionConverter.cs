@@ -7,6 +7,9 @@
  *					fixed missing initial values (for AjaxMethod invoke return value!!)
  * MS	06-06-14	changed access to keys and values
  * MS	06-09-22	added inheritance to get HttpValueCollection working again
+ * MS	06-09-24	use QuoteString instead of Serialize
+ * MS	06-09-26	improved performance using StringBuilder
+ * 
  * 
  * 
  */
@@ -110,12 +113,17 @@ Object.extend(" + clientType + @".prototype, {
 
 		public override string Serialize(object o)
 		{
+			StringBuilder sb = new StringBuilder();
+			Serialize(o, sb);
+			return sb.ToString();
+		}
+
+		public override void Serialize(object o, StringBuilder sb)
+		{
 			NameValueCollection list = o as NameValueCollection;
 
 			if (list == null)
 				throw new NotSupportedException();
-
-			StringBuilder sb = new StringBuilder();
 
 			bool b = true;
 
@@ -125,19 +133,18 @@ Object.extend(" + clientType + @".prototype, {
 
 			for (int i = 0; i < list.Keys.Count; i++)
 			{
-				if (b) { b = false; }
-				else { sb.Append(","); }
+				if (!b) sb.Append(",");
 
 				sb.Append('[');
-				sb.Append(JavaScriptSerializer.Serialize(list.Keys[i]));
+				JavaScriptUtil.QuoteString(list.Keys[i], sb);
 				sb.Append(',');
-				sb.Append(JavaScriptSerializer.Serialize(list[list.Keys[i]]));
+				JavaScriptUtil.QuoteString(list[list.Keys[i]], sb);
 				sb.Append(']');
+
+				b = false;
 			}
 
 			sb.Append("])");
-
-			return sb.ToString();
 		}
 	}
 }

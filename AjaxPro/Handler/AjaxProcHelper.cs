@@ -127,7 +127,7 @@ namespace AjaxPro
 						{
 							res = p.Type.InvokeMember(
 								p.AjaxMethod.Name,
-								System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.InvokeMethod | System.Reflection.BindingFlags.IgnoreCase,
+								System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.InvokeMethod,
 								null, null, po);
 						}
 						catch(Exception ex)
@@ -172,7 +172,9 @@ namespace AjaxPro
 						}
 						catch(Exception ex)
 						{
+#if(WEBEVENT)
 							string errorText = string.Format(Constant.AjaxID + " Error", p.Context.User.Identity.Name);
+#endif
 
 							if (ex.InnerException != null)
 							{

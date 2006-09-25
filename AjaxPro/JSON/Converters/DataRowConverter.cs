@@ -2,7 +2,7 @@
  * MS	06-04-25	removed unnecessarily used cast
  * MS	06-05-23	using local variables instead of "new Type()" for get De-/SerializableTypes
  * MS	06-06-23	added AllowInheritance=true
- * 
+ * MS	06-09-26	improved performance using StringBuilder
  * 
  */
 using System;
@@ -22,16 +22,21 @@ namespace AjaxPro
 
 			m_serializableTypes = new Type[] { typeof(DataRow) };
 		}
-	
+
 		public override string Serialize(object o)
+		{
+			StringBuilder sb = new StringBuilder();
+			Serialize(o, sb);
+			return sb.ToString();
+		}
+
+		public override void Serialize(object o, StringBuilder sb)
 		{
 			DataRow row = o as DataRow;
 
 			if(row == null)
 				throw new NotSupportedException();
 			
-			StringBuilder sb = new StringBuilder();
-
 			DataColumnCollection cols = row.Table.Columns;
 			int colcount = cols.Count;
 
@@ -44,12 +49,10 @@ namespace AjaxPro
 				if(b){ b = false; }
 				else{ sb.Append(","); }
 
-				sb.Append(JavaScriptSerializer.Serialize(row[cols[i].ColumnName]));
+				JavaScriptSerializer.Serialize(row[cols[i].ColumnName], sb);
 			}
 
 			sb.Append("]");
-
-			return sb.ToString();
 		}
 	}
 }

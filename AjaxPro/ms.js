@@ -2,8 +2,9 @@ var addNamespace = function(ns) {
 	var nsParts = ns.split(".");
 	var root = window;
 	for(var i=0; i<nsParts.length; i++) {
-		if(typeof root[nsParts[i]] == "undefined")
+		if(typeof root[nsParts[i]] == "undefined") {
 			root[nsParts[i]] = {};
+		}
 		root = root[nsParts[i]];
 	}
 };
@@ -13,10 +14,12 @@ Object.extend(window, {
 		var elements = [];
 		for(var i=0; i<arguments.length; i++) {
 			var e = arguments[i];
-			if(typeof e == 'string')
+			if(typeof e == 'string') {
 				e = document.getElementById(e);
-			if (arguments.length == 1)
+			}
+			if(arguments.length == 1) {
 				return e;
+			}
 			elements.push(e);
 		}
 		return elements;
@@ -24,9 +27,10 @@ Object.extend(window, {
 	Class: {
 		create: function() {
 			return function() {
-				if(typeof this.initialize == "function")
+				if(typeof this.initialize == "function") {
 					this.initialize.apply(this, arguments);
-			}
+				}
+			};
 		}
 	}
 }, false);
@@ -62,8 +66,9 @@ Object.extend(MS.Position, {
 		ele.style.top = loc.top + "px";
 	},
 	setBounds: function(ele, rect) {
-		if(rect.left && rect.top)
+		if(rect.left && rect.top) {
 			MS.Position.setLocation(ele, rect);
+		}
 		ele.style.width = rect.width + "px";
 		ele.style.height = rect.height + "px";
 	}
@@ -84,47 +89,48 @@ Object.extend(MS.Keys, {
 	ENTER: 13,
 	getCode: function(e) {
 		e = MS.getEvent(e);
-		if(e != null) return e.keyCode;
+		if(e != null) { return e.keyCode; }
 		return -1;
 	}
 }, false);
 
 Object.extend(MS, {
 	setText: function(ele, text) {
-		if(ele == null) return;
-		if(document.all)
+		if(ele == null) { return; }
+		if(document.all) {
 			ele.innerText = text;
-		else
+		} else {
 			ele.textContent = text;
+		}
 	},
 	setHtml: function(ele, html) {
-		if(ele == null) return;
+		if(ele == null) { return; }
 		ele.innerHTML = html;
 	},
 	cancelEvent: function(e) {
 		e = MS.getEvent(e);
-		if(window.event)
+		if(window.event) {
 			e.returnValue = false;
-		else if(e) {
+		} else if(e) {
 			e.preventDefault();
 			e.stopPropagation();
 		}
 	},
 	getEvent: function(e) {
-		if(window.event) return window.event;
-		if(e) return e;
+		if(window.event) { return window.event; }
+		if(e) { return e; }
 		return null;
 	},
 	getTarget: function(e) {
 		e = MS.getEvent(e);
-		if(window.event) return e.srcElement;
-		if(e) return e.target;
+		if(window.event) { return e.srcElement; }
+		if(e) { return e.target; }
 	}
 }, false);
 
 var StringBuilder = function() {
 	this.v = [];
-}
+};
 
 Object.extend(StringBuilder.prototype, {
 	append: function(s) {
@@ -137,6 +143,6 @@ Object.extend(StringBuilder.prototype, {
 		this.v.clear();
 	},
 	toString: function() {
-		return v.join("");
+		return this.v.join("");
 	}
 }, true);

@@ -7,6 +7,9 @@
  * MS	06-05-23	using local variables instead of "new Type()" for get De-/SerializableTypes
  * MS	06-06-09	removed addNamespace use
  * MS	06-06-14	changed access to keys and values
+ * MS	06-09-26	improved performance using StringBuilder
+ * 
+ * 
  * 
 */
 using System;
@@ -118,12 +121,17 @@ Object.extend(" + clientType + @".prototype, {
 
 		public override string Serialize(object o)
 		{
+			StringBuilder sb = new StringBuilder();
+			Serialize(o, sb);
+			return sb.ToString();
+		}
+
+		public override void Serialize(object o, StringBuilder sb)
+		{
 			IDictionary dic = o as IDictionary;
 
 			if(dic == null)
 				throw new NotSupportedException();
-
-			StringBuilder sb = new StringBuilder();
 
 			IDictionaryEnumerator enumerable = dic.GetEnumerator();
 
@@ -158,21 +166,19 @@ Object.extend(" + clientType + @".prototype, {
 
 			sb.Append("]");
 			sb.Append(")");
-
-			return sb.ToString();
 		}
 
-		public override bool TrySerializeValue(object o, Type t, out string json)
+		public override bool TrySerializeValue(object o, Type t, StringBuilder sb)
 		{
 #if(NET20)
 			if (IsInterfaceImplemented(o, typeof(IDictionary)))
 			{
-				json = this.Serialize(o);
+				this.Serialize(o, sb);
 				return true;
 			}
 #endif
 
-			return base.TrySerializeValue(o, t, out json);
+			return base.TrySerializeValue(o, t, sb);
 		}
 #if(NET20)
 		internal static bool IsInterfaceImplemented(object obj, Type interfaceType)

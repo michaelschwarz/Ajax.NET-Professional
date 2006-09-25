@@ -121,7 +121,7 @@ namespace AjaxPro
 				}
                 else
 #endif
-                    if (n.Name == "jsonConverters")
+				if (n.Name == "jsonConverters")
                 {
                     XmlNodeList jsonConverters = n.SelectNodes("add");
 

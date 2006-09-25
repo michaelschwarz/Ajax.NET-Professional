@@ -4,6 +4,12 @@
  * MS	06-05-23	using local variables instead of "new Type()" for get De-/SerializableTypes
  * MS	06-06-09	removed addNamespace use
  * MS	06-06-22	added AllowInheritance=true
+ * MS	06-09-24	use QuoteString instead of Serialize
+ * MS	06-09-26	improved performance using StringBuilder
+ * 
+ * 
+ * 
+ * 
  * 
  */
 using System;
@@ -126,16 +132,20 @@ namespace AjaxPro
 			return dt;
 		}
 
-
 		public override string Serialize(object o)
+		{
+			StringBuilder sb = new StringBuilder();
+			Serialize(o, sb);
+			return sb.ToString();
+		}
+
+		public override void Serialize(object o, StringBuilder sb)
 		{
 			DataTable dt = o as DataTable;
 
 			if(dt == null)
 				throw new NotSupportedException();
 			
-			StringBuilder sb = new StringBuilder();
-
 			DataColumnCollection cols = dt.Columns;
 			DataRowCollection rows = dt.Rows;
 
@@ -151,9 +161,9 @@ namespace AjaxPro
 				else{ sb.Append(","); }
 
 				sb.Append('[');
-				sb.Append(JavaScriptSerializer.Serialize(col.ColumnName));
+				JavaScriptUtil.QuoteString(col.ColumnName, sb);
 				sb.Append(',');
-				sb.Append(JavaScriptSerializer.Serialize(col.DataType.FullName));
+				JavaScriptUtil.QuoteString(col.DataType.FullName, sb);
 				sb.Append(']');
 			}
 
@@ -163,15 +173,14 @@ namespace AjaxPro
 
 			foreach(DataRow row in rows)
 			{
-				if(b){ b = false; }
-				else{ sb.Append(","); }
+				if(!b) sb.Append(",");
 
-				sb.Append(JavaScriptSerializer.Serialize(row));
+				JavaScriptSerializer.Serialize(row, sb);
+
+				b = false;
 			}
 
 			sb.Append("])");
-
-			return sb.ToString();
 		}
 	}
 }
