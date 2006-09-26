@@ -272,7 +272,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Managment\WebAjaxErrorEvent.cs" />
-    <Compile Include="Web\UI\AjaxAutoComplete.cs" />
     <Compile Include="Web\UI\AjaxBasePage.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>

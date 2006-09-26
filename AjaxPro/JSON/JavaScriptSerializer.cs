@@ -190,10 +190,10 @@ namespace AjaxPro
 						(!nsa && !mi.IsDefined(typeof(AjaxNonSerializableAttribute), true)) ||
 						(nsa && mi.IsDefined(typeof(AjaxPropertyAttribute), true))
 #else
-						(!nsa && mi.GetCustomAttributes(typeof(AjaxPropertyAttribute), true).Length > 0) ||
-						(nsa && mi.GetCustomAttributes(typeof(AjaxNonSerializableAttribute), true).Length == 0)
+						(!nsa && mi.GetCustomAttributes(typeof(AjaxNonSerializableAttribute), true).Length == 0) ||
+						(nsa && mi.GetCustomAttributes(typeof(AjaxPropertyAttribute), true).Length > 0)
 #endif
-						)
+)
 					{
 						if (!b) sb.Append(",");
 
