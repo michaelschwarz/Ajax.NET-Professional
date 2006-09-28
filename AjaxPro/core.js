@@ -169,7 +169,7 @@ Object.extend(AjaxPro, {
 	cryptProvider: null,
 	queue: null,
 	token: "",
-	version: "6.9.26.2",
+	version: "6.9.27.1",
 	ID: "AjaxPro",
 	noActiveX: false,
 	timeoutPeriod: 10*1000,
@@ -345,7 +345,7 @@ AjaxPro.Request.prototype = {
 			} else {
 				if(responseText != null && responseText.trim().length > 0) {
 					r.json = responseText;
-					eval("r.value = " + responseText + "*/");
+					eval("r.value = " + responseText + "*" + "/");
 				}
 			}
 		}
