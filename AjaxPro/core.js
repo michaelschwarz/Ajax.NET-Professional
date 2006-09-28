@@ -169,7 +169,7 @@ Object.extend(AjaxPro, {
 	cryptProvider: null,
 	queue: null,
 	token: "",
-	version: "6.9.27.2",
+	version: "6.9.27.3",
 	ID: "AjaxPro",
 	noActiveX: false,
 	timeoutPeriod: 10*1000,
@@ -181,12 +181,13 @@ Object.extend(AjaxPro, {
 		}
 		var v = [];
 		var i;
-		switch(o.constructor) {
-			case Number:
+		// Firefox bug when using different script tags
+		var c = o.constructor;
+		if(c == Number) {
 				return isFinite(o) ? o.toString() : AjaxPro.toJSON(null);
-			case Boolean:
+		} else if(c == Boolean) {
 				return o.toString();
-			case String:
+		} else if(c == String) {
 				for(i=0; i<o.length; i++) {
 					var c = o.charAt(i);
 					if(c >= " ") {
@@ -208,12 +209,12 @@ Object.extend(AjaxPro, {
 					}
 				}
 				return '"' + v.join('') + '"';
-			case Array:
+		} else if (c == Array) {
 				for(i=0; i<o.length; i++) {
 					v.push(AjaxPro.toJSON(o[i]));
 				}
 				return "[" + v.join(",") + "]";
-			case Date:
+		} else if (c == Date) {
 				var d = {};
 				d.__type = "System.DateTime";
 				d.Year = o.getUTCFullYear();
@@ -224,23 +225,22 @@ Object.extend(AjaxPro, {
 				d.Second = o.getUTCSeconds();
 				d.Millisecond = o.getUTCMilliseconds();
 				return AjaxPro.toJSON(d);
-			default:
-				if(typeof o.toJSON == "function") {
-					return o.toJSON();
-				}
-				if(typeof o == "object") {
-					for(var attr in o) {
-						if(typeof o[attr] != "function") {
-							v.push('"' + attr + '":' + AjaxPro.toJSON(o[attr]));
-						}
-					}
-					if(v.length>0) {
-						return "{" + v.join(",") + "}";
-					}
-					return "{}";		
-				}
-				return o.toString();
 		}
+		if(typeof o.toJSON == "function") {
+			return o.toJSON();
+		}
+		if(typeof o == "object") {
+			for(var attr in o) {
+				if(typeof o[attr] != "function") {
+					v.push('"' + attr + '":' + AjaxPro.toJSON(o[attr]));
+				}
+			}
+			if(v.length>0) {
+				return "{" + v.join(",") + "}";
+			}
+			return "{}";		
+		}
+		return o.toString();
 	},
 	dispose: function() {
 		if(AjaxPro.queue != null) {
