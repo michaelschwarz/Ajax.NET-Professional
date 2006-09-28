@@ -169,7 +169,7 @@ Object.extend(AjaxPro, {
 	cryptProvider: null,
 	queue: null,
 	token: "",
-	version: "6.9.27.1",
+	version: "6.9.27.2",
 	ID: "AjaxPro",
 	noActiveX: false,
 	timeoutPeriod: 10*1000,
@@ -182,6 +182,10 @@ Object.extend(AjaxPro, {
 		var v = [];
 		var i;
 		switch(o.constructor) {
+			case Number:
+				return isFinite(o) ? o.toString() : AjaxPro.toJSON(null);
+			case Boolean:
+				return o.toString();
 			case String:
 				for(i=0; i<o.length; i++) {
 					var c = o.charAt(i);
@@ -209,10 +213,6 @@ Object.extend(AjaxPro, {
 					v.push(AjaxPro.toJSON(o[i]));
 				}
 				return "[" + v.join(",") + "]";
-			case Number:
-				return isFinite(o) ? o.toString() : AjaxPro.toJSON(null);
-			case Boolean:
-				return o.toString();
 			case Date:
 				var d = {};
 				d.__type = "System.DateTime";
