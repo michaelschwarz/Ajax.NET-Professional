@@ -154,9 +154,6 @@
     <Compile Include="Handler\HttpCompressionModule.cs" />
     <Compile Include="Handler\AjaxRequestModule.cs" />
     <Compile Include="Handler\Security\AjaxEncryption.cs" />
-    <Compile Include="Handler\SimpleResult.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Handler\TypeJavaScriptHandler.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -210,12 +207,6 @@
     <Compile Include="JSON\Converters\ProfileBaseConverter.cs" />
     <Compile Include="JSON\Interfaces\IJavaScriptConverter.cs" />
     <Compile Include="JSON\Interfaces\IJavaScriptObject.cs" />
-    <Compile Include="JSON\JavaScriptConverter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="JSON\JavaScriptConverterCollection.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="JSON\JavaScriptDeserializer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -244,7 +235,6 @@
     <Compile Include="JSON\JSONParser.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Security\Authentication.cs" />
     <Compile Include="Security\Decryptor.cs" />
     <Compile Include="Security\DecryptTransformer.cs" />
     <Compile Include="Security\Encryptor.cs" />
@@ -286,12 +276,7 @@
   <ItemGroup>
     <None Include="build.bat" />
     <None Include="build_json.bat" />
-    <None Include="changes.txt" />
     <EmbeddedResource Include="ms.js" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="changes.xml" />
-    <Content Include="rss.xsl" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

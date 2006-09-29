@@ -1,4 +1,29 @@
 /*
+ * DataTableConverter.cs
+ * 
+ * Copyright © 2006 Michael Schwarz (http://www.ajaxpro.info).
+ * All Rights Reserved.
+ * 
+ * Permission is hereby granted, free of charge, to any person 
+ * obtaining a copy of this software and associated documentation 
+ * files (the "Software"), to deal in the Software without 
+ * restriction, including without limitation the rights to use, 
+ * copy, modify, merge, publish, distribute, sublicense, and/or 
+ * sell copies of the Software, and to permit persons to whom the 
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be 
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES 
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR 
+ * ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+/*
  * MS	06-04-25	removed unnecessarily used cast
  * MS	06-04-26	fixed null values to DBNull.Value (thanks to allex@as.ro)
  * MS	06-05-23	using local variables instead of "new Type()" for get De-/SerializableTypes
@@ -42,37 +67,38 @@ namespace AjaxPro
 	this.Rows = [];
 	this.addColumn = function(name, type) {
 		this.Columns.push({Name:name,__type:type});
-	}
+	};
 	this.toJSON = function() {
 		var dt = {};
+		var i;
 		dt.Columns = [];
-		for(var i=0; i<this.Columns.length; i++)
+		for(i=0; i<this.Columns.length; i++)
 			dt.Columns.push([this.Columns[i].Name, this.Columns[i].__type]);
 		dt.Rows = [];
-		for(var i=0; i<this.Rows.length; i++) {
+		for(i=0; i<this.Rows.length; i++) {
 			var row = [];
 			for(var j=0; j<this.Columns.length; j++)
 				row.push(this.Rows[i][this.Columns[j].Name]);
 			dt.Rows.push(row);
 		}
 		return AjaxPro.toJSON(dt);
-	}
+	};
 	this.addRow = function(row) {
 		this.Rows.push(row);
-	}
+	};
 	if(c != null) {
 		for(var i=0; i<c.length; i++)
 			this.addColumn(c[i][0], c[i][1]);
 	}
 	if(r != null) {
-		for(var i=0; i<r.length; i++) {
+		for(var y=0; y<r.length; y++) {
 			var row = {};
-			for(var c=0; c<this.Columns.length && c<r[i].length; c++)
-				row[this.Columns[c].Name] = r[i][c];
+			for(var z=0; z<this.Columns.length && z<r[y].length; z++)
+				row[this.Columns[z].Name] = r[y][z];
 			this.addRow(row);
 		}
 	}
-}
+};
 ";
 		}
 
