@@ -125,16 +125,7 @@ namespace AjaxPro
 			string clientNS = type.FullName;
 
 			if(cma.Length > 0 && cma[0].ClientNamespace != null)
-			{
-				//if (cma[0].ClientNamespace.IndexOf(".") > 0)
-				//  sb.Append("addNamespace(\"" + cma[0].ClientNamespace + "\");\r\n");
-
 				clientNS = cma[0].ClientNamespace;
-			}
-			else
-			{
-				//sb.Append("addNamespace(\"" + (type.FullName.IndexOf(".") > 0 ? type.FullName.Substring(0, type.FullName.LastIndexOf(".")) : type.FullName) + "\");\r\n");
-			}
 
 			sb.Append(JavaScriptUtil.GetClientNamespaceRepresentation(clientNS));
 
