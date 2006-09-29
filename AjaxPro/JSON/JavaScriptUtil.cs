@@ -1,4 +1,29 @@
 /*
+ * JavaScriptUtil.cs
+ * 
+ * Copyright © 2006 Michael Schwarz (http://www.ajaxpro.info).
+ * All Rights Reserved.
+ * 
+ * Permission is hereby granted, free of charge, to any person 
+ * obtaining a copy of this software and associated documentation 
+ * files (the "Software"), to deal in the Software without 
+ * restriction, including without limitation the rights to use, 
+ * copy, modify, merge, publish, distribute, sublicense, and/or 
+ * sell copies of the Software, and to permit persons to whom the 
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be 
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES 
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR 
+ * ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+/*
  * MS	06-04-04	fixed GetEnumRepresentation if type.FullName has no "."
  * MS	06-04-12	fixed \0 return value for QuoteString, will be simply removed from the string
  * MS	06-04-29	added ConvertXmlToIJavaScriptObject and fixed ConvertIJavaScriptObjectToXML
@@ -9,7 +34,7 @@
  * MS	06-60-19	added GetIJavaScriptObjectFromXmlNode
  * MS	06-09-15	fixed bug when using special chars in a string below ASCII 32
  * MS	06-09-26	improved performance using StringBuilder for quotestring methods
- * 
+ * MS	06-09-29	removed addNamespace use for GetEnumRepresentation
  * 
  * 
  */
@@ -157,13 +182,13 @@ namespace AjaxPro
 			
 			if(ema.Length > 0 && ema[0].ClientNamespace.Replace(".", "").Length > 0)
 			{
-				sb.Append("addNamespace(\"" + ema[0].ClientNamespace + "\");\r\n");
+				sb.Append(GetClientNamespaceRepresentation(ema[0].ClientNamespace));
 				sb.Append(ema[0].ClientNamespace + ".");
 				sb.Append(type.Name);
 			}
 			else
 			{
-				sb.Append("addNamespace(\"" + (type.FullName.IndexOf(".") > 0 ? type.FullName.Substring(0, type.FullName.LastIndexOf(".")) : type.FullName) + "\");\r\n");
+				sb.Append(GetClientNamespaceRepresentation(type.FullName.IndexOf(".") > 0 ? type.FullName.Substring(0, type.FullName.LastIndexOf(".")) : type.FullName));
 				sb.Append(type.FullName);
 			}
 			sb.Append(" = {\r\n");
