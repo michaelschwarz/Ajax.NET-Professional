@@ -169,11 +169,12 @@ Object.extend(AjaxPro, {
 	cryptProvider: null,
 	queue: null,
 	token: "",
-	version: "6.9.29.1",
+	version: "6.9.29.2",
 	ID: "AjaxPro",
 	noActiveX: false,
 	timeoutPeriod: 10*1000,
 	queue: null,
+	noUtcTime: false,
 
 	toJSON: function(o) {	
 		if(o == null) {
@@ -181,7 +182,6 @@ Object.extend(AjaxPro, {
 		}
 		var v = [];
 		var i;
-		// Firefox bug when using different script tags
 		var c = o.constructor;
 		if(c == Number) {
 				return isFinite(o) ? o.toString() : AjaxPro.toJSON(null);
@@ -217,13 +217,23 @@ Object.extend(AjaxPro, {
 		} else if (c == Date) {
 				var d = {};
 				d.__type = "System.DateTime";
-				d.Year = o.getUTCFullYear();
-				d.Month = o.getUTCMonth() +1;
-				d.Day = o.getUTCDate();
-				d.Hour = o.getUTCHours();
-				d.Minute = o.getUTCMinutes();
-				d.Second = o.getUTCSeconds();
-				d.Millisecond = o.getUTCMilliseconds();
+				if(AjaxPro.noUtcTime == true) {
+					d.Year = o.getFullYear();
+					d.Month = o.getMonth() +1;
+					d.Day = o.getDate();
+					d.Hour = o.getHours();
+					d.Minute = o.getMinutes();
+					d.Second = o.getSeconds();
+					d.Millisecond = o.getMilliseconds();
+				} else {
+					d.Year = o.getUTCFullYear();
+					d.Month = o.getUTCMonth() +1;
+					d.Day = o.getUTCDate();
+					d.Hour = o.getUTCHours();
+					d.Minute = o.getUTCMinutes();
+					d.Second = o.getUTCSeconds();
+					d.Millisecond = o.getUTCMilliseconds();
+				}
 				return AjaxPro.toJSON(d);
 		}
 		if(typeof o.toJSON == "function") {

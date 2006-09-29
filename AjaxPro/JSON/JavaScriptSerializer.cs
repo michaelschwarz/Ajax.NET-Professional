@@ -49,13 +49,6 @@ namespace AjaxPro
 	/// </summary>
 	public sealed class JavaScriptSerializer
 	{
-		public static string Serialize(object o)
-		{
-			StringBuilder sb = new StringBuilder();
-			Serialize(o, sb);
-			return sb.ToString();
-		}
-
 		/// <summary>
 		/// Converts a .NET object into a JSON string.
 		/// </summary>
@@ -76,6 +69,39 @@ namespace AjaxPro
 		///				string json = JavaScriptSerializer.Serialize(serverTime);
 		///				
 		///				// json = "new Date(...)";
+		///			}
+		///		}
+		/// }
+		/// </example>
+		public static string Serialize(object o)
+		{
+			StringBuilder sb = new StringBuilder();
+			Serialize(o, sb);
+			return sb.ToString();
+		}
+
+		/// <summary>
+		/// Converts a .NET object into a JSON string.
+		/// </summary>
+		/// <param name="o">The object to convert.</param>
+		/// <param name="sb">A StringBuilder object.</param>
+		/// <returns>Returns a JSON string.</returns>
+		/// <example>
+		/// using System;
+		/// using System.Text;
+		/// using AjaxPro;
+		/// 
+		/// namespace Demo
+		/// {
+		///		public class WebForm1 : System.Web.UI.Page
+		///		{
+		///			private void Page_Load(object sender, System.EventArgs e)
+		///			{
+		///				DateTime serverTime = DateTime.Now;
+		///				StringBuilder sb = new StringBuilder();
+		///				JavaScriptSerializer.Serialize(serverTime, sb);
+		///				
+		///				// sb.ToString() = "new Date(...)";
 		///			}
 		///		}
 		/// }

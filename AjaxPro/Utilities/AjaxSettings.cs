@@ -42,6 +42,8 @@ namespace AjaxPro
 #if(JSONLIB)
     internal class AjaxSettings
     {
+		private System.Collections.Specialized.StringCollection m_OldStyle = new System.Collections.Specialized.StringCollection();
+
 #if(NET20)
 		internal Dictionary<Type, IJavaScriptConverter> SerializableConverters;
 		internal Dictionary<Type, IJavaScriptConverter> DeserializableConverters;
@@ -62,9 +64,18 @@ namespace AjaxPro
 			DeserializableConverters = new Hashtable();
 #endif
 		}
+
+		/// <summary>
+		/// Gets or sets several settings that will be used for old styled web applications.
+		/// </summary>
+		internal System.Collections.Specialized.StringCollection OldStyle
+		{
+			get { return m_OldStyle; }
+			set { m_OldStyle = value; }
+		}
     }
 #else
-    internal class AjaxSettings
+	internal class AjaxSettings
 	{
 		private System.Collections.Hashtable m_UrlNamespaceMappings = new System.Collections.Hashtable();
 

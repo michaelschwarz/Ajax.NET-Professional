@@ -77,7 +77,7 @@ namespace AjaxPro
 		private static AjaxSettings m_Settings = null;
 		private static object m_SettingsLock = new object();
 		internal static bool ConverterRegistered = false;
-#if(!JSONLIB)
+
 		public static string AjaxID
 		{
 			get
@@ -85,7 +85,7 @@ namespace AjaxPro
 				return Constant.AjaxID;
 			}
 		}
-
+#if(!JSONLIB)
 		/// <summary>
 		/// Returns the session identifier.
 		/// </summary>
@@ -456,11 +456,19 @@ namespace AjaxPro
 				RegisterClientScriptBlock(page, Constant.AjaxID + ".converters",
 					"<script type=\"text/javascript\" src=\"" + convertersJs + "\"></script>");
 
+			
+			StringBuilder sb = new StringBuilder();
 
 			if(Settings.TokenEnabled)
+				sb.Append("AjaxPro.token = \"" + CurrentAjaxToken + "\";\r\n");
+
+			if (Settings.OldStyle.Contains("noUtcTime"))
+				sb.Append("AjaxPro.noUtcTime = true;\r\n");
+
+			if (sb.Length > 0)
 			{
-				RegisterClientScriptBlock(page, Constant.AjaxID + ".token",
-					"<script type=\"text/javascript\">AjaxPro.token = \"" + CurrentAjaxToken + "\";</script>");
+				RegisterClientScriptBlock(page, Constant.AjaxID + ".ajaxproinit",
+					"<script type=\"text/javascript\">\r\n" + sb.ToString() + "</script>\r\n");
 			}
 		}
 

@@ -31,6 +31,8 @@
  *					added new oldStyle/renderDateTimeAsString configruation to enable string output of DateTime
  *					changed JSONLIB stand-alone library will return DateTimes as UniversalSortableDateTimePattern
  * MS	06-09-26	improved performance using StringBuilder
+ * MS	06-09-29	added new oldStyle/noUtcTime configuration
+ *					fixed using rednerDateTimeAsString serialization
  * 
  */
 using System;
@@ -98,7 +100,7 @@ namespace AjaxPro
                     DateTime d1 = new DateTime(nanosecs);
 #endif
 
-					return d1.AddMinutes(UtcOffsetMinutes); // TimeZone.CurrentTimeZone.GetUtcOffset(d1).TotalMinutes);
+					return (Utility.Settings.OldStyle.Contains("noUtcTime") ? d1 : d1.AddMinutes(UtcOffsetMinutes)); // TimeZone.CurrentTimeZone.GetUtcOffset(d1).TotalMinutes);
 				}
 			}
 			else if(o is JavaScriptString)
@@ -111,7 +113,7 @@ namespace AjaxPro
 					System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AllowWhiteSpaces, out d2
 					) == true)
 				{
-					return d2.AddMinutes(UtcOffsetMinutes); // TimeZone.CurrentTimeZone.GetUtcOffset(d2).TotalMinutes);
+					return (Utility.Settings.OldStyle.Contains("noUtcTime") ? d2 : d2.AddMinutes(UtcOffsetMinutes)); // TimeZone.CurrentTimeZone.GetUtcOffset(d2).TotalMinutes);
 				}
 #else
 				try
@@ -121,7 +123,7 @@ namespace AjaxPro
 						System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AllowWhiteSpaces
 					);
 
-					return d4.AddMinutes(UtcOffsetMinutes); // TimeZone.CurrentTimeZone.GetUtcOffset(d4).TotalMinutes);
+					return (Utility.Settings.OldStyle.Contains("noUtcTime") ? d4 : d4.AddMinutes(UtcOffsetMinutes)); // TimeZone.CurrentTimeZone.GetUtcOffset(d4).TotalMinutes);
 				}
 				catch(FormatException)
 				{
@@ -141,7 +143,8 @@ namespace AjaxPro
 			int Second2 = (int)JavaScriptDeserializer.Deserialize(ht["Second"], typeof(int));
 			int Millisecond2 = (int)JavaScriptDeserializer.Deserialize(ht["Millisecond"], typeof(int));
 
-			return new DateTime(Year2, Month2, Day2, Hour2, Minute2, Second2, Millisecond2).AddMinutes(UtcOffsetMinutes); // TimeZone.CurrentTimeZone.GetUtcOffset(d3).TotalMinutes);
+			DateTime d5 = new DateTime(Year2, Month2, Day2, Hour2, Minute2, Second2, Millisecond2);
+			return (Utility.Settings.OldStyle.Contains("noUtcTime") ? d5 : d5.AddMinutes(UtcOffsetMinutes)); // TimeZone.CurrentTimeZone.GetUtcOffset(d3).TotalMinutes);
 		}
 
 		public override string Serialize(object o)
@@ -157,24 +160,39 @@ namespace AjaxPro
 				throw new NotSupportedException();
 
 			DateTime dt = (DateTime)o;
-			dt = dt.ToUniversalTime();
 
 #if(JSONLIB)
 			JavaScriptUtil.QuoteString(dt.ToString(System.Globalization.DateTimeFormatInfo.InvariantInfo.UniversalSortableDateTimePattern), sb);
 #else
+			bool noUtcTime = Utility.Settings.OldStyle.Contains("noUtcTime");
+
+			if(!noUtcTime)
+				dt = dt.ToUniversalTime();
+
 			if (AjaxPro.Utility.Settings.OldStyle.Contains("renderDateTimeAsString"))
 			{
 				JavaScriptUtil.QuoteString(dt.ToString(System.Globalization.DateTimeFormatInfo.InvariantInfo.UniversalSortableDateTimePattern), sb);
+				return;
 			}
 
-			sb.AppendFormat("new Date(Date.UTC({0},{1},{2},{3},{4},{5},{6}))",
-				dt.Year,
-				dt.Month - 1,
-				dt.Day,
-				dt.Hour,
-				dt.Minute,
-				dt.Second,
-				dt.Millisecond);
+			if(!noUtcTime)
+				sb.AppendFormat("new Date(Date.UTC({0},{1},{2},{3},{4},{5},{6}))",
+					dt.Year,
+					dt.Month - 1,
+					dt.Day,
+					dt.Hour,
+					dt.Minute,
+					dt.Second,
+					dt.Millisecond);
+			else
+				sb.AppendFormat("new Date({0},{1},{2},{3},{4},{5},{6})",
+					dt.Year,
+					dt.Month - 1,
+					dt.Day,
+					dt.Hour,
+					dt.Minute,
+					dt.Second,
+					dt.Millisecond);
 #endif
 		}
 	}
