@@ -35,6 +35,7 @@
  * MS	06-09-15	fixed bug when using special chars in a string below ASCII 32
  * MS	06-09-26	improved performance using StringBuilder for quotestring methods
  * MS	06-09-29	removed addNamespace use for GetEnumRepresentation
+ * MS	06-10-03	fixed GetClientNamespaceRepresentation when using more than one point in namespace
  * 
  * 
  */
@@ -66,7 +67,7 @@ namespace AjaxPro
 
 			sb.Append("if(typeof " + _ns + " == \"undefined\") " + _ns + "={};\r\n");
 
-			for (int i = 1; i < nsParts.Length - 1; i++)
+			for (int i = 1; i < nsParts.Length; i++)
 			{
 				_ns += "." + nsParts[i];
 				sb.Append("if(typeof " + _ns + " == \"undefined\") " + _ns + "={};\r\n");
