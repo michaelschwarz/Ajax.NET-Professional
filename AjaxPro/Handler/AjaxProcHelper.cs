@@ -34,7 +34,7 @@
  * MS	06-06-02	fixed AjaxServerCache key
  * MS	06-06-06	using ContentType from IAjaxProcessor
  * MS	06-06-11	removed WebEvent because of SecurityPermissions not available in medium trust environments
- * 
+ * MS	06-10-04	set UTF-8 encoding for XML documents
  * 
  * 
  */
@@ -249,6 +249,8 @@ namespace AjaxPro
 						// use .responseXML or .xml.
 
 						p.Context.Response.ContentType = "text/xml";
+						p.Context.Response.ContentEncoding = System.Text.Encoding.UTF8;
+
 						((System.Xml.XmlDocument)res).Save(p.Context.Response.OutputStream);
 
 

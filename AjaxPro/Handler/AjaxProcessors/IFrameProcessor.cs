@@ -120,7 +120,7 @@ namespace AjaxPro
 			string res = JavaScriptSerializer.Serialize(o);
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
-			sb.Append("<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/></head><body>\r\n<script type=\"text/javascript\" defer=\"defer\">\r\ndocument.body.res = \"");
+			sb.Append("<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/></head><body>\r\n<script type=\"text/javascript\" defer=\"defer\">\r\ndocument.body.res = \"");
 
 			// check if we have to encrypt the JSON string.
 			if (Utility.Settings != null && Utility.Settings.Encryption != null)
