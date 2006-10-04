@@ -169,13 +169,21 @@ Object.extend(AjaxPro, {
 	cryptProvider: null,
 	queue: null,
 	token: "",
-	version: "6.9.29.2",
+	version: "6.10.4.1",
 	ID: "AjaxPro",
 	noActiveX: false,
 	timeoutPeriod: 10*1000,
 	queue: null,
 	noUtcTime: false,
-
+	m : {
+		'\b': '\\b',
+		'\t': '\\t',
+		'\n': '\\n',
+		'\f': '\\f',
+		'\r': '\\r',
+		'"' : '\\"',
+		'\\': '\\\\'
+	},
 	toJSON: function(o) {	
 		if(o == null) {
 			return "null";
@@ -184,57 +192,49 @@ Object.extend(AjaxPro, {
 		var i;
 		var c = o.constructor;
 		if(c == Number) {
-				return isFinite(o) ? o.toString() : AjaxPro.toJSON(null);
+			return isFinite(o) ? o.toString() : AjaxPro.toJSON(null);
 		} else if(c == Boolean) {
-				return o.toString();
+			return o.toString();
 		} else if(c == String) {
-				for(i=0; i<o.length; i++) {
-					var c = o.charAt(i);
-					if(c >= " ") {
-						if(c == "\\" || c == '"') {
-							v.push("\\");
-						}
-						v.push(c);
-					} else {
-						switch(c) {
-							case "\n": v.push("\\n"); break;
-							case "\r": v.push("\\r"); break;
-							case "\b": v.push("\\b"); break;
-							case "\f": v.push("\\f"); break;
-							case "\t": v.push("\\t"); break;
-							default:
-								v.push("\\u00");
-								v.push(c.charCodeAt().toString(16));
-						}
+			if (/["\\\x00-\x1f]/.test(o)) {
+				o = o.replace(/([\x00-\x1f\\"])/g, function(a, b) {
+					var c = AjaxPro.m[b];
+					if (c) {
+						return c;
 					}
-				}
-				return '"' + v.join('') + '"';
+					c = b.charCodeAt();
+					return '\\u00' +
+						Math.floor(c / 16).toString(16) +
+						(c % 16).toString(16);
+				});
+            }
+			return '"' + o + '"';
 		} else if (c == Array) {
-				for(i=0; i<o.length; i++) {
-					v.push(AjaxPro.toJSON(o[i]));
-				}
-				return "[" + v.join(",") + "]";
+			for(i=0; i<o.length; i++) {
+				v.push(AjaxPro.toJSON(o[i]));
+			}
+			return "[" + v.join(",") + "]";
 		} else if (c == Date) {
-				var d = {};
-				d.__type = "System.DateTime";
-				if(AjaxPro.noUtcTime == true) {
-					d.Year = o.getFullYear();
-					d.Month = o.getMonth() +1;
-					d.Day = o.getDate();
-					d.Hour = o.getHours();
-					d.Minute = o.getMinutes();
-					d.Second = o.getSeconds();
-					d.Millisecond = o.getMilliseconds();
-				} else {
-					d.Year = o.getUTCFullYear();
-					d.Month = o.getUTCMonth() +1;
-					d.Day = o.getUTCDate();
-					d.Hour = o.getUTCHours();
-					d.Minute = o.getUTCMinutes();
-					d.Second = o.getUTCSeconds();
-					d.Millisecond = o.getUTCMilliseconds();
-				}
-				return AjaxPro.toJSON(d);
+			var d = {};
+			d.__type = "System.DateTime";
+			if(AjaxPro.noUtcTime == true) {
+				d.Year = o.getFullYear();
+				d.Month = o.getMonth() +1;
+				d.Day = o.getDate();
+				d.Hour = o.getHours();
+				d.Minute = o.getMinutes();
+				d.Second = o.getSeconds();
+				d.Millisecond = o.getMilliseconds();
+			} else {
+				d.Year = o.getUTCFullYear();
+				d.Month = o.getUTCMonth() +1;
+				d.Day = o.getUTCDate();
+				d.Hour = o.getUTCHours();
+				d.Minute = o.getUTCMinutes();
+				d.Second = o.getUTCSeconds();
+				d.Millisecond = o.getUTCMilliseconds();
+			}
+			return AjaxPro.toJSON(d);
 		}
 		if(typeof o.toJSON == "function") {
 			return o.toJSON();

@@ -39,7 +39,7 @@
  * MS	06-06-08	fixed missing /* if used from cache
  * MS	06-07-19	fixed if method argument is from type IJavaScriptObject
  * MS	06-07-20	removed the fix above and put it to JavaScriptConverter
- * 
+ * MS	06-10-03	fixed bug with CryptProvider
  * 
  */
 using System;
@@ -134,6 +134,10 @@ namespace AjaxPro
 			//     as an array. 
 
 			string res = JavaScriptSerializer.Serialize(o) + ";/*";
+
+			// check if we have to encrypt the JSON string.
+			if (Utility.Settings != null && Utility.Settings.Encryption != null)
+				res = Utility.Settings.Encryption.CryptProvider.Encrypt(res);
 
 			context.Response.Write(res);
 

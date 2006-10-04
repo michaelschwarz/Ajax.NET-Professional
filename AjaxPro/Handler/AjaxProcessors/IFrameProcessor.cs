@@ -40,6 +40,7 @@
  * MS	06-06-06	ContentType moved to inherited class
  * MS	06-07-19	fixed if method argument is from type IJavaScriptObject
  * MS	06-07-20	removed the fix above and put it to JavaScriptConverter
+ * MS	06-10-03	fixed bug with CryptProvider
  * 
  */
 using System;
@@ -120,6 +121,11 @@ namespace AjaxPro
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
 			sb.Append("<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/></head><body>\r\n<script type=\"text/javascript\" defer=\"defer\">\r\ndocument.body.res = \"");
+
+			// check if we have to encrypt the JSON string.
+			if (Utility.Settings != null && Utility.Settings.Encryption != null)
+				res = Utility.Settings.Encryption.CryptProvider.Encrypt(res);
+
 			sb.Append(res.Replace("\\", "\\\\").Replace("\"", "\\\""));
 			sb.Append("/\"+\"*\";\r\n</script>\r\n</body></html>");
 
