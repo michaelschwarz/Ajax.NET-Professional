@@ -45,6 +45,7 @@ using System.Web.Caching;
 using System.IO;
 #if(NET20)
 using System.Web.Management;
+using System.Diagnostics;
 #endif
 
 namespace AjaxPro
