@@ -29,6 +29,7 @@
  * MS	06-04-12	added UseAssemblyQualifiedName (see web.config)
  * MS	06-05-30	changed to new converter dictionary
  * MS	06-06-07	added OnlyAllowTypesInList property (see web.config)
+ * MS	06-10-06	using new JavaScriptConverterList for .NET 1.1
  * 
  */
 using System;
@@ -92,8 +93,8 @@ namespace AjaxPro
 		internal Dictionary<Type, IJavaScriptConverter> SerializableConverters;
 		internal Dictionary<Type, IJavaScriptConverter> DeserializableConverters;
 #else
-		internal Hashtable SerializableConverters;
-		internal Hashtable DeserializableConverters;
+		internal JavaScriptConverterList SerializableConverters;
+		internal JavaScriptConverterList DeserializableConverters;
 #endif
 		private bool m_OnlyAllowTypesInList = false;
 
@@ -109,8 +110,8 @@ namespace AjaxPro
 			SerializableConverters = new Dictionary<Type, IJavaScriptConverter>();
 			DeserializableConverters = new Dictionary<Type, IJavaScriptConverter>();
 #else
-			SerializableConverters = new Hashtable();
-			DeserializableConverters = new Hashtable();
+			SerializableConverters = new JavaScriptConverterList();
+			DeserializableConverters = new JavaScriptConverterList();
 #endif
 		}
 

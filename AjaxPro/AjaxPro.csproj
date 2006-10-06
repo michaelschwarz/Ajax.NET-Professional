@@ -207,6 +207,7 @@
     <Compile Include="JSON\Converters\ProfileBaseConverter.cs" />
     <Compile Include="JSON\Interfaces\IJavaScriptConverter.cs" />
     <Compile Include="JSON\Interfaces\IJavaScriptObject.cs" />
+    <Compile Include="JSON\JavaScriptConverterList.cs" />
     <Compile Include="JSON\JavaScriptDeserializer.cs">
       <SubType>Code</SubType>
     </Compile>
