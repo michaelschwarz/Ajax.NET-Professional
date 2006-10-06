@@ -3,7 +3,7 @@ set NET20="%WINDIR%\Microsoft.NET\Framework\v2.0.50727"
 set ZIP="C:\Programme\7Zip"
 set ARG=
 set DEFINE=
-set VERSION=6.10.6.1
+set VERSION=6.10.6.2
 
 call build_1.1.bat
 call build_2.0.bat

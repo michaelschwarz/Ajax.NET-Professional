@@ -34,6 +34,8 @@
  * MS   06-07-10    fixed comma between fields and properties
  * MS	06-09-22	put some variable declarations outside of for statements
  * MS	06-09-26	improved performance using StringBuilder
+ * MS	06-10-06	fixed write-only property bug
+ * 
  * 
  * 
  */
@@ -232,7 +234,7 @@ namespace AjaxPro
 			foreach(PropertyInfo prop in t.GetProperties(BindingFlags.GetProperty | BindingFlags.Public | BindingFlags.Instance))
 			{
 				MethodInfo mi = prop.GetGetMethod();
-				if (mi.GetParameters().Length <= 0)
+				if (mi != null && mi.GetParameters().Length <= 0)
 				{
 					if (
 #if(NET20)
