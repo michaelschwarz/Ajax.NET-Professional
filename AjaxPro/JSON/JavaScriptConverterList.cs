@@ -1,5 +1,5 @@
 /*
- * JavaScriptDeserializer.cs
+ * JavaScriptConverterList.cs
  * 
  * Copyright © 2006 Michael Schwarz (http://www.ajaxpro.info).
  * All Rights Reserved.

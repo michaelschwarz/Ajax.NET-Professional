@@ -63,7 +63,7 @@ AjaxPro.IFrameXmlHttp.prototype = {
 			}
 			this.iframe.name = iframeID;
 			this.iframe.document.open();
-			this.iframe.document.write("<html><body></body></html>");
+			this.iframe.document.write("<"+"html><"+"body></"+"body></"+"html>");
 			this.iframe.document.close();
 		}
 		this.method = method;
@@ -129,7 +129,7 @@ AjaxPro.IFrameXmlHttp.prototype = {
 	}
 };
 
-var progids = ["Msxml2.XMLHTTP", "Microsoft.XMLHTTP"];
+var progids = ["Msxml2.XMLHTTP.4.0", "MSXML2.XMLHTTP", "Microsoft.XMLHTTP"];
 var progid = null;
 
 if(typeof ActiveXObject != "undefined") {
@@ -164,7 +164,7 @@ Object.extend(AjaxPro, {
 	noOperation: function() {},
 	onLoading: function() {},
 	onError: function() {},
-	onTimeout: function() {},
+	onTimeout: function() { return true; },
 	onStateChanged: function() {},
 	cryptProvider: null,
 	queue: null,
@@ -269,10 +269,10 @@ AjaxPro.Request = function(url) {
 AjaxPro.Request.prototype = {
 	url: null,
 	callback: null,
-	onLoading: AjaxPro.noOperation,
-	onError: AjaxPro.noOperation,
-	onTimeout: AjaxPro.noOperation,
-	onStateChanged: AjaxPro.noOperation,
+	onLoading: null,
+	onError: null,
+	onTimeout: null,
+	onStateChanged: null,
 	args: null,
 	context: null,
 	isRunning: false,
@@ -321,17 +321,13 @@ AjaxPro.Request.prototype = {
 	},
 	doStateChange: function() {
 		this.onStateChanged(this.xmlHttp.readyState, this);
-
 		if(this.xmlHttp.readyState != 4 || !this.isRunning) {
 			return;
 		}
-
 		this.duration = new Date().getTime() - this.__start;
-
 		if(this.timeoutTimer != null) {
 			clearTimeout(this.timeoutTimer);
 		}
-
 		var res = this.getEmptyRes();
 		if(this.xmlHttp.status == 200 && this.xmlHttp.statusText == "OK") {
 			res = this.createResponse(res);
@@ -342,7 +338,7 @@ AjaxPro.Request.prototype = {
 		
 		this.endRequest(res);
 	},
-	createResponse: function(r, noContent) {	
+	createResponse: function(r, noContent) {
 		if(!noContent) {
 			var responseText = "" + this.xmlHttp.responseText;
 
@@ -376,9 +372,9 @@ AjaxPro.Request.prototype = {
 	invoke: function(method, args, callback, context) {
 		this.__start = new Date().getTime();
 
-		if(this.xmlHttp == null) {
+		// if(this.xmlHttp == null) {
 			this.xmlHttp = new XMLHttpRequest();
-		}
+		// }
 
 		this.isRunning = true;
 		this.method = method;
@@ -448,7 +444,6 @@ AjaxPro.RequestQueue = function(conc) {
 
 AjaxPro.RequestQueue.prototype = {
 	process: function() {
-	
 		this.timer = null;
 		if(this.queue.length == 0) {
 			return;
@@ -472,16 +467,11 @@ AjaxPro.RequestQueue.prototype = {
 		}
 	},
 	add: function(url, method, args, e) {
-
-// txt += "\r\nqueue.add " + (new Date().getTime() - ss);
-
 		this.queue.push([url, method, args, e]);
-/*		
 		if(this.timer == null) {
 			this.timer = setTimeout(this.process.bind(this), 0);
 		}
-*/
-		this.process();
+		// this.process();
 	},
 	abort: function() {
 		this.queue.length = 0;
