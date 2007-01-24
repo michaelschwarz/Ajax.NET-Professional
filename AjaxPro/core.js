@@ -407,9 +407,9 @@ AjaxPro.Request.prototype = {
 			this.xmlHttp.setRequestHeader("X-" + AjaxPro.ID + "-Token", AjaxPro.token);
 		}
 
-		if(!MS.Browser.isIE) {
-			this.xmlHttp.setRequestHeader("Connection", "close");		// Mozilla Bug #246651
-		}
+		/* if(!MS.Browser.isIE) {
+			this.xmlHttp.setRequestHeader("Connection", "close");
+		} */
 
 		this.timeoutTimer = setTimeout(this.timeout.bind(this), AjaxPro.timeoutPeriod);
 
