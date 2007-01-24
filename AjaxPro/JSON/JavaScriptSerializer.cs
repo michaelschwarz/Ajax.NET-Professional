@@ -35,7 +35,7 @@
  * MS	06-09-22	put some variable declarations outside of for statements
  * MS	06-09-26	improved performance using StringBuilder
  * MS	06-10-06	fixed write-only property bug
- * 
+ * MS	07-01-24	fixed bug when trying to use AjaxNonSerializable attribute on properties (workitem #5337)
  * 
  * 
  */
@@ -238,11 +238,11 @@ namespace AjaxPro
 				{
 					if (
 #if(NET20)
-						(!nsa && !mi.IsDefined(typeof(AjaxNonSerializableAttribute), true)) ||
-						(nsa && mi.IsDefined(typeof(AjaxPropertyAttribute), true))
+						(!nsa && !prop.IsDefined(typeof(AjaxNonSerializableAttribute), true)) ||
+						(nsa && prop.IsDefined(typeof(AjaxPropertyAttribute), true))
 #else
-						(!nsa && mi.GetCustomAttributes(typeof(AjaxNonSerializableAttribute), true).Length == 0) ||
-						(nsa && mi.GetCustomAttributes(typeof(AjaxPropertyAttribute), true).Length > 0)
+						(!nsa && prop.GetCustomAttributes(typeof(AjaxNonSerializableAttribute), true).Length == 0) ||
+						(nsa && prop.GetCustomAttributes(typeof(AjaxPropertyAttribute), true).Length > 0)
 #endif
 )
 					{
