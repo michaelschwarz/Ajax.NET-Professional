@@ -27,10 +27,17 @@ using System;
 
 namespace AjaxPro
 {
+    /// <summary>
+    /// Class Attribute Class
+    /// </summary>
 	[AttributeUsage(AttributeTargets.Class)]
 	[Obsolete("The recommended alternative is AjaxPro.AjaxNamespaceAttribute.", true)]
 	public class AjaxClassAttribute : Attribute
 	{
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AjaxClassAttribute"/> class.
+        /// </summary>
+        /// <param name="names">The names.</param>
 		public AjaxClassAttribute(string names)
 		{
 		}
