@@ -39,11 +39,23 @@ namespace AjaxPro
 	public abstract class TokenProvider
 #endif
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TokenProvider"/> class.
+        /// </summary>
         public TokenProvider()
         {
         }
 
+        /// <summary>
+        /// Gets the token.
+        /// </summary>
+        /// <returns></returns>
         public abstract string GetToken();
+        /// <summary>
+        /// Parses the specified token.
+        /// </summary>
+        /// <param name="token">The token.</param>
+        /// <returns></returns>
         public abstract bool Parse(string token);
     }
 }

@@ -27,9 +27,15 @@ using System;
 
 namespace AjaxPro
 {
+    /// <summary>
+    /// AJAX property attribute class
+    /// </summary>
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false)]
 	public class AjaxPropertyAttribute : Attribute
 	{
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AjaxPropertyAttribute"/> class.
+        /// </summary>
 		public AjaxPropertyAttribute()
 		{
 		}

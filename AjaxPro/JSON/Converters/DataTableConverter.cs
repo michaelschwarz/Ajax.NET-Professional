@@ -50,6 +50,9 @@ namespace AjaxPro
 	{
 		private string clientType = "Ajax.Web.DataTable";
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DataTableConverter"/> class.
+        /// </summary>
 		public DataTableConverter() : base()
 		{
 			m_AllowInheritance = true;
@@ -58,6 +61,11 @@ namespace AjaxPro
 			m_deserializableTypes = new Type[] { typeof(DataTable) };
 		}
 
+        /// <summary>
+        /// Render the JavaScript code for prototypes or any other JavaScript method needed from this converter
+        /// on the client-side.
+        /// </summary>
+        /// <returns>Returns JavaScript code.</returns>
 		public override string GetClientScript()
 		{
 			return JavaScriptUtil.GetClientNamespaceRepresentation(clientType) + @"
@@ -102,6 +110,12 @@ namespace AjaxPro
 ";
 		}
 
+        /// <summary>
+        /// Converts an IJavaScriptObject into an NET object.
+        /// </summary>
+        /// <param name="o">The IJavaScriptObject object to convert.</param>
+        /// <param name="t"></param>
+        /// <returns>Returns a .NET object.</returns>
 		public override object Deserialize(IJavaScriptObject o, Type t)
 		{
 			JavaScriptObject ht = o as JavaScriptObject;
@@ -158,6 +172,11 @@ namespace AjaxPro
 			return dt;
 		}
 
+        /// <summary>
+        /// Converts a .NET object into a JSON string.
+        /// </summary>
+        /// <param name="o">The object to convert.</param>
+        /// <returns>Returns a JSON string.</returns>
 		public override string Serialize(object o)
 		{
 			StringBuilder sb = new StringBuilder();
@@ -165,6 +184,11 @@ namespace AjaxPro
 			return sb.ToString();
 		}
 
+        /// <summary>
+        /// Serializes the specified o.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <param name="sb">The sb.</param>
 		public override void Serialize(object o, StringBuilder sb)
 		{
 			DataTable dt = o as DataTable;

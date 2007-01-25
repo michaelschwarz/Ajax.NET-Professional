@@ -42,10 +42,10 @@ namespace AjaxPro
 		private string _clientNS = null;
 		private System.Text.RegularExpressions.Regex r = new System.Text.RegularExpressions.Regex("^[a-zA-Z_]{1}([a-zA-Z_]*([\\d]*)?)*((\\.)?[a-zA-Z_]+([\\d]*)?)*$", System.Text.RegularExpressions.RegexOptions.Compiled);
 
-		/// <summary>
-		/// This attribute can be used to specified a different namespace for the client-side representation.
-		/// </summary>
-		/// <param name="clientNS">The namespace to be used on the client-side JavaScript.</param>
+        /// <summary>
+        /// This attribute can be used to specified a different namespace for the client-side representation.
+        /// </summary>
+        /// <param name="clientNS">The namespace to be used on the client-side JavaScript.</param>
 		public AjaxNamespaceAttribute(string clientNS)
 		{
             if(!r.IsMatch(clientNS) || clientNS.StartsWith(".") || clientNS.EndsWith("."))
@@ -56,6 +56,10 @@ namespace AjaxPro
 
 		#region Internal Properties
 
+        /// <summary>
+        /// Gets the client namespace.
+        /// </summary>
+        /// <value>The client namespace.</value>
 		internal string ClientNamespace
 		{
 			get

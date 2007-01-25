@@ -56,10 +56,10 @@ namespace AjaxPro
 	/// </example>
 	public interface IContextInitializer
 	{
-		/// <summary>
-		/// Initialize the HttpContext to the class implementing IContextInitializer.
-		/// </summary>
-		/// <param name="context">The HttpContext.</param>
+        /// <summary>
+        /// Initialize the HttpContext to the class implementing IContextInitializer.
+        /// </summary>
+        /// <param name="context">The HttpContext.</param>
 		void InitializeContext(HttpContext context);
 	}
 }

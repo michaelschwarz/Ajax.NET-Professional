@@ -34,9 +34,15 @@ using System;
 
 namespace AjaxPro
 {
+    /// <summary>
+    /// AJAX no type usage attribute class
+    /// </summary>
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
 	public class AjaxNoTypeUsageAttribute : Attribute
 	{
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AjaxNoTypeUsageAttribute"/> class.
+        /// </summary>
 		public AjaxNoTypeUsageAttribute()
 		{
 		}

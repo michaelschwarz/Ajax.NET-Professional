@@ -29,7 +29,15 @@ namespace AjaxPro
 {
 	public interface IAjaxKeyProvider
 	{
+        /// <summary>
+        /// Gets the key.
+        /// </summary>
+        /// <value>The key.</value>
 		string Key{get;}
+        /// <summary>
+        /// Gets the client script.
+        /// </summary>
+        /// <value>The client script.</value>
 		string ClientScript{get;}
 	}
 }

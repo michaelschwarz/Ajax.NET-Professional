@@ -27,12 +27,19 @@ using System;
 
 namespace AjaxPro
 {
+    /// <summary>
+    /// AJAX Server Attribute Cache
+    /// </summary>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
 	public class AjaxServerCacheAttribute : Attribute
 	{
 		private TimeSpan cacheDuration;
 		private bool isCacheEnabled = false;
-	
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AjaxServerCacheAttribute"/> class.
+        /// </summary>
+        /// <param name="seconds">The seconds.</param>
 		public AjaxServerCacheAttribute(int seconds)
 		{
 			if(seconds > 0)
@@ -44,6 +51,12 @@ namespace AjaxPro
 
 		#region Internal Properties
 
+        /// <summary>
+        /// Gets a value indicating whether this instance is cache enabled.
+        /// </summary>
+        /// <value>
+        /// 	<c>true</c> if this instance is cache enabled; otherwise, <c>false</c>.
+        /// </value>
 		internal bool IsCacheEnabled
 		{
 			get
@@ -52,6 +65,10 @@ namespace AjaxPro
 			}
 		}
 
+        /// <summary>
+        /// Gets the cache duration.
+        /// </summary>
+        /// <value>The cache duration.</value>
 		internal TimeSpan CacheDuration
 		{
 			get

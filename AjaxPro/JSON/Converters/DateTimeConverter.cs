@@ -49,6 +49,9 @@ namespace AjaxPro
 		private Regex r = new Regex(@"(\d{4}),(\d{1,2}),(\d{1,2}),(\d{1,2}),(\d{1,2}),(\d{1,2}),(\d{1,3})", RegexOptions.Compiled);
 		private double UtcOffsetMinutes = TimeZone.CurrentTimeZone.GetUtcOffset(DateTime.Now).TotalMinutes;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DateTimeConverter"/> class.
+        /// </summary>
 		public DateTimeConverter()
 			: base()
 		{
@@ -56,6 +59,12 @@ namespace AjaxPro
 			m_deserializableTypes = new Type[] { typeof(DateTime) };
 		}
 
+        /// <summary>
+        /// Converts an IJavaScriptObject into an NET object.
+        /// </summary>
+        /// <param name="o">The IJavaScriptObject object to convert.</param>
+        /// <param name="t"></param>
+        /// <returns>Returns a .NET object.</returns>
 		public override object Deserialize(IJavaScriptObject o, Type t)
 		{
 			JavaScriptObject ht = o as JavaScriptObject;
@@ -147,6 +156,11 @@ namespace AjaxPro
 			return (Utility.Settings.OldStyle.Contains("noUtcTime") ? d5 : d5.AddMinutes(UtcOffsetMinutes)); // TimeZone.CurrentTimeZone.GetUtcOffset(d3).TotalMinutes);
 		}
 
+        /// <summary>
+        /// Converts a .NET object into a JSON string.
+        /// </summary>
+        /// <param name="o">The object to convert.</param>
+        /// <returns>Returns a JSON string.</returns>
 		public override string Serialize(object o)
 		{
 			StringBuilder sb = new StringBuilder();
@@ -154,6 +168,11 @@ namespace AjaxPro
 			return sb.ToString();
 		}
 
+        /// <summary>
+        /// Serializes the specified o.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <param name="sb">The sb.</param>
 		public override void Serialize(object o, StringBuilder sb)
 		{
 			if (!(o is DateTime))

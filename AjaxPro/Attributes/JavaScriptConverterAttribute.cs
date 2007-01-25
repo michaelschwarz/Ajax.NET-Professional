@@ -36,10 +36,10 @@ namespace AjaxPro
 	{
 		private Type type = null;
 
-		/// <summary>
-		/// Marks a class to be converted by the specified JavaScript converter.
-		/// </summary>
-		/// <param name="type">The IJavaScriptConverter to use to serialize or deserialize.</param>
+        /// <summary>
+        /// Marks a class to be converted by the specified JavaScript converter.
+        /// </summary>
+        /// <param name="type">The IJavaScriptConverter to use to serialize or deserialize.</param>
 		public JavaScriptConverterAttribute(Type type)
 		{
 			if(!(typeof(IJavaScriptConverter).IsAssignableFrom(type)))
@@ -50,6 +50,10 @@ namespace AjaxPro
 
 		#region Internal Methods
 
+        /// <summary>
+        /// Gets the converter.
+        /// </summary>
+        /// <value>The converter.</value>
 		internal IJavaScriptConverter Converter
 		{
 			get

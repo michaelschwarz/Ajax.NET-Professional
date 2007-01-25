@@ -56,16 +56,28 @@ namespace AjaxPro
 		private IntPtr token = IntPtr.Zero;
 		private System.Security.Principal.WindowsImpersonationContext winctx = null;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AjaxProcHelper"/> class.
+        /// </summary>
+        /// <param name="p">The p.</param>
 		internal AjaxProcHelper(IAjaxProcessor p)
 		{
 			this.p = p;
 		}
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AjaxProcHelper"/> class.
+        /// </summary>
+        /// <param name="p">The p.</param>
+        /// <param name="token">The token.</param>
 		internal AjaxProcHelper(IAjaxProcessor p, IntPtr token) : this(p)
 		{
 			this.token = token;
 		}
 
+        /// <summary>
+        /// Runs this instance.
+        /// </summary>
 		internal void Run()
 		{
 			if(p.Context.Trace.IsEnabled) p.Context.Trace.Write(Constant.AjaxID, "Begin ProcessRequest");

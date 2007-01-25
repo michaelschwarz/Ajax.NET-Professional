@@ -44,6 +44,9 @@ namespace AjaxPro
 	{
 		private string clientType = "Ajax.Web.DataRow";
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DataRowViewConverter"/> class.
+        /// </summary>
 		public DataRowViewConverter() : base()
 		{
 			m_AllowInheritance = true;
@@ -51,6 +54,11 @@ namespace AjaxPro
 			m_serializableTypes = new Type[] { typeof(DataRowView) };
 		}
 
+        /// <summary>
+        /// Converts a .NET object into a JSON string.
+        /// </summary>
+        /// <param name="o">The object to convert.</param>
+        /// <returns>Returns a JSON string.</returns>
 		public override string Serialize(object o)
 		{
 			StringBuilder sb = new StringBuilder();
@@ -58,6 +66,11 @@ namespace AjaxPro
 			return sb.ToString();
 		}
 
+        /// <summary>
+        /// Serializes the specified o.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <param name="sb">The sb.</param>
 		public override void Serialize(object o, StringBuilder sb)
 		{
 			DataRowView row = o as DataRowView;

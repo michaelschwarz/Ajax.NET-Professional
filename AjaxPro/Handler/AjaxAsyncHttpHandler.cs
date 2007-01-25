@@ -46,6 +46,10 @@ namespace AjaxPro
 		private IAjaxProcessor p;
 		private HttpContext ctx = null;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AjaxAsyncHttpHandler"/> class.
+        /// </summary>
+        /// <param name="p">The p.</param>
 		internal AjaxAsyncHttpHandler(IAjaxProcessor p)
 			: base()
 		{
@@ -54,6 +58,15 @@ namespace AjaxPro
 
 		#region IHttpAsyncHandler Members
 
+        /// <summary>
+        /// Initiates an asynchronous call to the HTTP handler.
+        /// </summary>
+        /// <param name="context">An <see cref="T:System.Web.HttpContext"></see> object that provides references to intrinsic server objects (for example, Request, Response, Session, and Server) used to service HTTP requests.</param>
+        /// <param name="cb">The <see cref="T:System.AsyncCallback"></see> to call when the asynchronous method call is complete. If cb is null, the delegate is not called.</param>
+        /// <param name="extraData">Any extra data needed to process the request.</param>
+        /// <returns>
+        /// An <see cref="T:System.IAsyncResult"></see> that contains information about the status of the process.
+        /// </returns>
 		public IAsyncResult BeginProcessRequest(HttpContext context, System.AsyncCallback cb, object extraData)
 		{
 			ctx = context;
@@ -67,6 +80,10 @@ namespace AjaxPro
 			return ar;
 		}
 
+        /// <summary>
+        /// Ends the process request.
+        /// </summary>
+        /// <param name="ar">The ar.</param>
 		public void EndProcessRequest(IAsyncResult ar)
 		{
 			AsyncAjaxProcDelegate apd = (AsyncAjaxProcDelegate)ar.AsyncState;
@@ -80,11 +97,20 @@ namespace AjaxPro
 
 		#region IHttpHandler Members
 
+        /// <summary>
+        /// Enables processing of HTTP Web requests by a custom HttpHandler that implements the <see cref="T:System.Web.IHttpHandler"></see> interface.
+        /// </summary>
+        /// <param name="context">An <see cref="T:System.Web.HttpContext"></see> object that provides references to the intrinsic server objects (for example, Request, Response, Session, and Server) used to service HTTP requests.</param>
 		public void ProcessRequest(HttpContext context)
 		{
 			// TODO:  Add AjaxAsyncHttpHandler.ProcessRequest implementation
 		}
 
+        /// <summary>
+        /// Gets a value indicating whether another request can use the <see cref="T:System.Web.IHttpHandler"></see> instance.
+        /// </summary>
+        /// <value></value>
+        /// <returns>true if the <see cref="T:System.Web.IHttpHandler"></see> instance is reusable; otherwise, false.</returns>
 		public bool IsReusable
 		{
 			get

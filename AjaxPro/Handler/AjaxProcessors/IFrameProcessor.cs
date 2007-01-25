@@ -54,12 +54,21 @@ namespace AjaxPro
 	{
 		private int hashCode;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IFrameProcessor"/> class.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <param name="type">The type.</param>
 		internal IFrameProcessor(HttpContext context, Type type) : base(context, type)
 		{
 		}
 
 		#region IAjaxProcessor Members
 
+        /// <summary>
+        /// Retreives the parameters.
+        /// </summary>
+        /// <returns></returns>
 		public override object[] RetreiveParameters()
 		{
 			ParameterInfo[] pi = method.GetParameters();
@@ -105,6 +114,11 @@ namespace AjaxPro
 			return args;
 		}
 
+        /// <summary>
+        /// Serializes the object.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <returns></returns>
 		public override string SerializeObject(object o)
 		{
 			// On the client we want to have a real object.
@@ -137,6 +151,12 @@ namespace AjaxPro
 			return sb.ToString();
 		}
 
+        /// <summary>
+        /// Gets a value indicating whether this instance can handle request.
+        /// </summary>
+        /// <value>
+        /// 	<c>true</c> if this instance can handle request; otherwise, <c>false</c>.
+        /// </value>
 		internal override bool CanHandleRequest
 		{
 			get
@@ -145,6 +165,10 @@ namespace AjaxPro
 			}
 		}
 
+        /// <summary>
+        /// Gets the ajax method.
+        /// </summary>
+        /// <value>The ajax method.</value>
 		public override MethodInfo AjaxMethod
 		{
 			get
@@ -158,6 +182,12 @@ namespace AjaxPro
 			}
 		}
 
+        /// <summary>
+        /// Gets a value indicating whether this instance is encryption able.
+        /// </summary>
+        /// <value>
+        /// 	<c>true</c> if this instance is encryption able; otherwise, <c>false</c>.
+        /// </value>
 		public override bool IsEncryptionAble
 		{
 			get
@@ -166,11 +196,19 @@ namespace AjaxPro
 			}
 		}
 
+        /// <summary>
+        /// Gets the hash code.
+        /// </summary>
+        /// <returns></returns>
 		public override int GetHashCode()
 		{
 			return hashCode;
 		}
 
+        /// <summary>
+        /// Gets the type of the content.
+        /// </summary>
+        /// <value>The type of the content.</value>
 		public override string ContentType
 		{
 			get

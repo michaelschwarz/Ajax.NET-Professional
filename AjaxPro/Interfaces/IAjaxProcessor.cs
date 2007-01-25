@@ -47,12 +47,22 @@ namespace AjaxPro
 		protected AjaxNamespaceAttribute[] m_namespaceAttributes = null;
 		protected AjaxServerCacheAttribute[] m_serverCacheAttributes = null;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IAjaxProcessor"/> class.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <param name="type">The type.</param>
 		public IAjaxProcessor(HttpContext context, Type type)
 		{
 			this.context = context;
 			this.type = type;
 		}
 
+        /// <summary>
+        /// Gets the method info.
+        /// </summary>
+        /// <param name="methodName">Name of the method.</param>
+        /// <returns></returns>
 		public MethodInfo GetMethodInfo(string methodName)
 		{
 			if (method != null)
@@ -110,6 +120,10 @@ namespace AjaxPro
 
 		#region Internal Properties
 
+        /// <summary>
+        /// Gets the context.
+        /// </summary>
+        /// <value>The context.</value>
 		internal HttpContext Context
 		{
 			get
@@ -118,6 +132,10 @@ namespace AjaxPro
 			}
 		}
 
+        /// <summary>
+        /// Gets the type.
+        /// </summary>
+        /// <value>The type.</value>
 		internal Type Type
 		{
 			get
@@ -130,6 +148,12 @@ namespace AjaxPro
 
 		#region Virtual Members
 
+        /// <summary>
+        /// Gets a value indicating whether this instance can handle request.
+        /// </summary>
+        /// <value>
+        /// 	<c>true</c> if this instance can handle request; otherwise, <c>false</c>.
+        /// </value>
 		internal virtual bool CanHandleRequest
 		{
 			get
@@ -138,6 +162,13 @@ namespace AjaxPro
 			}
 		}
 
+        /// <summary>
+        /// Determines whether [is valid ajax token] [the specified server token].
+        /// </summary>
+        /// <param name="serverToken">The server token.</param>
+        /// <returns>
+        /// 	<c>true</c> if [is valid ajax token] [the specified server token]; otherwise, <c>false</c>.
+        /// </returns>
 		public virtual bool IsValidAjaxToken(string serverToken)
 		{
 			if(Utility.Settings == null || !Utility.Settings.TokenEnabled)
@@ -154,22 +185,43 @@ namespace AjaxPro
 			return false;
 		}
 
+        /// <summary>
+        /// Retreives the parameters.
+        /// </summary>
+        /// <returns></returns>
 		public virtual object[] RetreiveParameters()
 		{
 			return null;
 		}
 
+        /// <summary>
+        /// Serves as a hash function for a particular type. <see cref="M:System.Object.GetHashCode"></see> is suitable for use in hashing algorithms and data structures like a hash table.
+        /// </summary>
+        /// <returns>
+        /// A hash code for the current <see cref="T:System.Object"></see>.
+        /// </returns>
 		public override int GetHashCode()
 		{
 			throw new NotImplementedException();
 		}
 
 
+        /// <summary>
+        /// Serializes the object.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <returns></returns>
 		public virtual string SerializeObject(object o)
 		{
 			return "";
 		}
 
+        /// <summary>
+        /// Gets a value indicating whether this instance is encryption able.
+        /// </summary>
+        /// <value>
+        /// 	<c>true</c> if this instance is encryption able; otherwise, <c>false</c>.
+        /// </value>
 		public virtual bool IsEncryptionAble
 		{
 			get
@@ -178,6 +230,10 @@ namespace AjaxPro
 			}
 		}
 
+        /// <summary>
+        /// Gets the ajax method.
+        /// </summary>
+        /// <value>The ajax method.</value>
 		public virtual MethodInfo AjaxMethod
 		{
 			get
@@ -186,6 +242,10 @@ namespace AjaxPro
 			}
 		}
 
+        /// <summary>
+        /// Gets the method attributes.
+        /// </summary>
+        /// <value>The method attributes.</value>
 		public virtual AjaxMethodAttribute[] MethodAttributes
 		{
 			get
@@ -194,6 +254,10 @@ namespace AjaxPro
 			}
 		}
 
+        /// <summary>
+        /// Gets the namespace attributes.
+        /// </summary>
+        /// <value>The namespace attributes.</value>
 		public virtual AjaxNamespaceAttribute[] NamespaceAttributes
 		{
 			get
@@ -202,6 +266,10 @@ namespace AjaxPro
 			}
 		}
 
+        /// <summary>
+        /// Gets the server cache attributes.
+        /// </summary>
+        /// <value>The server cache attributes.</value>
 		public virtual AjaxServerCacheAttribute[] ServerCacheAttributes
 		{
 			get
@@ -210,6 +278,10 @@ namespace AjaxPro
 			}
 		}
 
+        /// <summary>
+        /// Gets the type of the content.
+        /// </summary>
+        /// <value>The type of the content.</value>
 		public virtual string ContentType
 		{
 			get

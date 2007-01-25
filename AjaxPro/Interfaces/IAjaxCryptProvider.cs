@@ -29,9 +29,27 @@ namespace AjaxPro
 {
 	public interface IAjaxCryptProvider
 	{
+        /// <summary>
+        /// Encrypts the specified json.
+        /// </summary>
+        /// <param name="json">The json.</param>
+        /// <returns></returns>
 		string Encrypt(string json);
+        /// <summary>
+        /// Decrypts the specified jsoncrypt.
+        /// </summary>
+        /// <param name="jsoncrypt">The jsoncrypt.</param>
+        /// <returns></returns>
 		string Decrypt(string jsoncrypt);
+        /// <summary>
+        /// Sets the key provider.
+        /// </summary>
+        /// <value>The key provider.</value>
 		IAjaxKeyProvider KeyProvider{set;}
+        /// <summary>
+        /// Gets the client script.
+        /// </summary>
+        /// <value>The client script.</value>
 		string ClientScript{get;}
 	}
 }
