@@ -34,12 +34,21 @@ namespace AjaxPro
 		private IAjaxCryptProvider m_CryptProvider = null;
 		private IAjaxKeyProvider m_KeyProvider = null;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AjaxEncryption"/> class.
+        /// </summary>
+        /// <param name="cryptType">Type of the crypt.</param>
+        /// <param name="keyType">Type of the key.</param>
 		internal AjaxEncryption(string cryptType, string keyType)
 		{
 			m_CryptType = cryptType;
 			m_KeyType = keyType;
 		}
 
+        /// <summary>
+        /// Inits this instance.
+        /// </summary>
+        /// <returns></returns>
 		internal bool Init()
 		{
 			try
@@ -60,11 +69,19 @@ namespace AjaxPro
 
 		#region Public Properties
 
+        /// <summary>
+        /// Gets the crypt provider.
+        /// </summary>
+        /// <value>The crypt provider.</value>
 		public IAjaxCryptProvider CryptProvider
 		{
 			get{ return m_CryptProvider; }
 		}
 
+        /// <summary>
+        /// Gets the key provider.
+        /// </summary>
+        /// <value>The key provider.</value>
 		public IAjaxKeyProvider KeyProvider
 		{
 			get{ return m_KeyProvider; }

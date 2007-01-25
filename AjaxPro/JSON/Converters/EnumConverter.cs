@@ -41,6 +41,9 @@ namespace AjaxPro
 	/// </summary>
 	public class EnumConverter : IJavaScriptConverter
 	{
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EnumConverter"/> class.
+        /// </summary>
 		public EnumConverter()
 			: base()
 		{
@@ -50,6 +53,11 @@ namespace AjaxPro
 			m_deserializableTypes = m_serializableTypes;
 		}
 
+        /// <summary>
+        /// Converts a .NET object into a JSON string.
+        /// </summary>
+        /// <param name="o">The object to convert.</param>
+        /// <returns>Returns a JSON string.</returns>
 		public override string Serialize(object o)
 		{
 			StringBuilder sb = new StringBuilder();
@@ -57,6 +65,11 @@ namespace AjaxPro
 			return sb.ToString();
 		}
 
+        /// <summary>
+        /// Serializes the specified o.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <param name="sb">The sb.</param>
 		public override void Serialize(object o, StringBuilder sb)
 		{
 			// this.SerializeValue(Decimal.GetBits(d), sb);
@@ -67,6 +80,12 @@ namespace AjaxPro
 			JavaScriptSerializer.Serialize((Double)o, sb);
 		}
 
+        /// <summary>
+        /// Converts an IJavaScriptObject into an NET object.
+        /// </summary>
+        /// <param name="o">The IJavaScriptObject object to convert.</param>
+        /// <param name="t"></param>
+        /// <returns>Returns a .NET object.</returns>
 		public override object Deserialize(IJavaScriptObject o, Type t)
 		{
 			//return Enum.Parse(type, o.ToString());
@@ -79,6 +98,13 @@ namespace AjaxPro
 			return Enum.ToObject(t, enumValue);
 		}
 
+        /// <summary>
+        /// Tries the serialize value.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <param name="t">The t.</param>
+        /// <param name="sb">The sb.</param>
+        /// <returns></returns>
 		public override bool TrySerializeValue(object o, Type t, StringBuilder sb)
 		{
 			if (t.IsEnum)
@@ -90,6 +116,12 @@ namespace AjaxPro
 			return base.TrySerializeValue(o, t, sb);
 		}
 
+        /// <summary>
+        /// </summary>
+        /// <param name="jso"></param>
+        /// <param name="t"></param>
+        /// <param name="o"></param>
+        /// <returns></returns>
 		public override bool TryDeserializeValue(IJavaScriptObject jso, Type t, out object o)
 		{
 			if (t.IsEnum)

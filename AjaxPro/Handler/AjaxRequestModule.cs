@@ -37,17 +37,27 @@ namespace AjaxPro
 {
 	public class AjaxRequestModule : IHttpModule
 	{
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AjaxRequestModule"/> class.
+        /// </summary>
 		public AjaxRequestModule()
 		{
 		}
 
 		#region IHttpModule Members
 
+        /// <summary>
+        /// Disposes of the resources (other than memory) used by the module that implements <see cref="T:System.Web.IHttpModule"></see>.
+        /// </summary>
 		void IHttpModule.Dispose()
 		{
 
 		}
 
+        /// <summary>
+        /// Initializes a module and prepares it to handle requests.
+        /// </summary>
+        /// <param name="context">An <see cref="T:System.Web.HttpApplication"></see> that provides access to the methods, properties, and events common to all application objects within an ASP.NET application</param>
 		void IHttpModule.Init(HttpApplication context)
 		{
 			context.BeginRequest += (new EventHandler(this.context_BeginRequest));
@@ -55,6 +65,11 @@ namespace AjaxPro
 
 		#endregion
 
+        /// <summary>
+        /// Handles the BeginRequest event of the context control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
 		void context_BeginRequest(object sender, EventArgs e)
 		{
 			HttpApplication app = (HttpApplication)sender;

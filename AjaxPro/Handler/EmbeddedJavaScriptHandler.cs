@@ -47,6 +47,10 @@ namespace AjaxPro
 	{
 		private string fileName;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EmbeddedJavaScriptHandler"/> class.
+        /// </summary>
+        /// <param name="fileName">Name of the file.</param>
 		internal EmbeddedJavaScriptHandler(string fileName)
 		{
 			this.fileName = fileName;
@@ -54,6 +58,10 @@ namespace AjaxPro
 
 		#region IHttpHandler Members
 
+        /// <summary>
+        /// Enables processing of HTTP Web requests by a custom HttpHandler that implements the <see cref="T:System.Web.IHttpHandler"></see> interface.
+        /// </summary>
+        /// <param name="context">An <see cref="T:System.Web.HttpContext"></see> object that provides references to the intrinsic server objects (for example, Request, Response, Session, and Server) used to service HTTP requests.</param>
 		public void ProcessRequest(HttpContext context)
 		{
 			string etag = context.Request.Headers["If-None-Match"];
@@ -156,6 +164,11 @@ Object.prototype.extend = function(o, override) {
 				System.Web.Caching.CacheItemPriority.Normal, null);
 		}
 
+        /// <summary>
+        /// Gets a value indicating whether another request can use the <see cref="T:System.Web.IHttpHandler"></see> instance.
+        /// </summary>
+        /// <value></value>
+        /// <returns>true if the <see cref="T:System.Web.IHttpHandler"></see> instance is reusable; otherwise, false.</returns>
 		public bool IsReusable
 		{
 			get

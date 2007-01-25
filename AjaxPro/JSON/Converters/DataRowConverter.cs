@@ -41,6 +41,9 @@ namespace AjaxPro
 	/// </summary>
 	public class DataRowConverter : IJavaScriptConverter
 	{
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DataRowConverter"/> class.
+        /// </summary>
 		public DataRowConverter() : base()
 		{
 			m_AllowInheritance = true;
@@ -48,6 +51,11 @@ namespace AjaxPro
 			m_serializableTypes = new Type[] { typeof(DataRow) };
 		}
 
+        /// <summary>
+        /// Converts a .NET object into a JSON string.
+        /// </summary>
+        /// <param name="o">The object to convert.</param>
+        /// <returns>Returns a JSON string.</returns>
 		public override string Serialize(object o)
 		{
 			StringBuilder sb = new StringBuilder();
@@ -55,6 +63,11 @@ namespace AjaxPro
 			return sb.ToString();
 		}
 
+        /// <summary>
+        /// Serializes the specified o.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <param name="sb">The sb.</param>
 		public override void Serialize(object o, StringBuilder sb)
 		{
 			DataRow row = o as DataRow;

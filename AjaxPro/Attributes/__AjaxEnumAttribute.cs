@@ -27,10 +27,16 @@ using System;
 
 namespace AjaxPro
 {
+    /// <summary>
+    /// AJAX Enumeration Attribute class
+    /// </summary>
 	[AttributeUsage(AttributeTargets.Class)]
 	[Obsolete("The recommended alternative is AjaxPro.AjaxNamespaceAttribute.", true)]
 	public class AjaxEnumAttribute : Attribute
 	{
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AjaxEnumAttribute"/> class.
+        /// </summary>
 		public AjaxEnumAttribute()
 		{
 		}

@@ -41,6 +41,9 @@ namespace AjaxPro
 	/// </summary>
 	public class ExceptionConverter : IJavaScriptConverter
 	{
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExceptionConverter"/> class.
+        /// </summary>
 		public ExceptionConverter()
 			: base()
 		{
@@ -55,13 +58,23 @@ namespace AjaxPro
 			};
 		}
 
+        /// <summary>
+        /// Converts a .NET object into a JSON string.
+        /// </summary>
+        /// <param name="o">The object to convert.</param>
+        /// <returns>Returns a JSON string.</returns>
 		public override string Serialize(object o)
 		{
 			StringBuilder sb = new StringBuilder();
 			Serialize(o, sb);
 			return sb.ToString();
 		}
-	
+
+        /// <summary>
+        /// Serializes the specified o.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <param name="sb">The sb.</param>
 		public override void Serialize(object o, StringBuilder sb)
 		{
 			Exception ex = (Exception)o;
@@ -96,6 +109,13 @@ namespace AjaxPro
 			sb.Append("}");
 		}
 
+        /// <summary>
+        /// Tries the serialize value.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <param name="t">The t.</param>
+        /// <param name="sb">The sb.</param>
+        /// <returns></returns>
 		public override bool TrySerializeValue(object o, Type t, StringBuilder sb)
 		{
 			Exception ex = o as Exception;

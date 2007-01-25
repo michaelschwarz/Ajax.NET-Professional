@@ -27,9 +27,15 @@ using System;
 
 namespace AjaxPro
 {
+    /// <summary>
+    /// AJAX Nonserializable attribute class
+    /// </summary>
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
 	public class AjaxNonSerializableAttribute : Attribute
 	{
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AjaxNonSerializableAttribute"/> class.
+        /// </summary>
 		public AjaxNonSerializableAttribute()
 		{
 		}
