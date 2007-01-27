@@ -51,21 +51,30 @@ namespace AjaxPro
 		{
 		}
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="JavaScriptString"/> class.
+        /// </summary>
+        /// <param name="s">The s.</param>
 		public JavaScriptString(string s)
 			: base()
 		{
 			this.Append(s);
 		}
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="JavaScriptString"/> class.
+        /// </summary>
+        /// <param name="c">The c.</param>
 		public JavaScriptString(char c)
 			: base()
 		{
 			this.Append(c);
 		}
 
-		/// <summary>
-		/// Returns the string representation of the object.
-		/// </summary>
+        /// <summary>
+        /// Returns the string representation of the object.
+        /// </summary>
+        /// <value>The value.</value>
 		public string Value
 		{
 			get
@@ -76,11 +85,19 @@ namespace AjaxPro
 
 		#region Internal Methods
 
+        /// <summary>
+        /// Appends the specified s.
+        /// </summary>
+        /// <param name="s">The s.</param>
 		internal void Append(string s)
 		{
 			_value.Append(s);
 		}
 
+        /// <summary>
+        /// Appends the specified c.
+        /// </summary>
+        /// <param name="c">The c.</param>
 		internal void Append(char c)
 		{
 			_value.Append(c);
@@ -90,16 +107,33 @@ namespace AjaxPro
 
 		#region Public Operators
 
+        /// <summary>
+        /// Returns a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+        /// </returns>
 		public override string ToString()
 		{
 			return _value.ToString();
 		}
 
+        /// <summary>
+        /// Implicit operators the specified o.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <returns></returns>
 		public static implicit operator string(JavaScriptString o)
 		{
 			return o.ToString();
 		}
 
+        /// <summary>
+        /// Operator +s the specified a.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="s">The s.</param>
+        /// <returns></returns>
 		public static JavaScriptString operator +(JavaScriptString a, string s)
 		{
 			a.Append(s);
@@ -107,6 +141,12 @@ namespace AjaxPro
 			return a;
 		}
 
+        /// <summary>
+        /// Operator +s the specified a.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="c">The c.</param>
+        /// <returns></returns>
 		public static JavaScriptString operator +(JavaScriptString a, char c)
 		{
 			a.Append(c);

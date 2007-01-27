@@ -40,12 +40,30 @@ namespace AjaxPro.Services
 	[AjaxNamespace("AjaxPro.Services.Chat")]
 	public abstract class IChatService
 	{
+        /// <summary>
+        /// Sends the message.
+        /// </summary>
+        /// <param name="room">The room.</param>
+        /// <param name="message">The message.</param>
+        /// <returns></returns>
 		[AjaxMethod]
 		public abstract bool SendMessage(string room, string message);
 
+        /// <summary>
+        /// Retrieves the new.
+        /// </summary>
+        /// <param name="room">The room.</param>
+        /// <param name="lastRetreived">The last retreived.</param>
+        /// <returns></returns>
 		[AjaxMethod]
 		public abstract object[] RetrieveNew(string room, DateTime lastRetreived);
 
+        /// <summary>
+        /// Retrieves the last.
+        /// </summary>
+        /// <param name="room">The room.</param>
+        /// <param name="count">The count.</param>
+        /// <returns></returns>
 		[AjaxMethod]
 		public abstract object[] RetrieveLast(string room, int count);
 	}

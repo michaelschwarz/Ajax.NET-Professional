@@ -47,16 +47,30 @@ namespace AjaxPro.Web.UI
 	{
 		protected HttpContext m_HttpContext;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AjaxBasePage"/> class.
+        /// </summary>
 		public AjaxBasePage()
 			: base()
 		{
 			this.Load += new EventHandler(AjaxBasePage_Load);
 		}
 
+        /// <summary>
+        /// Handles the Load event of the AjaxBasePage control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
 		void AjaxBasePage_Load(object sender, EventArgs e)
 		{
 		}
 
+        /// <summary>
+        /// Gets the <see cref="T:System.Web.Caching.Cache"></see> object associated with the application in which the page resides.
+        /// </summary>
+        /// <value></value>
+        /// <returns>The <see cref="T:System.Web.Caching.Cache"></see> associated with the page's application.</returns>
+        /// <exception cref="T:System.Web.HttpException">An instance of <see cref="T:System.Web.Caching.Cache"></see> is not created. </exception>
 		protected new System.Web.Caching.Cache Cache
 		{
 			get
@@ -65,6 +79,11 @@ namespace AjaxPro.Web.UI
 			}
 		}
 
+        /// <summary>
+        /// Gets the <see cref="T:System.Web.HttpContext"></see> object associated with the page.
+        /// </summary>
+        /// <value></value>
+        /// <returns>An <see cref="T:System.Web.HttpContext"></see> object that contains information associated with the current page.</returns>
 		protected override HttpContext Context
 		{
 			get
@@ -73,6 +92,12 @@ namespace AjaxPro.Web.UI
 			}
 		}
 
+        /// <summary>
+        /// Gets the current Session object provided by ASP.NET.
+        /// </summary>
+        /// <value></value>
+        /// <returns>The current session-state data.</returns>
+        /// <exception cref="T:System.Web.HttpException">Occurs when the session information is set to null. </exception>
 		protected new System.Web.SessionState.HttpSessionState Session
 		{
 			get
@@ -83,6 +108,10 @@ namespace AjaxPro.Web.UI
 
 		#region IContextInitializer Member
 
+        /// <summary>
+        /// Initialize the HttpContext to the class implementing IContextInitializer.
+        /// </summary>
+        /// <param name="context">The HttpContext.</param>
 		public void InitializeContext(HttpContext context)
 		{
 			m_HttpContext = context;

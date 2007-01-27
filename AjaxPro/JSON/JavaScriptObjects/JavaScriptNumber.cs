@@ -43,47 +43,68 @@ namespace AjaxPro
 	{
 		private StringBuilder _value = new StringBuilder();
 
-		/// <summary>
-		/// Initializes a new JavaScript number instance.
-		/// </summary>
+        /// <summary>
+        /// Initializes a new JavaScript number instance.
+        /// </summary>
 		public JavaScriptNumber()
 			: base()
 		{
 		}
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="JavaScriptNumber"/> class.
+        /// </summary>
+        /// <param name="i">The i.</param>
 		public JavaScriptNumber(Int16 i)
 			: base()
 		{
 			this.Append(JavaScriptSerializer.Serialize(i));
 		}
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="JavaScriptNumber"/> class.
+        /// </summary>
+        /// <param name="i">The i.</param>
 		public JavaScriptNumber(Int32 i)
 			: base()
 		{
 			this.Append(JavaScriptSerializer.Serialize(i));
 		}
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="JavaScriptNumber"/> class.
+        /// </summary>
+        /// <param name="i">The i.</param>
 		public JavaScriptNumber(Int64 i)
 			: base()
 		{
 			this.Append(JavaScriptSerializer.Serialize(i));
 		}
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="JavaScriptNumber"/> class.
+        /// </summary>
+        /// <param name="d">The d.</param>
 		public JavaScriptNumber(Double d)
 			: base()
 		{
 			this.Append(JavaScriptSerializer.Serialize(d));
 		}
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="JavaScriptNumber"/> class.
+        /// </summary>
+        /// <param name="s">The s.</param>
 		public JavaScriptNumber(Single s)
 			: base()
 		{
 			this.Append(JavaScriptSerializer.Serialize(s));
 		}
 
-		/// <summary>
-		/// Returns the string representation of the object.
-		/// </summary>
+        /// <summary>
+        /// Returns the string representation of the object.
+        /// </summary>
+        /// <value>The value.</value>
 		public string Value
 		{
 			get
@@ -94,16 +115,29 @@ namespace AjaxPro
 
 		#region Internal Methods
 
+        /// <summary>
+        /// Appends the specified s.
+        /// </summary>
+        /// <param name="s">The s.</param>
 		internal void Append(string s)
 		{
 			_value.Append(s);
 		}
 
+        /// <summary>
+        /// Appends the specified c.
+        /// </summary>
+        /// <param name="c">The c.</param>
 		internal void Append(char c)
 		{
 			_value.Append(c);
 		}
 
+        /// <summary>
+        /// Indexes the of.
+        /// </summary>
+        /// <param name="s">The s.</param>
+        /// <returns></returns>
 		internal int IndexOf(string s)
 		{
 			return _value.ToString().IndexOf(s);
@@ -113,41 +147,83 @@ namespace AjaxPro
 
 		#region Public Operators
 
+        /// <summary>
+        /// Returns a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+        /// </returns>
 		public override string ToString()
 		{
 			return this.Value;
 		}
 
+        /// <summary>
+        /// Implicit operators the specified o.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <returns></returns>
 		public static implicit operator string(JavaScriptNumber o)
 		{
 			return o.Value;
 		}
 
+        /// <summary>
+        /// Implicit operators the specified o.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <returns></returns>
 		public static implicit operator Int16(JavaScriptNumber o)
 		{
 			return Int16.Parse(o.Value);
 		}
 
+        /// <summary>
+        /// Implicit operators the specified o.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <returns></returns>
 		public static implicit operator Int32(JavaScriptNumber o)
 		{
 			return Int32.Parse(o.Value);
 		}
 
+        /// <summary>
+        /// Implicit operators the specified o.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <returns></returns>
 		public static implicit operator Int64(JavaScriptNumber o)
 		{
 			return Int64.Parse(o.Value);
 		}
 
+        /// <summary>
+        /// Implicit operators the specified o.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <returns></returns>
 		public static implicit operator Double(JavaScriptNumber o)
 		{
 			return Double.Parse(o.Value);
 		}
 
+        /// <summary>
+        /// Implicit operators the specified o.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <returns></returns>
 		public static implicit operator Single(JavaScriptNumber o)
 		{
 			return Single.Parse(o.Value);
 		}
 
+        /// <summary>
+        /// Operator +s the specified a.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="s">The s.</param>
+        /// <returns></returns>
 		public static JavaScriptNumber operator +(JavaScriptNumber a, string s)
 		{
 			a.Append(s);
@@ -155,6 +231,12 @@ namespace AjaxPro
 			return a;
 		}
 
+        /// <summary>
+        /// Operator +s the specified a.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="c">The c.</param>
+        /// <returns></returns>
 		public static JavaScriptNumber operator +(JavaScriptNumber a, char c)
 		{
 			a.Append(c);

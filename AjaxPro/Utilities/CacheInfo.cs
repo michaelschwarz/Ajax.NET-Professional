@@ -35,17 +35,30 @@ namespace AjaxPro
 		private string etag;
 		private DateTime lastMod;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CacheInfo"/> class.
+        /// </summary>
+        /// <param name="etag">The etag.</param>
+        /// <param name="lastMod">The last mod.</param>
 		internal CacheInfo(string etag, DateTime lastMod)
 		{
 			this.etag = etag;
 			this.lastMod = lastMod;
 		}
 
+        /// <summary>
+        /// Gets the E tag.
+        /// </summary>
+        /// <value>The E tag.</value>
 		internal string ETag
 		{
 			get{ return null; }
 		}
 
+        /// <summary>
+        /// Gets the last modified.
+        /// </summary>
+        /// <value>The last modified.</value>
 		internal DateTime LastModified
 		{
 			get{ return lastMod; }

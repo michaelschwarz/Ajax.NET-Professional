@@ -42,26 +42,27 @@ namespace AjaxPro
 	{
 		private bool _value = false;
 
-		/// <summary>
-		/// Initializes a new JavaScript boolean instance.
-		/// </summary>
+        /// <summary>
+        /// Initializes a new JavaScript boolean instance.
+        /// </summary>
 		public JavaScriptBoolean() : base()
 		{
 
 		}
 
-		/// <summary>
-		/// Initializes a new JavaScript boolean instance.
-		/// </summary>
-		/// <param name="value">The pre-defined value.</param>
+        /// <summary>
+        /// Initializes a new JavaScript boolean instance.
+        /// </summary>
+        /// <param name="value">The pre-defined value.</param>
 		public JavaScriptBoolean(bool value) : base()
 		{
 			_value = value;
 		}
 
-		/// <summary>
-		/// Returns the string representation of the object.
-		/// </summary>
+        /// <summary>
+        /// Returns the string representation of the object.
+        /// </summary>
+        /// <value>The value.</value>
 		public string Value
 		{
 			get
@@ -72,16 +73,32 @@ namespace AjaxPro
 
 		#region Public Operators
 
+        /// <summary>
+        /// Returns a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+        /// </returns>
 		public override string ToString()
 		{
 			return bool.Parse(this.Value).ToString();
 		}
 
+        /// <summary>
+        /// Implicit operators the specified o.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <returns></returns>
 		public static implicit operator bool(JavaScriptBoolean o)
 		{
 			return bool.Parse(o.Value);
 		}
 
+        /// <summary>
+        /// Implicit operators the specified o.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <returns></returns>
 		public static implicit operator string(JavaScriptBoolean o)
 		{
 			return o.ToString();

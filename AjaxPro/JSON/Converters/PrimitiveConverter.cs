@@ -42,6 +42,9 @@ namespace AjaxPro
 	/// </summary>
 	public class PrimitiveConverter : IJavaScriptConverter
 	{
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PrimitiveConverter"/> class.
+        /// </summary>
 		public PrimitiveConverter()
 			: base()
 		{
@@ -56,6 +59,11 @@ namespace AjaxPro
 			m_deserializableTypes = m_serializableTypes;
 		}
 
+        /// <summary>
+        /// Converts a .NET object into a JSON string.
+        /// </summary>
+        /// <param name="o">The object to convert.</param>
+        /// <returns>Returns a JSON string.</returns>
 		public override string Serialize(object o)
 		{
 			StringBuilder sb = new StringBuilder();
@@ -63,6 +71,11 @@ namespace AjaxPro
 			return sb.ToString();
 		}
 
+        /// <summary>
+        /// Serializes the specified o.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <param name="sb">The sb.</param>
 		public override void Serialize(object o, StringBuilder sb)
 		{
 			if (o is Boolean)
@@ -89,6 +102,12 @@ namespace AjaxPro
 			//}
 		}
 
+        /// <summary>
+        /// Converts an IJavaScriptObject into an NET object.
+        /// </summary>
+        /// <param name="o">The IJavaScriptObject object to convert.</param>
+        /// <param name="t"></param>
+        /// <returns>Returns a .NET object.</returns>
 		public override object Deserialize(IJavaScriptObject o, Type t)
 		{
 			// TODO: return the default value for this primitive data type

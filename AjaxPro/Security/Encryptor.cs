@@ -38,21 +38,21 @@ namespace AjaxPro.Cryptography
 		private byte[] initVec;
 		private byte[] encKey;
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="algId">The algorithm to encrypt data.</param>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Encryptor"/> class.
+        /// </summary>
+        /// <param name="algId">The algorithm to encrypt data.</param>
 		public Encryptor(EncryptionAlgorithm algId)
 		{
 			transformer = new EncryptTransformer(algId);
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="bytesData"></param>
-		/// <param name="bytesKey"></param>
-		/// <returns></returns>
+        /// <summary>
+        /// Encrypts the specified bytes data.
+        /// </summary>
+        /// <param name="bytesData">The bytes data.</param>
+        /// <param name="bytesKey">The bytes key.</param>
+        /// <returns></returns>
 		public byte[] Encrypt(byte[] bytesData, byte[] bytesKey)
 		{
 			MemoryStream memStreamEncryptedData = new MemoryStream();
@@ -80,9 +80,10 @@ namespace AjaxPro.Cryptography
 			return memStreamEncryptedData.ToArray();
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
+        /// <summary>
+        /// Gets or sets the IV.
+        /// </summary>
+        /// <value>The IV.</value>
 		public byte[] IV
 		{
 			get
@@ -95,9 +96,10 @@ namespace AjaxPro.Cryptography
 			}
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
+        /// <summary>
+        /// Gets the key.
+        /// </summary>
+        /// <value>The key.</value>
 		public byte[] Key
 		{
 			get

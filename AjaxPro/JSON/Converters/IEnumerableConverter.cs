@@ -44,6 +44,9 @@ namespace AjaxPro
 	/// </summary>
 	public class IEnumerableConverter : IJavaScriptConverter
 	{
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IEnumerableConverter"/> class.
+        /// </summary>
 		public IEnumerableConverter() : base()
 		{
 			m_AllowInheritance = true;
@@ -51,6 +54,11 @@ namespace AjaxPro
 			m_serializableTypes = new Type[] { typeof(IEnumerable) };
 		}
 
+        /// <summary>
+        /// Converts a .NET object into a JSON string.
+        /// </summary>
+        /// <param name="o">The object to convert.</param>
+        /// <returns>Returns a JSON string.</returns>
 		public override string Serialize(object o)
 		{
 			StringBuilder sb = new StringBuilder();
@@ -58,6 +66,11 @@ namespace AjaxPro
 			return sb.ToString();
 		}
 
+        /// <summary>
+        /// Serializes the specified o.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <param name="sb">The sb.</param>
 		public override void Serialize(object o, StringBuilder sb)
 		{
 			IEnumerable enumerable = o as IEnumerable;
@@ -80,6 +93,13 @@ namespace AjaxPro
 			sb.Append("]");
 		}
 
+        /// <summary>
+        /// Tries the serialize value.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <param name="t">The t.</param>
+        /// <param name="sb">The sb.</param>
+        /// <returns></returns>
 		public override bool TrySerializeValue(object o, Type t, StringBuilder sb)
 		{
 			if (typeof(IDictionary).IsAssignableFrom(t))
@@ -90,6 +110,12 @@ namespace AjaxPro
 			return base.TrySerializeValue(o, t, sb);
 		}
 
+        /// <summary>
+        /// </summary>
+        /// <param name="jso"></param>
+        /// <param name="t"></param>
+        /// <param name="o"></param>
+        /// <returns></returns>
 		public override bool TryDeserializeValue(IJavaScriptObject jso, Type t, out object o)
 		{
 			if (typeof(IDictionary).IsAssignableFrom(t))

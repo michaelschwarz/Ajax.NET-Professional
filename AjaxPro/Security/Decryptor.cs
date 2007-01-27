@@ -37,21 +37,21 @@ namespace AjaxPro.Cryptography
 		private DecryptTransformer transformer;
 		private byte[] initVec;
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="algId">The algorithm to decrypt data.</param>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Decryptor"/> class.
+        /// </summary>
+        /// <param name="algId">The algorithm to decrypt data.</param>
 		public Decryptor(EncryptionAlgorithm algId)
 		{
 			transformer = new DecryptTransformer(algId);
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="bytesData"></param>
-		/// <param name="bytesKey"></param>
-		/// <returns></returns>
+        /// <summary>
+        /// Decrypts the specified bytes data.
+        /// </summary>
+        /// <param name="bytesData">The bytes data.</param>
+        /// <param name="bytesKey">The bytes key.</param>
+        /// <returns></returns>
 		public byte[] Decrypt(byte[] bytesData, byte[] bytesKey)
 		{
 			MemoryStream memStreamDecryptedData = new MemoryStream();
@@ -76,9 +76,10 @@ namespace AjaxPro.Cryptography
 			return memStreamDecryptedData.ToArray();
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
+        /// <summary>
+        /// Sets the IV.
+        /// </summary>
+        /// <value>The IV.</value>
 		public byte[] IV
 		{
 			set

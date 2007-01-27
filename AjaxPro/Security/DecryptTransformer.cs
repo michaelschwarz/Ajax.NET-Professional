@@ -36,11 +36,20 @@ namespace AjaxPro.Cryptography
 		private EncryptionAlgorithm algorithmID;
 		private byte[] initVec;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DecryptTransformer"/> class.
+        /// </summary>
+        /// <param name="algId">The alg id.</param>
 		public DecryptTransformer(EncryptionAlgorithm algId)
 		{
 			algorithmID = algId;
 		}
 
+        /// <summary>
+        /// Gets the crypto service provider.
+        /// </summary>
+        /// <param name="bytesKey">The bytes key.</param>
+        /// <returns></returns>
 		internal ICryptoTransform GetCryptoServiceProvider(byte[] bytesKey)
 		{
 			switch(algorithmID)
@@ -72,6 +81,10 @@ namespace AjaxPro.Cryptography
 			}
 		}
 
+        /// <summary>
+        /// Sets the IV.
+        /// </summary>
+        /// <value>The IV.</value>
 		internal byte[] IV
 		{
 			set

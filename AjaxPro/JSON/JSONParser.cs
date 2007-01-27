@@ -117,10 +117,12 @@ namespace AjaxPro
 			return false;
 		}
 
-		/// <summary>
-		/// Read the previous character from the JSON string and store it in the private variable ch.
-		/// </summary>
-		/// <returns>Returns false if at the beginning of the JSON string.</returns>
+        /// <summary>
+        /// Read the previous character from the JSON string and store it in the private variable ch.
+        /// </summary>
+        /// <returns>
+        /// Returns false if at the beginning of the JSON string.
+        /// </returns>
 		internal bool ReadPrev()
 		{
 			if (_idx <= 0)
@@ -136,10 +138,10 @@ namespace AjaxPro
 
 		#region Read JSON Methods
 
-		/// <summary>
-		/// Read a string object from the JSON string.
-		/// </summary>
-		/// <returns>Returns the string.</returns>
+        /// <summary>
+        /// Read a string object from the JSON string.
+        /// </summary>
+        /// <returns>Returns the string.</returns>
 		internal JavaScriptString ReadString()
 		{
 			JavaScriptString s = new JavaScriptString();
@@ -197,6 +199,10 @@ namespace AjaxPro
 			return s;
 		}
 
+        /// <summary>
+        /// Reads the java script source.
+        /// </summary>
+        /// <returns></returns>
 		internal JavaScriptSource ReadJavaScriptSource()
 		{
 			JavaScriptSource s = new JavaScriptSource();
@@ -206,10 +212,10 @@ namespace AjaxPro
 			return s;
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
+        /// <summary>
+        /// Reads the java script object.
+        /// </summary>
+        /// <returns></returns>
 		internal JavaScriptString ReadJavaScriptObject()
 		{
 			JavaScriptString n = new JavaScriptString();
@@ -244,10 +250,10 @@ namespace AjaxPro
 			return n;
 		}
 
-		/// <summary>
-		/// Read a number object from the JSON string.
-		/// </summary>
-		/// <returns>Returns the number.</returns>
+        /// <summary>
+        /// Read a number object from the JSON string.
+        /// </summary>
+        /// <returns>Returns the number.</returns>
 		internal JavaScriptNumber ReadNumber()
 		{
 			JavaScriptNumber n = new JavaScriptNumber();
@@ -305,10 +311,10 @@ namespace AjaxPro
 			return n;
 		}
 
-		/// <summary>
-		/// Read a word object from the JSON string.
-		/// </summary>
-		/// <returns>Returns the word.</returns>
+        /// <summary>
+        /// Read a word object from the JSON string.
+        /// </summary>
+        /// <returns>Returns the word.</returns>
 		internal IJavaScriptObject ReadWord()
 		{
 			switch (_ch)
@@ -348,10 +354,10 @@ namespace AjaxPro
 			throw new NotSupportedException("word " + _ch);
 		}
 
-		/// <summary>
-		/// Read an array object from the JSON string.
-		/// </summary>
-		/// <returns>Returns an ArrayList with all objects.</returns>
+        /// <summary>
+        /// Read an array object from the JSON string.
+        /// </summary>
+        /// <returns>Returns an ArrayList with all objects.</returns>
 		internal JavaScriptArray ReadArray()
 		{
 			JavaScriptArray a = new JavaScriptArray();
@@ -393,10 +399,12 @@ namespace AjaxPro
 			return a;
 		}
 
-		/// <summary>
-		/// Reads the next object from the JSON string.
-		/// </summary>
-		/// <returns>Returns an Hashtable with all properties.</returns>
+        /// <summary>
+        /// Reads the next object from the JSON string.
+        /// </summary>
+        /// <returns>
+        /// Returns an Hashtable with all properties.
+        /// </returns>
 		internal JavaScriptObject ReadObject()
 		{
 			JavaScriptObject h = new JavaScriptObject();
@@ -451,10 +459,10 @@ namespace AjaxPro
 
 		#region JSON string and JSON object
 
-		/// <summary>
-		/// Returns a JSON object using Hashtable, ArrayList or string.
-		/// </summary>
-		/// <returns></returns>
+        /// <summary>
+        /// Returns a JSON object using Hashtable, ArrayList or string.
+        /// </summary>
+        /// <returns></returns>
 		internal IJavaScriptObject GetObject()
 		{
 			if (_json == null)
@@ -475,10 +483,11 @@ namespace AjaxPro
 
 		#endregion
 
-		/// <summary>
-		/// Reads the object that represents the JSON string.
-		/// </summary>
-		/// <returns>Returns an object.</returns>
+        /// <summary>
+        /// Reads the object that represents the JSON string.
+        /// </summary>
+        /// <param name="json">The json.</param>
+        /// <returns>Returns an object.</returns>
 		public IJavaScriptObject GetJSONObject(string json)
 		{
 			_json = json;

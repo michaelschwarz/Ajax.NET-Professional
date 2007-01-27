@@ -34,6 +34,11 @@ namespace AjaxPro
 	/// </summary>
 	internal class MD5Helper
 	{
+        /// <summary>
+        /// Gets the hash.
+        /// </summary>
+        /// <param name="data">The data.</param>
+        /// <returns></returns>
 		internal static string GetHash(string data)
 		{
 			byte[] b = System.Text.Encoding.Default.GetBytes(data);
@@ -41,6 +46,11 @@ namespace AjaxPro
 			return GetHash(b);
 		}
 
+        /// <summary>
+        /// Gets the hash.
+        /// </summary>
+        /// <param name="data">The data.</param>
+        /// <returns></returns>
 		internal static string GetHash(byte[] data)
 		{
 			string sMD5HashHexa = "";

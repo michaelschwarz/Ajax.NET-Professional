@@ -44,6 +44,9 @@ namespace AjaxPro
 	/// </summary>
 	public class HtmlControlConverter : IJavaScriptConverter
 	{
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HtmlControlConverter"/> class.
+        /// </summary>
 		public HtmlControlConverter() : base()
 		{
 			m_serializableTypes = new Type[]
@@ -80,6 +83,12 @@ namespace AjaxPro
 				};
 		}
 
+        /// <summary>
+        /// Converts an IJavaScriptObject into an NET object.
+        /// </summary>
+        /// <param name="o">The IJavaScriptObject object to convert.</param>
+        /// <param name="t"></param>
+        /// <returns>Returns a .NET object.</returns>
 		public override object Deserialize(IJavaScriptObject o, Type t)
 		{
 			if(!typeof(HtmlControl).IsAssignableFrom(t) || !(o is JavaScriptString))
@@ -88,6 +97,11 @@ namespace AjaxPro
 			return HtmlControlFromString(o.ToString(), t);
 		}
 
+        /// <summary>
+        /// Converts a .NET object into a JSON string.
+        /// </summary>
+        /// <param name="o">The object to convert.</param>
+        /// <returns>Returns a JSON string.</returns>
 		public override string Serialize(object o)
 		{
 			StringBuilder sb = new StringBuilder();
@@ -95,6 +109,11 @@ namespace AjaxPro
 			return sb.ToString();
 		}
 
+        /// <summary>
+        /// Serializes the specified o.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <param name="sb">The sb.</param>
 		public override void Serialize(object o, StringBuilder sb)
 		{
 			if(!(o is Control))
@@ -105,6 +124,11 @@ namespace AjaxPro
 
 		#region Internal Methods
 
+        /// <summary>
+        /// Corrects the attributes.
+        /// </summary>
+        /// <param name="input">The input.</param>
+        /// <returns></returns>
 		internal static string CorrectAttributes(string input)
 		{
 			string s = @"selected=""selected""";
@@ -122,6 +146,11 @@ namespace AjaxPro
 			return input;
 		}
 
+        /// <summary>
+        /// HTMLs the control to string.
+        /// </summary>
+        /// <param name="control">The control.</param>
+        /// <returns></returns>
 		internal static string HtmlControlToString(HtmlControl control)
 		{
 			StringWriter writer = new StringWriter(new StringBuilder());
@@ -131,6 +160,12 @@ namespace AjaxPro
 			return JavaScriptSerializer.Serialize(writer.ToString());    
 		}
 
+        /// <summary>
+        /// HTMLs the control from string.
+        /// </summary>
+        /// <param name="html">The HTML.</param>
+        /// <param name="type">The type.</param>
+        /// <returns></returns>
 		internal static HtmlControl HtmlControlFromString(string html, Type type)
 		{
 			if(!typeof(HtmlControl).IsAssignableFrom(type))
@@ -159,6 +194,12 @@ namespace AjaxPro
 			return null;
 		}
 
+        /// <summary>
+        /// Adds the run at server.
+        /// </summary>
+        /// <param name="input">The input.</param>
+        /// <param name="tagName">Name of the tag.</param>
+        /// <returns></returns>
 		internal static string AddRunAtServer(string input, string tagName)
 		{
 			// <select[^>]*?(?<InsertPos>\s*)>
@@ -180,6 +221,11 @@ namespace AjaxPro
 
 	internal class HtmlControlConverterHelper : TemplateControl
 	{
+        /// <summary>
+        /// Parses the specified control string.
+        /// </summary>
+        /// <param name="controlString">The control string.</param>
+        /// <returns></returns>
 		internal static Control Parse(string controlString)
 		{
 			HtmlControlConverterHelper control = new HtmlControlConverterHelper();

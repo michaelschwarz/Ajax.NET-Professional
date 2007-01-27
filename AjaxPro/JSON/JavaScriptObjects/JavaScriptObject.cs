@@ -50,16 +50,17 @@ namespace AjaxPro
 		private StringCollection keys = new StringCollection();
 #endif
 
-		/// <summary>
-		/// Initializes a new JavaScript object instance.
-		/// </summary>
+        /// <summary>
+        /// Initializes a new JavaScript object instance.
+        /// </summary>
 		public JavaScriptObject() : base()
 		{
 		}
 
-		/// <summary>
-		/// Returns the string representation of the object.
-		/// </summary>
+        /// <summary>
+        /// Returns the string representation of the object.
+        /// </summary>
+        /// <value>The value.</value>
 		public string Value
 		{
 			get
@@ -68,6 +69,12 @@ namespace AjaxPro
 			}
 		}
 
+        /// <summary>
+        /// Returns a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+        /// </returns>
 		public override string ToString()
 		{
 			return this.Value;
@@ -75,9 +82,10 @@ namespace AjaxPro
 
 		#region IDictionary Members
 
-		/// <summary>
-		/// Returns the object defined for the name of the property.
-		/// </summary>
+        /// <summary>
+        /// Returns the object defined for the name of the property.
+        /// </summary>
+        /// <value></value>
 		public IJavaScriptObject this[string key]
 		{
 			get
@@ -97,11 +105,11 @@ namespace AjaxPro
 			}
 		}
 
-		/// <summary>
-		/// Verify if the property does exist in the object.
-		/// </summary>
-		/// <param name="key">The name of the property.</param>
-		/// <returns>Returns true if the property is defined.</returns>
+        /// <summary>
+        /// Verify if the property does exist in the object.
+        /// </summary>
+        /// <param name="key">The name of the property.</param>
+        /// <returns>Returns true if the property is defined.</returns>
 		public bool Contains(string key)
 		{
 #if(NET20)
@@ -111,11 +119,11 @@ namespace AjaxPro
 #endif
 		}
 
-		/// <summary>
-		/// Adds a new property to the object.
-		/// </summary>
-		/// <param name="key">The name of the property.</param>
-		/// <param name="value">The value of the property.</param>
+        /// <summary>
+        /// Adds a new property to the object.
+        /// </summary>
+        /// <param name="key">The name of the property.</param>
+        /// <param name="value">The value of the property.</param>
 		public void Add(string key, IJavaScriptObject value)
 		{
 #if(NET20)
@@ -136,9 +144,10 @@ namespace AjaxPro
 //#endif
 //        }
 
-		/// <summary>
-		/// Returns all keys that are used internal for the name of properties.
-		/// </summary>
+        /// <summary>
+        /// Returns all keys that are used internal for the name of properties.
+        /// </summary>
+        /// <value>The keys.</value>
 		public string[] Keys
 		{
 			get
@@ -155,6 +164,12 @@ namespace AjaxPro
 			}
 		}
 
+        /// <summary>
+        /// Gets a value indicating whether this instance is fixed size.
+        /// </summary>
+        /// <value>
+        /// 	<c>true</c> if this instance is fixed size; otherwise, <c>false</c>.
+        /// </value>
 		public bool IsFixedSize
 		{
 			get

@@ -51,37 +51,34 @@ namespace AjaxPro
 	/// </summary>
 	public sealed class JavaScriptDeserializer
 	{
-		/// <summary>
-		/// Converts an JSON string into an NET object.
-		/// </summary>
-		/// <param name="json">The JSON string representation.</param>
-		/// <param name="type">The type to convert the string to.</param>
-		/// <returns>Returns a .NET object.</returns>
-		/// <example>
-		/// using System;
-		/// using AjaxPro;
-		/// 
-		/// namespace Demo
-		/// {
-		///		public class WebForm1 : System.Web.UI.Page
-		///		{
-		///			private void Page_Load(object sender, System.EventArgs e)
-		///			{
-		///				string json = "[1,2,3,4,5,6]";
-		///				
-		///				object o = JavaScriptDeserializer.Deserialize(json, typeof(int[]);
-		///				
-		///				if(o != null)
-		///				{
-		///					foreach(int i in (int[])o)
-		///					{
-		///						Response.Write(i.ToString());
-		///					}
-		///				}
-		///			}
-		///		}
-		/// }
-		/// </example>
+        /// <summary>
+        /// Converts an JSON string into an NET object.
+        /// </summary>
+        /// <param name="json">The JSON string representation.</param>
+        /// <param name="type">The type to convert the string to.</param>
+        /// <returns>Returns a .NET object.</returns>
+        /// <example>
+        /// using System;
+        /// using AjaxPro;
+        /// namespace Demo
+        /// {
+        /// public class WebForm1 : System.Web.UI.Page
+        /// {
+        /// private void Page_Load(object sender, System.EventArgs e)
+        /// {
+        /// string json = "[1,2,3,4,5,6]";
+        /// object o = JavaScriptDeserializer.Deserialize(json, typeof(int[]);
+        /// if(o != null)
+        /// {
+        /// foreach(int i in (int[])o)
+        /// {
+        /// Response.Write(i.ToString());
+        /// }
+        /// }
+        /// }
+        /// }
+        /// }
+        /// </example>
 		public static object DeserializeFromJson(string json, Type type)
 		{
 			JSONParser p = new JSONParser();
@@ -91,30 +88,36 @@ namespace AjaxPro
 		}
 
 #if(NET20)
-		/// <summary>
-		/// Converts an JSON string into an NET object.
-		/// </summary>
-		/// <typeparam name="T">The type to create from JSON string.</typeparam>
-		/// <param name="json">The JSON string representation.</param>
-		/// <returns>Returns a type safe .NET object.</returns>
+        /// <summary>
+        /// Converts an JSON string into an NET object.
+        /// </summary>
+        /// <param name="json">The JSON string representation.</param>
+        /// <returns>Returns a type safe .NET object.</returns>
+        /// <typeparam name="T">The type to create from JSON string.</typeparam>
 		public static T DeserializeFromJson<T>(string json)
 		{
 			return (T)DeserializeFromJson(json, typeof(T));
 		}
 #endif
 
+        /// <summary>
+        /// Deserializes the specified json.
+        /// </summary>
+        /// <param name="json">The json.</param>
+        /// <param name="type">The type.</param>
+        /// <returns></returns>
 		[Obsolete("The recommended alternative is AjaxPro.JavaScriptDeserializer.DeserializeFromJson(string, Type).")]
 		public static object Deserialize(string json, Type type)
 		{
 			return DeserializeFromJson(json, type);
 		}
 
-		/// <summary>
-		/// Converts an IJavaScriptObject into an NET object.
-		/// </summary>
-		/// <param name="o">The IJavaScriptObject object to convert.</param>
-		/// <param name="type">The type to convert the object to.</param>
-		/// <returns>Returns a .NET object.</returns>
+        /// <summary>
+        /// Converts an IJavaScriptObject into an NET object.
+        /// </summary>
+        /// <param name="o">The IJavaScriptObject object to convert.</param>
+        /// <param name="type">The type to convert the object to.</param>
+        /// <returns>Returns a .NET object.</returns>
 		public static object Deserialize(IJavaScriptObject o, Type type)
 		{
 			if (o == null)
@@ -195,6 +198,12 @@ namespace AjaxPro
 
 		#region Internal Methods
 
+        /// <summary>
+        /// Deserializes the custom object.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <param name="type">The type.</param>
+        /// <returns></returns>
 		internal static object DeserializeCustomObject(JavaScriptObject o, Type type)
 		{
 			object c = Activator.CreateInstance(type);

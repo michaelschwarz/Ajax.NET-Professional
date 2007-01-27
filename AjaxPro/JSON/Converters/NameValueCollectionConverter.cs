@@ -52,6 +52,9 @@ namespace AjaxPro
 	{
 		private string clientType = "Ajax.Web.NameValueCollection";
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NameValueCollectionConverter"/> class.
+        /// </summary>
 		public NameValueCollectionConverter()
 			: base()
 		{
@@ -61,6 +64,11 @@ namespace AjaxPro
 			m_AllowInheritance = true;
 		}
 
+        /// <summary>
+        /// Render the JavaScript code for prototypes or any other JavaScript method needed from this converter
+        /// on the client-side.
+        /// </summary>
+        /// <returns>Returns JavaScript code.</returns>
 		public override string GetClientScript()
 		{
 			return JavaScriptUtil.GetClientNamespaceRepresentation(clientType) + @"
@@ -113,6 +121,12 @@ Object.extend(" + clientType + @".prototype, {
 ";
 		}
 
+        /// <summary>
+        /// Converts an IJavaScriptObject into an NET object.
+        /// </summary>
+        /// <param name="o">The IJavaScriptObject object to convert.</param>
+        /// <param name="t"></param>
+        /// <returns>Returns a .NET object.</returns>
 		public override object Deserialize(IJavaScriptObject o, Type t)
 		{
 			JavaScriptObject jso = o as JavaScriptObject;
@@ -138,6 +152,11 @@ Object.extend(" + clientType + @".prototype, {
 			return list;
 		}
 
+        /// <summary>
+        /// Converts a .NET object into a JSON string.
+        /// </summary>
+        /// <param name="o">The object to convert.</param>
+        /// <returns>Returns a JSON string.</returns>
 		public override string Serialize(object o)
 		{
 			StringBuilder sb = new StringBuilder();
@@ -145,6 +164,11 @@ Object.extend(" + clientType + @".prototype, {
 			return sb.ToString();
 		}
 
+        /// <summary>
+        /// Serializes the specified o.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <param name="sb">The sb.</param>
 		public override void Serialize(object o, StringBuilder sb)
 		{
 			NameValueCollection list = o as NameValueCollection;
