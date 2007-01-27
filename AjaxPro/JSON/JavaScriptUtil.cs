@@ -50,11 +50,13 @@ namespace AjaxPro
 	/// </summary>
 	public sealed class JavaScriptUtil
 	{
-		/// <summary>
-		/// Get the client-side JavaScript namespace script.
-		/// </summary>
-		/// <param name="ns">The full JavaScript namespace as a string.</param>
-		/// <returns>Returns the JavaScript code to create client-side namespaces.</returns>
+        /// <summary>
+        /// Get the client-side JavaScript namespace script.
+        /// </summary>
+        /// <param name="ns">The full JavaScript namespace as a string.</param>
+        /// <returns>
+        /// Returns the JavaScript code to create client-side namespaces.
+        /// </returns>
 		internal static string GetClientNamespaceRepresentation(string ns)
 		{
 			if (ns == null)
@@ -76,12 +78,12 @@ namespace AjaxPro
 			return sb.ToString();
 		}
 
-		/// <summary>
-		/// Quote the given string to be used in JSON.
-		/// </summary>
-		/// <param name="s">The string to quote.</param>
-		/// <param name="quoteChar">The parameter you want to use for quoting.</param>
-		/// <returns>Returns the quoted string.</returns>
+        /// <summary>
+        /// Quote the given string to be used in JSON.
+        /// </summary>
+        /// <param name="s">The string to quote.</param>
+        /// <param name="quoteChar">The parameter you want to use for quoting.</param>
+        /// <returns>Returns the quoted string.</returns>
 		internal static string QuoteString(string s, char quoteChar)
 		{
 			StringBuilder sb = new StringBuilder();
@@ -89,6 +91,12 @@ namespace AjaxPro
 			return sb.ToString();
 		}
 
+        /// <summary>
+        /// Quotes the string.
+        /// </summary>
+        /// <param name="s">The s.</param>
+        /// <param name="quoteChar">The quote char.</param>
+        /// <param name="sb">The sb.</param>
 		internal static void QuoteString(string s, char quoteChar, StringBuilder sb)
 		{
 			if (s == null || (s.Length == 1 && s[0] == '\0'))
@@ -139,26 +147,31 @@ namespace AjaxPro
 			sb.Append(quoteChar);
 		}
 
-		/// <summary>
-		/// Quote the given string to be used in JSON.
-		/// </summary>
-		/// <param name="s">The string to quote.</param>
-		/// <returns>Returns the quoted string.</returns>
+        /// <summary>
+        /// Quote the given string to be used in JSON.
+        /// </summary>
+        /// <param name="s">The string to quote.</param>
+        /// <returns>Returns the quoted string.</returns>
 		public static string QuoteString(string s)
 		{
 			return QuoteString(s, '"');
 		}
 
+        /// <summary>
+        /// Quotes the string.
+        /// </summary>
+        /// <param name="s">The s.</param>
+        /// <param name="sb">The sb.</param>
 		public static void QuoteString(string s, StringBuilder sb)
 		{
 			QuoteString(s, '"', sb);
 		}
 
-		/// <summary>
-		/// Quote the given string to be used in HTML attributes.
-		/// </summary>
-		/// <param name="s">The string to quote.</param>
-		/// <returns>Returns the quoted string.</returns>
+        /// <summary>
+        /// Quote the given string to be used in HTML attributes.
+        /// </summary>
+        /// <param name="s">The string to quote.</param>
+        /// <returns>Returns the quoted string.</returns>
 		public static string QuoteHtmlAttribute(string s)
 		{
 			string r = QuoteString(s, '\'');
@@ -167,11 +180,13 @@ namespace AjaxPro
 			return r;
 		}
 #if(!JSONLIB)
-		/// <summary>
-		/// Converts a enum type to a JavaScript representation.
-		/// </summary>
-		/// <param name="type">The type of the enum.</param>
-		/// <returns>Returns a JavaScript that will add a local variable to the page.</returns>
+        /// <summary>
+        /// Converts a enum type to a JavaScript representation.
+        /// </summary>
+        /// <param name="type">The type of the enum.</param>
+        /// <returns>
+        /// Returns a JavaScript that will add a local variable to the page.
+        /// </returns>
 		internal static string GetEnumRepresentation(Type type)
 		{
 			if(type.IsEnum == false)
@@ -218,11 +233,11 @@ namespace AjaxPro
 
 		#region JSON/XML serialization
 
-		/// <summary>
-		/// Converts an IJavaScriptObject to an XML document.
-		/// </summary>
-		/// <param name="o">The IJavaScript object to convert.</param>
-		/// <returns>Returns an XML document.</returns>
+        /// <summary>
+        /// Converts an IJavaScriptObject to an XML document.
+        /// </summary>
+        /// <param name="o">The IJavaScript object to convert.</param>
+        /// <returns>Returns an XML document.</returns>
 		public static XmlDocument ConvertIJavaScriptObjectToXml(IJavaScriptObject o)
 		{
 			XmlDocument doc = new XmlDocument();
@@ -233,6 +248,11 @@ namespace AjaxPro
 			return doc;
 		}
 
+        /// <summary>
+        /// Serializes to ajax XML.
+        /// </summary>
+        /// <param name="n">The n.</param>
+        /// <param name="o">The o.</param>
 		internal static void SerializeToAjaxXml(XmlNode n, IJavaScriptObject o)
 		{
 			if(o is JavaScriptArray)
@@ -283,12 +303,12 @@ namespace AjaxPro
 			}
 		}
 
-		/// <summary>
-		/// Converts an Ajax.NET Professional XML JSON document to an IJavaScript object.
-		/// Note: this is not a method to convert any XML document!
-		/// </summary>
-		/// <param name="doc">The XML JSON document.</param>
-		/// <returns>Returns an IJavaScriptObject.</returns>
+        /// <summary>
+        /// Converts an Ajax.NET Professional XML JSON document to an IJavaScript object.
+        /// Note: this is not a method to convert any XML document!
+        /// </summary>
+        /// <param name="doc">The XML JSON document.</param>
+        /// <returns>Returns an IJavaScriptObject.</returns>
 		public static IJavaScriptObject ConvertXmlToIJavaScriptObject(XmlDocument doc)
 		{
 			if (doc == null || doc.DocumentElement == null || doc.DocumentElement.ChildNodes.Count != 1)
@@ -297,6 +317,11 @@ namespace AjaxPro
 			return DeserialzeFromAjaxXml(doc.DocumentElement.ChildNodes[0]);
 		}
 
+        /// <summary>
+        /// Deserialzes from ajax XML.
+        /// </summary>
+        /// <param name="n">The n.</param>
+        /// <returns></returns>
 		internal static IJavaScriptObject DeserialzeFromAjaxXml(XmlNode n)
 		{
 			switch (n.Name)
@@ -351,14 +376,13 @@ namespace AjaxPro
 
 		#region XMLDocument serialization to IJavaScriptObject
 
-		/// <summary>
-		/// Converts an XML document to an IJavaScriptObject (JSON).
-		/// <see cref="http://www.xml.com/pub/a/2006/05/31/converting-between-xml-and-json.html?page=1">Stefan Goessner</see>
-		/// <see cref="http://developer.yahoo.com/common/json.html#xml">Yahoo XML JSON</see>
-		/// </summary>
-		/// <param name="n">The XmlNode to serialize to JSON.</param>
-		/// <param name="h">An instance of custom XML value handler.</param>
-		/// <returns>A IJavaScriptObject.</returns>
+        /// <summary>
+        /// Converts an XML document to an IJavaScriptObject (JSON).
+        /// <see cref="http://www.xml.com/pub/a/2006/05/31/converting-between-xml-and-json.html?page=1">Stefan Goessner</see>
+        /// 	<see cref="http://developer.yahoo.com/common/json.html#xml">Yahoo XML JSON</see>
+        /// </summary>
+        /// <param name="n">The XmlNode to serialize to JSON.</param>
+        /// <returns>A IJavaScriptObject.</returns>
 		public static IJavaScriptObject GetIJavaScriptObjectFromXmlNode(XmlNode n)
 		{
 			if (n == null)

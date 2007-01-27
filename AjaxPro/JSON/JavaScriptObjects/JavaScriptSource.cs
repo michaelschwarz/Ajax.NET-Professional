@@ -47,15 +47,20 @@ namespace AjaxPro
 		{
 		}
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="JavaScriptSource"/> class.
+        /// </summary>
+        /// <param name="s">The s.</param>
 		public JavaScriptSource(string s)
 			: base()
 		{
 			this.Append(s);
 		}
 
-		/// <summary>
-		/// Returns the string representation of the object.
-		/// </summary>
+        /// <summary>
+        /// Returns the string representation of the object.
+        /// </summary>
+        /// <value>The value.</value>
 		public string Value
 		{
 			get
@@ -66,6 +71,10 @@ namespace AjaxPro
 
 		#region Internal Methods
 
+        /// <summary>
+        /// Appends the specified s.
+        /// </summary>
+        /// <param name="s">The s.</param>
 		internal void Append(string s)
 		{
 			_value += s;
@@ -74,17 +83,34 @@ namespace AjaxPro
 		#endregion
 
 		#region Public Operators
-		
+
+        /// <summary>
+        /// Returns a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+        /// </returns>
 		public override string ToString()
 		{
 			return _value;
 		}
 
+        /// <summary>
+        /// Implicit operators the specified o.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <returns></returns>
 		public static implicit operator string(JavaScriptSource o)
 		{
 			return o.ToString();
 		}
 
+        /// <summary>
+        /// Operator +s the specified a.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="s">The s.</param>
+        /// <returns></returns>
 		public static JavaScriptSource operator +(JavaScriptSource a, string s)
 		{
 			a.Append(s);

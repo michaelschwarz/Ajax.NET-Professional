@@ -41,14 +41,18 @@ namespace AjaxPro
 	/// </summary>
 	public class JavaScriptArray : ArrayList, IJavaScriptObject
 	{
-		/// <summary>
-		/// Initializes a new JavaScript array instance.
-		/// </summary>
+        /// <summary>
+        /// Initializes a new JavaScript array instance.
+        /// </summary>
 		public JavaScriptArray()
 			: base()
 		{
 		}
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="JavaScriptArray"/> class.
+        /// </summary>
+        /// <param name="items">The items.</param>
 		public JavaScriptArray(IJavaScriptObject[] items)
 			: base()
 		{
@@ -56,6 +60,10 @@ namespace AjaxPro
 				this.Add(items[i]);
 		}
 
+        /// <summary>
+        /// Gets the <see cref="AjaxPro.IJavaScriptObject"/> at the specified index.
+        /// </summary>
+        /// <value></value>
 		public new IJavaScriptObject this[int index]
 		{
 			get
@@ -64,6 +72,14 @@ namespace AjaxPro
 			}
 		}
 
+        /// <summary>
+        /// Adds an object to the end of the <see cref="T:System.Collections.ArrayList"></see>.
+        /// </summary>
+        /// <param name="value">The <see cref="T:System.Object"></see> to be added to the end of the <see cref="T:System.Collections.ArrayList"></see>. The value can be null.</param>
+        /// <returns>
+        /// The <see cref="T:System.Collections.ArrayList"></see> index at which the value has been added.
+        /// </returns>
+        /// <exception cref="T:System.NotSupportedException">The <see cref="T:System.Collections.ArrayList"></see> is read-only.-or- The <see cref="T:System.Collections.ArrayList"></see> has a fixed size. </exception>
 		public override int Add(object value)
 		{
 			if (value is IJavaScriptObject || value == null)
@@ -72,9 +88,10 @@ namespace AjaxPro
 			throw new NotSupportedException();
 		}
 
-		/// <summary>
-		/// Returns the string representation of the object.
-		/// </summary>
+        /// <summary>
+        /// Returns the string representation of the object.
+        /// </summary>
+        /// <value></value>
 		public string Value
 		{
 			get
@@ -83,6 +100,12 @@ namespace AjaxPro
 			}
 		}
 
+        /// <summary>
+        /// Returns a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+        /// </returns>
 		public override string ToString()
 		{
 			return this.Value;

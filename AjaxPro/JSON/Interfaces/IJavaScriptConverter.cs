@@ -47,34 +47,40 @@ namespace AjaxPro
 		protected Type[] m_serializableTypes = new Type[0];
 		protected Type[] m_deserializableTypes = new Type[0];
 
-		/// <summary>
-		/// Initializes the converter. This method will be called when the application is starting and 
-		/// any converter is loaded.
-		/// </summary>
+        /// <summary>
+        /// Initializes the converter. This method will be called when the application is starting and
+        /// any converter is loaded.
+        /// </summary>
+        /// <param name="d">The d.</param>
 		public virtual void Initialize(StringDictionary d)
 		{
 		}
 
-		/// <summary>
-		/// Render the JavaScript code for prototypes or any other JavaScript method needed from this converter
-		/// on the client-side.
-		/// </summary>
-		/// <returns>Returns JavaScript code.</returns>
+        /// <summary>
+        /// Render the JavaScript code for prototypes or any other JavaScript method needed from this converter
+        /// on the client-side.
+        /// </summary>
+        /// <returns>Returns JavaScript code.</returns>
 		public virtual string GetClientScript()
 		{
 			return "";
 		}
 
-		/// <summary>
-		/// Converts a .NET object into a JSON string.
-		/// </summary>
-		/// <param name="o">The object to convert.</param>
-		/// <returns>Returns a JSON string.</returns>
+        /// <summary>
+        /// Converts a .NET object into a JSON string.
+        /// </summary>
+        /// <param name="o">The object to convert.</param>
+        /// <returns>Returns a JSON string.</returns>
 		public virtual string Serialize(object o)
 		{
 			throw new NotImplementedException("Converter for type '" + o.GetType().FullName + "'.");
 		}
 
+        /// <summary>
+        /// Serializes the specified o.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <param name="sb">The sb.</param>
 		public virtual void Serialize(object o, StringBuilder sb)
 		{
 			sb.Append(Serialize(o));
@@ -93,13 +99,13 @@ namespace AjaxPro
 
 		#region Try'nParse Methods
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="o"></param>
-		/// <param name="t"></param>
-		/// <param name="json"></param>
-		/// <returns></returns>
+        /// <summary>
+        /// Tries the serialize value.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <param name="t">The t.</param>
+        /// <param name="json">The json.</param>
+        /// <returns></returns>
 		[Obsolete("The recommended alternative is IJavaScriptConverter.TrySerializeValue(object, t, sb).", true)]
 		public virtual bool TrySerializeValue(object o, Type t, out string json)
 		{
@@ -115,6 +121,13 @@ namespace AjaxPro
 			return false;
 		}
 
+        /// <summary>
+        /// Tries the serialize value.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <param name="t">The t.</param>
+        /// <param name="sb">The sb.</param>
+        /// <returns></returns>
 		public virtual bool TrySerializeValue(object o, Type t, StringBuilder sb)
 		{
 			if (m_AllowInheritance)
@@ -132,13 +145,13 @@ namespace AjaxPro
 			return false;
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="o"></param>
-		/// <param name="t"></param>
-		/// <param name="json"></param>
-		/// <returns></returns>
+        /// <summary>
+        /// Tries the deserialize value.
+        /// </summary>
+        /// <param name="jso">The jso.</param>
+        /// <param name="t">The t.</param>
+        /// <param name="o">The o.</param>
+        /// <returns></returns>
 		public virtual bool TryDeserializeValue(IJavaScriptObject jso, Type t, out object o)
 		{
 			if (m_AllowInheritance)
@@ -161,9 +174,10 @@ namespace AjaxPro
 
 		#region Properties
 
-		/// <summary>
-		/// Returns every type that can be used with this converter to serialize an object.
-		/// </summary>
+        /// <summary>
+        /// Returns every type that can be used with this converter to serialize an object.
+        /// </summary>
+        /// <value>The serializable types.</value>
 		public virtual Type[] SerializableTypes
 		{
 			get
@@ -172,9 +186,10 @@ namespace AjaxPro
 			}
 		}
 
-		/// <summary>
-		/// Returns every type that can be used with this converter to deserialize an JSON string.
-		/// </summary>
+        /// <summary>
+        /// Returns every type that can be used with this converter to deserialize an JSON string.
+        /// </summary>
+        /// <value>The deserializable types.</value>
 		public virtual Type[] DeserializableTypes
 		{
 			get
@@ -183,6 +198,10 @@ namespace AjaxPro
 			}
 		}
 
+        /// <summary>
+        /// Gets the name of the converter.
+        /// </summary>
+        /// <value>The name of the converter.</value>
 		public virtual string ConverterName
 		{
 			get

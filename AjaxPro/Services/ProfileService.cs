@@ -44,12 +44,21 @@ namespace AjaxPro.Services
 	[AjaxNamespace("AjaxPro.Services.Profile")]
 	public class ProfileService
 	{
+        /// <summary>
+        /// Gets the profile.
+        /// </summary>
+        /// <returns></returns>
 		[AjaxMethod]
 		public static ProfileBase GetProfile()
 		{
 			return HttpContext.Current.Profile;
 		}
 
+        /// <summary>
+        /// Gets the profile property.
+        /// </summary>
+        /// <param name="property">The property.</param>
+        /// <returns></returns>
         [AjaxMethod]
         public static object GetProfileProperty(string property)
         {
@@ -61,6 +70,11 @@ namespace AjaxPro.Services
             return profile[property];
         }
 
+        /// <summary>
+        /// Sets the profile.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <returns></returns>
         [AjaxMethod]
         public static bool SetProfile(JavaScriptObject o)
         {

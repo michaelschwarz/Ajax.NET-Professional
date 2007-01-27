@@ -78,6 +78,10 @@ namespace AjaxPro
 		private static object m_SettingsLock = new object();
 		internal static bool ConverterRegistered = false;
 
+        /// <summary>
+        /// Gets the ajax ID.
+        /// </summary>
+        /// <value>The ajax ID.</value>
 		public static string AjaxID
 		{
 			get
@@ -86,10 +90,12 @@ namespace AjaxPro
 			}
 		}
 #if(!JSONLIB)
-		/// <summary>
-		/// Returns the session identifier.
-		/// </summary>
-		/// <returns>Returns the URL part for the session identifier.</returns>
+        /// <summary>
+        /// Returns the session identifier.
+        /// </summary>
+        /// <returns>
+        /// Returns the URL part for the session identifier.
+        /// </returns>
 		internal static string GetSessionUri()
 		{
 			string cookieUri = "";
@@ -113,11 +119,13 @@ namespace AjaxPro
 			return cookieUri;
 		}
 
-		/// <summary>
-		/// Returns the name of the class and method the AjaxMethod will be rendered to the client-side JavaScript.
-		/// </summary>
-		/// <param name="method">The method you want to call.</param>
-		/// <returns>Returns a string separated by a comma, i.e. "MyNamespace.MyClass,MyMethod"</returns>
+        /// <summary>
+        /// Returns the name of the class and method the AjaxMethod will be rendered to the client-side JavaScript.
+        /// </summary>
+        /// <param name="method">The method you want to call.</param>
+        /// <returns>
+        /// Returns a string separated by a comma, i.e. "MyNamespace.MyClass,MyMethod"
+        /// </returns>
 		[Obsolete("The recommended alternative is AjaxPro.ClientMethod.FromMethodInfo.", false)]
 		public static string GetClientMethod(MethodInfo method)
 		{
@@ -129,10 +137,10 @@ namespace AjaxPro
 			return cm.ClassName + "," + cm.MethodName;
 		}
 
-		/// <summary>
-		/// Writes an enum representation to the current page.
-		/// </summary>
-		/// <param name="type">The type of the enum.</param>
+        /// <summary>
+        /// Writes an enum representation to the current page.
+        /// </summary>
+        /// <param name="type">The type of the enum.</param>
 		public static void RegisterEnumForAjax(Type type)
 		{
 			System.Web.UI.Page page = (System.Web.UI.Page)System.Web.HttpContext.Current.Handler;
@@ -140,11 +148,11 @@ namespace AjaxPro
 			RegisterEnumForAjax(type, page);
 		}
 
-		/// <summary>
-		/// Writes an enum representation to the current page.
-		/// </summary>
-		/// <param name="type">The type of the enum.</param>
-		/// <param name="page">The page where the JavaScript shoult be rendered in.</param>
+        /// <summary>
+        /// Writes an enum representation to the current page.
+        /// </summary>
+        /// <param name="type">The type of the enum.</param>
+        /// <param name="page">The page where the JavaScript shoult be rendered in.</param>
 		public static void RegisterEnumForAjax(Type type, System.Web.UI.Page page)
 		{
 			RegisterCommonAjax(page);
@@ -154,10 +162,10 @@ namespace AjaxPro
 		}
 
 
-		/// <summary>
-		/// Register the specified type (class) for the current page. This will also add the common JavaScript file.
-		/// </summary>
-		/// <param name="type">The tpye to register i.e. RegisterTypeForAjax(typeof(WebApplication1.WebForm1));</param>
+        /// <summary>
+        /// Register the specified type (class) for the current page. This will also add the common JavaScript file.
+        /// </summary>
+        /// <param name="type">The tpye to register i.e. RegisterTypeForAjax(typeof(WebApplication1.WebForm1));</param>
 		public static void RegisterTypeForAjax(Type type)
 		{
 			System.Web.UI.Page page = (System.Web.UI.Page)System.Web.HttpContext.Current.Handler;
@@ -165,11 +173,11 @@ namespace AjaxPro
 			RegisterTypeForAjax(type, page);
 		}
 
-		/// <summary>
-		/// Register the specified type (class) for the current page. This will also add the common JavaScript file.
-		/// </summary>
-		/// <param name="type">The tpye to register i.e. RegisterTypeForAjax(typeof(WebApplication1.WebForm1));</param>
-		/// <param name="page">The Page the script should rendered on.</param>
+        /// <summary>
+        /// Register the specified type (class) for the current page. This will also add the common JavaScript file.
+        /// </summary>
+        /// <param name="type">The tpye to register i.e. RegisterTypeForAjax(typeof(WebApplication1.WebForm1));</param>
+        /// <param name="page">The Page the script should rendered on.</param>
 		public static void RegisterTypeForAjax(Type type, System.Web.UI.Page page)
 		{
 			RegisterCommonAjax(page);
@@ -198,10 +206,10 @@ namespace AjaxPro
 				"<script type=\"text/javascript\" src=\"" + System.Web.HttpContext.Current.Request.ApplicationPath + (System.Web.HttpContext.Current.Request.ApplicationPath.EndsWith("/") ? "" : "/") + Utility.HandlerPath + "/" + Utility.GetSessionUri() + path + Utility.HandlerExtension + "\"></script>");
 		}
 #endif
-		/// <summary>
-		/// Register the specified converter to be used with Ajax.NET.
-		/// </summary>
-		/// <param name="converter">The IJavaScriptConverter.</param>
+        /// <summary>
+        /// Register the specified converter to be used with Ajax.NET.
+        /// </summary>
+        /// <param name="converter">The IJavaScriptConverter.</param>
 		[Obsolete("The recommended alternative is to add the converter type to ajaxNet/ajaxSettings/jsonConverters.", false)]
 		public static void RegisterConverterForAjax(IJavaScriptConverter converter)
 		{
@@ -210,6 +218,10 @@ namespace AjaxPro
 
 		#region Internal Members
 
+        /// <summary>
+        /// Adds the default converter.
+        /// </summary>
+        /// <param name="settings">The settings.</param>
 		internal static void AddDefaultConverter(AjaxSettings settings)
 		{
 			#region Default Converters
@@ -246,6 +258,11 @@ namespace AjaxPro
 			#endregion
 		}
 
+        /// <summary>
+        /// Removes the converter.
+        /// </summary>
+        /// <param name="settings">The settings.</param>
+        /// <param name="t">The t.</param>
 		internal static void RemoveConverter(AjaxSettings settings, Type t)
 		{
 			Type key;
@@ -276,11 +293,22 @@ namespace AjaxPro
 			}
 		}
 
+        /// <summary>
+        /// Adds the converter.
+        /// </summary>
+        /// <param name="settings">The settings.</param>
+        /// <param name="converter">The converter.</param>
 		internal static void AddConverter(AjaxSettings settings, IJavaScriptConverter converter)
 		{
 			AddConverter(settings, converter, false);
 		}
 
+        /// <summary>
+        /// Adds the converter.
+        /// </summary>
+        /// <param name="settings">The settings.</param>
+        /// <param name="converter">The converter.</param>
+        /// <param name="replace">if set to <c>true</c> [replace].</param>
 		internal static void AddConverter(AjaxSettings settings, IJavaScriptConverter converter, bool replace)
 		{
 			Type t;
@@ -314,9 +342,10 @@ namespace AjaxPro
 			}
 		}
 
-		/// <summary>
-		/// Get the settings configured in web.config.
-		/// </summary>
+        /// <summary>
+        /// Get the settings configured in web.config.
+        /// </summary>
+        /// <value>The settings.</value>
 		internal static AjaxSettings Settings
 		{
 			get
@@ -361,6 +390,10 @@ namespace AjaxPro
 			}
 		}
 #if(!JSONLIB)
+        /// <summary>
+        /// Gets the current ajax token.
+        /// </summary>
+        /// <value>The current ajax token.</value>
 		internal static string CurrentAjaxToken
 		{
 			get
@@ -386,18 +419,18 @@ namespace AjaxPro
 			}
 		}
 
-		/// <summary>
-		/// Register the common JavaScript to the current handler.
-		/// </summary>
+        /// <summary>
+        /// Register the common JavaScript to the current handler.
+        /// </summary>
 		internal static void RegisterCommonAjax()
 		{
 			RegisterCommonAjax((System.Web.UI.Page)System.Web.HttpContext.Current.Handler);
 		}
 
-		/// <summary>
-		/// Register the common JavaScript file for the specified page.
-		/// </summary>
-		/// <param name="page">The Page the client script should be rendered to.</param>
+        /// <summary>
+        /// Register the common JavaScript file for the specified page.
+        /// </summary>
+        /// <param name="page">The Page the client script should be rendered to.</param>
 		internal static void RegisterCommonAjax(System.Web.UI.Page page)
 		{
 			if(page == null)
@@ -474,11 +507,20 @@ namespace AjaxPro
 
 		internal static HybridDictionary pages = new HybridDictionary();
 
+        /// <summary>
+        /// Gets the scripts.
+        /// </summary>
+        /// <returns></returns>
 		internal static ListDictionary GetScripts()
 		{
 			return GetScripts(false);
 		}
 
+        /// <summary>
+        /// Gets the scripts.
+        /// </summary>
+        /// <param name="RemoveFromCollection">if set to <c>true</c> [remove from collection].</param>
+        /// <returns></returns>
 		internal static ListDictionary GetScripts(bool RemoveFromCollection)
 		{
 			Guid pageID = (Guid)System.Web.HttpContext.Current.Items[Constant.AjaxID + ".pageID"];
@@ -501,7 +543,13 @@ namespace AjaxPro
 				return scripts;
 			}
 		}
-       
+
+        /// <summary>
+        /// Registers the client script block.
+        /// </summary>
+        /// <param name="page">The page.</param>
+        /// <param name="key">The key.</param>
+        /// <param name="script">The script.</param>
 		internal static void RegisterClientScriptBlock(System.Web.UI.Page page, string key, string script)
 		{
 			Guid pageID = Guid.Empty;
@@ -524,6 +572,11 @@ namespace AjaxPro
 			scripts.Add(key, script);
 		}
 
+        /// <summary>
+        /// Handles the PreRender event of the page control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
 		private static void page_PreRender(object sender, EventArgs e)
 		{
 			ListDictionary scripts = GetScripts(true);

@@ -52,6 +52,9 @@ namespace AjaxPro
 	{
 		private string clientType = "Ajax.Web.Dictionary";
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IDictionaryConverter"/> class.
+        /// </summary>
 		public IDictionaryConverter() : base()
 		{
 			m_AllowInheritance = true;
@@ -64,6 +67,11 @@ namespace AjaxPro
 #endif
 		}
 
+        /// <summary>
+        /// Render the JavaScript code for prototypes or any other JavaScript method needed from this converter
+        /// on the client-side.
+        /// </summary>
+        /// <returns>Returns JavaScript code.</returns>
 		public override string GetClientScript()
 		{
 			return JavaScriptUtil.GetClientNamespaceRepresentation(clientType) + @"
@@ -112,6 +120,12 @@ Object.extend(" + clientType + @".prototype, {
 ";
 		}
 
+        /// <summary>
+        /// Converts an IJavaScriptObject into an NET object.
+        /// </summary>
+        /// <param name="o">The IJavaScriptObject object to convert.</param>
+        /// <param name="t"></param>
+        /// <returns>Returns a .NET object.</returns>
         public override object Deserialize(IJavaScriptObject o, Type t)
         {
 			JavaScriptObject ht = o as JavaScriptObject;
@@ -146,6 +160,11 @@ Object.extend(" + clientType + @".prototype, {
             return d;
         }
 
+        /// <summary>
+        /// Converts a .NET object into a JSON string.
+        /// </summary>
+        /// <param name="o">The object to convert.</param>
+        /// <returns>Returns a JSON string.</returns>
 		public override string Serialize(object o)
 		{
 			StringBuilder sb = new StringBuilder();
@@ -153,6 +172,11 @@ Object.extend(" + clientType + @".prototype, {
 			return sb.ToString();
 		}
 
+        /// <summary>
+        /// Serializes the specified o.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <param name="sb">The sb.</param>
 		public override void Serialize(object o, StringBuilder sb)
 		{
 			IDictionary dic = o as IDictionary;
@@ -195,6 +219,13 @@ Object.extend(" + clientType + @".prototype, {
 			sb.Append(")");
 		}
 
+        /// <summary>
+        /// Tries the serialize value.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <param name="t">The t.</param>
+        /// <param name="sb">The sb.</param>
+        /// <returns></returns>
 		public override bool TrySerializeValue(object o, Type t, StringBuilder sb)
 		{
 #if(NET20)
@@ -208,6 +239,14 @@ Object.extend(" + clientType + @".prototype, {
 			return base.TrySerializeValue(o, t, sb);
 		}
 #if(NET20)
+        /// <summary>
+        /// Determines whether [is interface implemented] [the specified obj].
+        /// </summary>
+        /// <param name="obj">The obj.</param>
+        /// <param name="interfaceType">Type of the interface.</param>
+        /// <returns>
+        /// 	<c>true</c> if [is interface implemented] [the specified obj]; otherwise, <c>false</c>.
+        /// </returns>
 		internal static bool IsInterfaceImplemented(object obj, Type interfaceType)
 		{
 			if (obj == null)

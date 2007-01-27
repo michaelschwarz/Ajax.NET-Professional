@@ -32,9 +32,10 @@ namespace AjaxPro
 	/// </summary>
 	public interface IJavaScriptObject
 	{
-		/// <summary>
-		/// Returns the string representation of the object.
-		/// </summary>
+        /// <summary>
+        /// Returns the string representation of the object.
+        /// </summary>
+        /// <value>The value.</value>
 		string Value{ get; }
 	}
 }

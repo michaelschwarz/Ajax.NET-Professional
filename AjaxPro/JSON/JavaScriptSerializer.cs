@@ -51,30 +51,27 @@ namespace AjaxPro
 	/// </summary>
 	public sealed class JavaScriptSerializer
 	{
-		/// <summary>
-		/// Converts a .NET object into a JSON string.
-		/// </summary>
-		/// <param name="o">The object to convert.</param>
-		/// <param name="sb">A StringBuilder object.</param>
-		/// <returns>Returns a JSON string.</returns>
-		/// <example>
-		/// using System;
-		/// using AjaxPro;
-		/// 
-		/// namespace Demo
-		/// {
-		///		public class WebForm1 : System.Web.UI.Page
-		///		{
-		///			private void Page_Load(object sender, System.EventArgs e)
-		///			{
-		///				DateTime serverTime = DateTime.Now;
-		///				string json = JavaScriptSerializer.Serialize(serverTime);
-		///				
-		///				// json = "new Date(...)";
-		///			}
-		///		}
-		/// }
-		/// </example>
+        /// <summary>
+        /// Converts a .NET object into a JSON string.
+        /// </summary>
+        /// <param name="o">The object to convert.</param>
+        /// <returns>Returns a JSON string.</returns>
+        /// <example>
+        /// using System;
+        /// using AjaxPro;
+        /// namespace Demo
+        /// {
+        /// public class WebForm1 : System.Web.UI.Page
+        /// {
+        /// private void Page_Load(object sender, System.EventArgs e)
+        /// {
+        /// DateTime serverTime = DateTime.Now;
+        /// string json = JavaScriptSerializer.Serialize(serverTime);
+        /// // json = "new Date(...)";
+        /// }
+        /// }
+        /// }
+        /// </example>
 		public static string Serialize(object o)
 		{
 			StringBuilder sb = new StringBuilder();
@@ -82,32 +79,29 @@ namespace AjaxPro
 			return sb.ToString();
 		}
 
-		/// <summary>
-		/// Converts a .NET object into a JSON string.
-		/// </summary>
-		/// <param name="o">The object to convert.</param>
-		/// <param name="sb">A StringBuilder object.</param>
-		/// <returns>Returns a JSON string.</returns>
-		/// <example>
-		/// using System;
-		/// using System.Text;
-		/// using AjaxPro;
-		/// 
-		/// namespace Demo
-		/// {
-		///		public class WebForm1 : System.Web.UI.Page
-		///		{
-		///			private void Page_Load(object sender, System.EventArgs e)
-		///			{
-		///				DateTime serverTime = DateTime.Now;
-		///				StringBuilder sb = new StringBuilder();
-		///				JavaScriptSerializer.Serialize(serverTime, sb);
-		///				
-		///				// sb.ToString() = "new Date(...)";
-		///			}
-		///		}
-		/// }
-		/// </example>
+        /// <summary>
+        /// Converts a .NET object into a JSON string.
+        /// </summary>
+        /// <param name="o">The object to convert.</param>
+        /// <param name="sb">A StringBuilder object.</param>
+        /// <example>
+        /// using System;
+        /// using System.Text;
+        /// using AjaxPro;
+        /// namespace Demo
+        /// {
+        /// public class WebForm1 : System.Web.UI.Page
+        /// {
+        /// private void Page_Load(object sender, System.EventArgs e)
+        /// {
+        /// DateTime serverTime = DateTime.Now;
+        /// StringBuilder sb = new StringBuilder();
+        /// JavaScriptSerializer.Serialize(serverTime, sb);
+        /// // sb.ToString() = "new Date(...)";
+        /// }
+        /// }
+        /// }
+        /// </example>
 		public static void Serialize(object o, StringBuilder sb)
 		{
 			if (o == null || o is System.DBNull)
@@ -160,11 +154,11 @@ namespace AjaxPro
 			}
 		}
 
-		/// <summary>
-		/// Converts a string into a JSON string.
-		/// </summary>
-		/// <param name="s">The string to convert.</param>
-		/// <returns>Returns a JSON string.</returns>
+        /// <summary>
+        /// Converts a string into a JSON string.
+        /// </summary>
+        /// <param name="s">The string to convert.</param>
+        /// <returns>Returns a JSON string.</returns>
 		[Obsolete("The recommended alternative is JavaScriptUtil.QuoteString(string).", false)]
 		public static string SerializeString(string s)
 		{
@@ -173,6 +167,11 @@ namespace AjaxPro
 
 		#region Internal Methods
 
+        /// <summary>
+        /// Serializes the custom object.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <returns></returns>
 		[Obsolete("The recommended alternative is JavaScriptSerializer.SerializeCustomObject(object, StringBuilder).", true)]
 		internal static string SerializeCustomObject(object o)
 		{
@@ -181,6 +180,11 @@ namespace AjaxPro
 			return sb.ToString();
 		}
 
+        /// <summary>
+        /// Serializes the custom object.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <param name="sb">The sb.</param>
 		internal static void SerializeCustomObject(object o, StringBuilder sb)
 		{
 			Type t = o.GetType();

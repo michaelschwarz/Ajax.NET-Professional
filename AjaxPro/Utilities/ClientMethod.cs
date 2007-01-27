@@ -37,11 +37,13 @@ namespace AjaxPro
 
 	public class ClientMethod
 	{
-		/// <summary>
-		/// Returns a ClientMethod instance to get the name of the class and method name on the client-side JavaScript.
-		/// </summary>
-		/// <param name="method">The MethodInfo.</param>
-		/// <returns>Returns the ClientMethod info, if it is not a AjaxMethod it will return null.</returns>
+        /// <summary>
+        /// Returns a ClientMethod instance to get the name of the class and method name on the client-side JavaScript.
+        /// </summary>
+        /// <param name="method">The MethodInfo.</param>
+        /// <returns>
+        /// Returns the ClientMethod info, if it is not a AjaxMethod it will return null.
+        /// </returns>
 		public static ClientMethod FromMethodInfo(MethodInfo method)
 		{
 			if(method.GetCustomAttributes(typeof(AjaxPro.AjaxMethodAttribute), true).Length == 0)
@@ -65,11 +67,13 @@ namespace AjaxPro
 			return cm;
 		}
 
-		/// <summary>
-		/// Returns a ClientMethod instance to get the name of the class and method name on the client-side JavaScript.
-		/// </summary>
-		/// <param name="d">The Delegate.</param>
-		/// <returns>Returns the ClientMethod info, if it is not a AjaxMethod it will return null.</returns>
+        /// <summary>
+        /// Returns a ClientMethod instance to get the name of the class and method name on the client-side JavaScript.
+        /// </summary>
+        /// <param name="d">The Delegate.</param>
+        /// <returns>
+        /// Returns the ClientMethod info, if it is not a AjaxMethod it will return null.
+        /// </returns>
 		public static ClientMethod FromDelegate(Delegate d)
 		{
 			if(d == null)
@@ -89,10 +93,12 @@ namespace AjaxPro
 		public string MethodName;
 
 
-		/// <summary>
-		/// Returns the full path to the method that can be used on client-side JavaScript code.
-		/// </summary>
-		/// <returns></returns>
+        /// <summary>
+        /// Returns the full path to the method that can be used on client-side JavaScript code.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+        /// </returns>
 		public override string ToString()
 		{
 			return this.ClassName + "." + this.MethodName;

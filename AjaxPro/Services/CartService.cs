@@ -40,9 +40,20 @@ namespace AjaxPro.Services
 	[AjaxNamespace("AjaxPro.Services.Cart")]
 	public abstract class ICartService
 	{
+        /// <summary>
+        /// Adds the item.
+        /// </summary>
+        /// <param name="cartName">Name of the cart.</param>
+        /// <param name="item">The item.</param>
+        /// <returns></returns>
 		[AjaxMethod]
 		public abstract bool AddItem(string cartName, object item);
 
+        /// <summary>
+        /// Gets the items.
+        /// </summary>
+        /// <param name="cartName">Name of the cart.</param>
+        /// <returns></returns>
 		[AjaxMethod]
 		public abstract object[] GetItems(string cartName);
 	}

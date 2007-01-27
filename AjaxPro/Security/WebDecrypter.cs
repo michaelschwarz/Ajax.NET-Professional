@@ -33,19 +33,19 @@ namespace AjaxPro.Cryptography
 	/// </summary>
 	public class WebDecrypter
 	{
-		/// <summary>
-		/// 
-		/// </summary>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WebDecrypter"/> class.
+        /// </summary>
 		public WebDecrypter()
 		{
 		}
 
-		/// <summary>
-		/// Decrypts a string.
-		/// </summary>
-		/// <param name="Text">The encrypted string to be decrypted.</param>
-		/// <param name="Key">The 8-bit string for decryption.</param>
-		/// <returns>The plain text.</returns>
+        /// <summary>
+        /// Decrypts a string.
+        /// </summary>
+        /// <param name="Text">The encrypted string to be decrypted.</param>
+        /// <param name="Key">The 8-bit string for decryption.</param>
+        /// <returns>The plain text.</returns>
 		public string Decrypt(string Text, string Key)
 		{
 			if(Key.Length != 8)

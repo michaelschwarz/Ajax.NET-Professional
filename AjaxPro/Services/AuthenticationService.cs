@@ -39,6 +39,12 @@ namespace AjaxPro.Services
 	[AjaxNamespace("AjaxPro.Services.Authentication")]
 	public class AuthenticationService
 	{
+        /// <summary>
+        /// Logins the specified username.
+        /// </summary>
+        /// <param name="username">The username.</param>
+        /// <param name="password">The password.</param>
+        /// <returns></returns>
 		[AjaxMethod]
 		public static bool Login(string username, string password)
 		{
@@ -55,12 +61,21 @@ namespace AjaxPro.Services
 			return false;
 		}
 
+        /// <summary>
+        /// Logouts this instance.
+        /// </summary>
 		[AjaxMethod]
 		public static void Logout()
 		{
 			FormsAuthentication.SignOut();
 		}
 
+        /// <summary>
+        /// Validates the user.
+        /// </summary>
+        /// <param name="username">The username.</param>
+        /// <param name="password">The password.</param>
+        /// <returns></returns>
 		[AjaxMethod]
 		public static bool ValidateUser(string username, string password)
 		{

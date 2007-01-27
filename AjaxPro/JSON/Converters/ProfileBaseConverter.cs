@@ -48,12 +48,20 @@ namespace AjaxPro
 	{
 		private string clientType = "Ajax.Web.Profile";
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ProfileBaseConverter"/> class.
+        /// </summary>
 		public ProfileBaseConverter()
 			: base()
 		{
 			m_serializableTypes = new Type[] { typeof(ProfileBase) };
 		}
 
+        /// <summary>
+        /// Render the JavaScript code for prototypes or any other JavaScript method needed from this converter
+        /// on the client-side.
+        /// </summary>
+        /// <returns>Returns JavaScript code.</returns>
 		public override string GetClientScript()
 		{
 			return JavaScriptUtil.GetClientNamespaceRepresentation(clientType) + @"
@@ -71,6 +79,11 @@ namespace AjaxPro
 ";
 		}
 
+        /// <summary>
+        /// Converts a .NET object into a JSON string.
+        /// </summary>
+        /// <param name="o">The object to convert.</param>
+        /// <returns>Returns a JSON string.</returns>
 		public override string Serialize(object o)
 		{
 			StringBuilder sb = new StringBuilder();
@@ -78,6 +91,11 @@ namespace AjaxPro
 			return sb.ToString();
 		}
 
+        /// <summary>
+        /// Serializes the specified o.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <param name="sb">The sb.</param>
 		public override void Serialize(object o, StringBuilder sb)
 		{
 			if (!(o is ProfileBase))

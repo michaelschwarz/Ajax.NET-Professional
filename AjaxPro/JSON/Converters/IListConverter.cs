@@ -49,6 +49,9 @@ namespace AjaxPro
 	/// </remarks>
 	public class IListConverter : IJavaScriptConverter
 	{
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IListConverter"/> class.
+        /// </summary>
 		public IListConverter() : base()
 		{
 			m_AllowInheritance = true;
@@ -63,6 +66,11 @@ namespace AjaxPro
 			m_deserializableTypes = m_serializableTypes;
 		}
 
+        /// <summary>
+        /// Converts a .NET object into a JSON string.
+        /// </summary>
+        /// <param name="o">The object to convert.</param>
+        /// <returns>Returns a JSON string.</returns>
 		public override string Serialize(object o)
 		{
 			StringBuilder sb = new StringBuilder();
@@ -70,6 +78,11 @@ namespace AjaxPro
 			return sb.ToString();
 		}
 
+        /// <summary>
+        /// Serializes the specified o.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <param name="sb">The sb.</param>
 		public override void Serialize(object o, StringBuilder sb)
 		{
 			IEnumerable enumerable = (IEnumerable)o;
@@ -89,6 +102,12 @@ namespace AjaxPro
 			sb.Append("]");
 		}
 
+        /// <summary>
+        /// Converts an IJavaScriptObject into an NET object.
+        /// </summary>
+        /// <param name="o">The IJavaScriptObject object to convert.</param>
+        /// <param name="t"></param>
+        /// <returns>Returns a .NET object.</returns>
 		public override object Deserialize(IJavaScriptObject o, Type t)
 		{
 			JavaScriptArray list = o as JavaScriptArray;
@@ -136,6 +155,13 @@ namespace AjaxPro
 			return l;
 		}
 
+        /// <summary>
+        /// Tries the serialize value.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <param name="t">The t.</param>
+        /// <param name="sb">The sb.</param>
+        /// <returns></returns>
 		public override bool TrySerializeValue(object o, Type t, StringBuilder sb)
 		{
 			if (t.IsArray) // || typeof(IEnumerable).IsAssignableFrom(t))
