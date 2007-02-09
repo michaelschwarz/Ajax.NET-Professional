@@ -409,7 +409,7 @@ namespace AjaxPro
 				string ip = MD5Helper.GetHash(System.Web.HttpContext.Current.Request.UserHostAddress);
 				string agent = MD5Helper.GetHash(System.Web.HttpContext.Current.Request.UserAgent);
 				string site = MD5Helper.GetHash("Michael Schwarz" + Utility.Settings.TokenSitePassword);
-
+                
 				if(ip == null || ip.Length == 0 || agent == null || agent.Length == 0 || site == null || site.Length == 0)
 					return null;
 
