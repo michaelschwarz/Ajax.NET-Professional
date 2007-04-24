@@ -1,13 +1,16 @@
 set NET11="%WINDIR%\Microsoft.NET\Framework\v1.1.4322"
 set NET20="%WINDIR%\Microsoft.NET\Framework\v2.0.50727"
-set ZIP="C:\Programme\7Zip"
+set ZIP="Z:\AjaxPro"
 set ARG=
 set DEFINE=
-set VERSION=6.10.6.2
+set VERSION=7.4.24.1
+
+
+
 
 call build_1.1.bat
 call build_2.0.bat
-call build_json.bat
+REM call build_json.bat
 
 cd Release
 
@@ -17,19 +20,21 @@ copy "%VERSION%(no strong name)_DLL.zip" "..\%VERSION%(no strong name)_DLL.zip"
 del *.dll
 cd ..
 
+
+
+
 set DEFINE=STRONGNAME;
 
 call build_1.1.bat
 call build_2.0.bat
-call build_json.bat
+REM call build_json.bat
 
-cd ..
-cd AjaxProTemplate
 
-call createpackage.bat
-
-cd ..
-cd AjaxPro
+REM cd ..
+REN cd AjaxProTemplate
+REM call createpackage.bat
+REM cd ..
+REM cd AjaxPro
 
 del "%VERSION%_DLL.zip"
 
@@ -39,5 +44,7 @@ del "%VERSION%_DLL.zip"
 cd Release
 
 "%ZIP%\7za.exe" a -tZIP "..\%VERSION%_DLL.zip" *.dll
+
+cd ..
 
 pause
