@@ -1,7 +1,7 @@
 /*
  * ProfileBaseConverter.cs
  * 
- * Copyright © 2006 Michael Schwarz (http://www.ajaxpro.info).
+ * Copyright © 2007 Michael Schwarz (http://www.ajaxpro.info).
  * All Rights Reserved.
  * 
  * Permission is hereby granted, free of charge, to any person 
@@ -31,7 +31,7 @@
  * MS	06-09-14	mark for NET20 only
  * MS	06-09-24	use QuoteString instead of Serialize
  * MS	06-09-26	improved performance using StringBuilder
- * 
+ * MS	07-04-24	added renderJsonCompliant serialization
  * 
  */
 using System;
@@ -64,6 +64,9 @@ namespace AjaxPro
         /// <returns>Returns JavaScript code.</returns>
 		public override string GetClientScript()
 		{
+			if (AjaxPro.Utility.Settings.OldStyle.Contains("renderJsonCompliant"))
+				return "";
+
 			return JavaScriptUtil.GetClientNamespaceRepresentation(clientType) + @"
 " + clientType + @" = function() {
 	this.toJSON = function() {
@@ -105,7 +108,12 @@ namespace AjaxPro
 
 			bool b = true;
 
-			sb.Append("Object.extend(new " + clientType + "(), {");
+			if (!AjaxPro.Utility.Settings.OldStyle.Contains("renderJsonCompliant"))
+			{
+				sb.Append("Object.extend(new " + clientType + "(), ");
+			}
+			
+			sb.Append("{");
 
 			foreach (SettingsProperty property in ProfileBase.Properties)
 			{
@@ -118,7 +126,10 @@ namespace AjaxPro
 				b = false;
 			}
 
-			sb.Append("})");
+			sb.Append("}");
+			
+			if (!AjaxPro.Utility.Settings.OldStyle.Contains("renderJsonCompliant"))
+				sb.Append(")");
 		}
 	}
 }

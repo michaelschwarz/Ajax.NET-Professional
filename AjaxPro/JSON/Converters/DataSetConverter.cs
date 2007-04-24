@@ -1,7 +1,7 @@
 /*
  * DataSetConverter.cs
  * 
- * Copyright © 2006 Michael Schwarz (http://www.ajaxpro.info).
+ * Copyright © 2007 Michael Schwarz (http://www.ajaxpro.info).
  * All Rights Reserved.
  * 
  * Permission is hereby granted, free of charge, to any person 
@@ -29,7 +29,7 @@
  * MS	06-06-09	removed addNamespace use
  * MS	06-06-22	added AllowInheritance=true
  * MS	06-09-26	improved performance using StringBuilder
- * 
+ * MS	07-04-24	added renderJsonCompliant serialization
  * 
  * 
  * 
@@ -65,6 +65,9 @@ namespace AjaxPro
         /// <returns>Returns JavaScript code.</returns>
 		public override string GetClientScript()
 		{
+			if (AjaxPro.Utility.Settings.OldStyle.Contains("renderJsonCompliant"))
+				return "";
+
 			return JavaScriptUtil.GetClientNamespaceRepresentation(clientType) + @"
 " + clientType + @" = function(t) {
 	this.__type = ""System.Data.DataSet,System.Data"";
@@ -89,6 +92,9 @@ namespace AjaxPro
         /// <returns>Returns a .NET object.</returns>
 		public override object Deserialize(IJavaScriptObject o, Type t)
 		{
+			if (AjaxPro.Utility.Settings.OldStyle.Contains("renderJsonCompliant"))
+				return new NotSupportedException("DataSets are not supported when renderJsonCompliant is configured.");
+
 			JavaScriptObject ht = o as JavaScriptObject;
 
 			if(ht == null)
@@ -139,9 +145,14 @@ namespace AjaxPro
 			
 			bool b = true;
 
-			sb.Append("new ");
-			sb.Append(clientType);
-			sb.Append("([");
+			if (!AjaxPro.Utility.Settings.OldStyle.Contains("renderJsonCompliant"))
+			{
+				sb.Append("new ");
+				sb.Append(clientType);
+				sb.Append("(");
+			}
+				
+			sb.Append("[");
 				
 			foreach(DataTable dt in ds.Tables)
 			{
@@ -151,7 +162,10 @@ namespace AjaxPro
 				JavaScriptSerializer.Serialize(dt, sb);
 			}
 
-			sb.Append("])");
+			sb.Append("]");
+
+			if (!AjaxPro.Utility.Settings.OldStyle.Contains("renderJsonCompliant"))
+				sb.Append(")");
 		}
 	}
 }

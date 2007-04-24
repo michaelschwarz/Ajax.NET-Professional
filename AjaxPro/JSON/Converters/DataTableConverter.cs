@@ -1,7 +1,7 @@
 /*
  * DataTableConverter.cs
  * 
- * Copyright © 2006 Michael Schwarz (http://www.ajaxpro.info).
+ * Copyright © 2007 Michael Schwarz (http://www.ajaxpro.info).
  * All Rights Reserved.
  * 
  * Permission is hereby granted, free of charge, to any person 
@@ -31,7 +31,7 @@
  * MS	06-06-22	added AllowInheritance=true
  * MS	06-09-24	use QuoteString instead of Serialize
  * MS	06-09-26	improved performance using StringBuilder
- * 
+ * MS	07-04-24	added renderJsonCompliant serialization
  * 
  * 
  * 
@@ -68,6 +68,9 @@ namespace AjaxPro
         /// <returns>Returns JavaScript code.</returns>
 		public override string GetClientScript()
 		{
+			if (!AjaxPro.Utility.Settings.OldStyle.Contains("renderJsonCompliant"))
+				return "";
+
 			return JavaScriptUtil.GetClientNamespaceRepresentation(clientType) + @"
 " + clientType + @" = function(c, r) {
 	this.__type = ""System.Data.DataTable,System.Data"";
@@ -201,36 +204,68 @@ namespace AjaxPro
 
 			bool b = true;
 
-			sb.Append("new ");
-			sb.Append(clientType);
-			sb.Append("([");
-				
-			foreach(DataColumn col in cols)
-			{
-				if(b){ b = false; }
-				else{ sb.Append(","); }
 
+			if (!AjaxPro.Utility.Settings.OldStyle.Contains("renderJsonCompliant"))
+			{
+				sb.Append("new ");
+				sb.Append(clientType);
+				sb.Append("([");
+
+				foreach (DataColumn col in cols)
+				{
+					if (b) { b = false; }
+					else { sb.Append(","); }
+
+					sb.Append('[');
+					JavaScriptUtil.QuoteString(col.ColumnName, sb);
+					sb.Append(',');
+					JavaScriptUtil.QuoteString(col.DataType.FullName, sb);
+					sb.Append(']');
+				}
+
+				sb.Append("],[");
+
+				b = true;
+
+				foreach (DataRow row in rows)
+				{
+					if (!b) sb.Append(",");
+
+					JavaScriptSerializer.Serialize(row, sb);
+
+					b = false;
+				}
+
+				sb.Append("])");
+			}
+			else
+			{
 				sb.Append('[');
-				JavaScriptUtil.QuoteString(col.ColumnName, sb);
-				sb.Append(',');
-				JavaScriptUtil.QuoteString(col.DataType.FullName, sb);
+
+				foreach (DataRow row in rows)
+				{
+					if (b) { b = false; }
+					else { sb.Append(","); }
+
+					sb.Append('{');
+
+					bool bc = true;
+
+					foreach (DataColumn col in dt.Columns)
+					{
+						if (bc) { bc = false; }
+						else { sb.Append(","); }
+
+						JavaScriptUtil.QuoteString(col.ColumnName, sb);
+						sb.Append(':');
+						JavaScriptSerializer.Serialize(row[col], sb);
+					}
+
+					sb.Append('}');
+				}
+
 				sb.Append(']');
 			}
-
-			sb.Append("],[");
-
-			b = true;
-
-			foreach(DataRow row in rows)
-			{
-				if(!b) sb.Append(",");
-
-				JavaScriptSerializer.Serialize(row, sb);
-
-				b = false;
-			}
-
-			sb.Append("])");
 		}
 	}
 }
