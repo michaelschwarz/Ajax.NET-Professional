@@ -1,7 +1,7 @@
 /*
  * IAjaxProcessor.cs
  * 
- * Copyright © 2006 Michael Schwarz (http://www.ajaxpro.info).
+ * Copyright © 2007 Michael Schwarz (http://www.ajaxpro.info).
  * All Rights Reserved.
  * 
  * Permission is hereby granted, free of charge, to any person 
@@ -29,6 +29,7 @@
  * MS	06-05-22	added common GetMethodInfo
  * MS	06-05-30	changed using new http header X-AjaxPro
  * MS	06-06-06	added ContentType property
+ * MS	07-04-24	fixed Ajax token
  * 
  */
 using System;
@@ -163,24 +164,35 @@ namespace AjaxPro
 		}
 
         /// <summary>
-        /// Determines whether [is valid ajax token] [the specified server token].
+        /// Determines whether [is valid ajax token].
         /// </summary>
-        /// <param name="serverToken">The server token.</param>
         /// <returns>
-        /// 	<c>true</c> if [is valid ajax token] [the specified server token]; otherwise, <c>false</c>.
+        /// 	<c>true</c> if [is valid ajax token] otherwise, <c>false</c>.
         /// </returns>
-		public virtual bool IsValidAjaxToken(string serverToken)
+		public virtual bool IsValidAjaxToken()
 		{
-			if(Utility.Settings == null || !Utility.Settings.TokenEnabled)
-				return true;
-
-			if(System.Web.HttpContext.Current == null || System.Web.HttpContext.Current.Request == null)
+			if(context == null)
 				return false;
 
-			string token = System.Web.HttpContext.Current.Request.Headers["X-" + Constant.AjaxID + "-Token"];
-
-			if(serverToken != null && token == serverToken)
+			if (Utility.Settings == null || Utility.Settings.Security == null || Utility.Settings.Security.SecurityProvider == null)
 				return true;
+
+			if (Utility.Settings.Security.SecurityProvider.AjaxTokenEnabled == false)
+				return true;
+				
+			string token = context.Request.Headers["X-" + Constant.AjaxID + "-Token"];
+
+			if (token != null)
+			{
+				try
+				{
+					if (Utility.Settings.Security.SecurityProvider.IsValidAjaxToken(token, Utility.Settings.TokenSitePassword))
+						return true;
+				}
+				catch (Exception)
+				{
+				}
+			}
 
 			return false;
 		}
