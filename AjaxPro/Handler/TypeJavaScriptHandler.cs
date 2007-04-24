@@ -1,7 +1,7 @@
 /*
  * TypeJavaScriptHandler.cs
  * 
- * Copyright © 2006 Michael Schwarz (http://www.ajaxpro.info).
+ * Copyright © 2007 Michael Schwarz (http://www.ajaxpro.info).
  * All Rights Reserved.
  * 
  * Permission is hereby granted, free of charge, to any person 
@@ -32,6 +32,10 @@
  * MS	06-05-23	using AjaxNamespace name for method
  * MS	06-06-06	fixed If-Modified-Since http header if using zip
  * MS	06-06-09	removed addNamespace use
+ * MS	07-04-24	using new TypeJavaScriptProvider
+ * 
+ * 
+ * 
  * 
  */
 using System;
@@ -40,6 +44,9 @@ using System.Web;
 using System.Web.SessionState;
 using System.Web.Caching;
 using System.IO;
+using System.Security.Permissions;
+using System.Web.Security;
+using System.Collections.Generic;
 
 namespace AjaxPro
 {
@@ -75,8 +82,7 @@ namespace AjaxPro
 
 			if(context.Trace.IsEnabled) context.Trace.Write(Constant.AjaxID, "Render class proxy Javascript");
 		
-			System.Reflection.MethodInfo[] mi = type.GetMethods();
-			
+
 			// Check wether the javascript is already rendered and cached in the
 			// current context.
 			
@@ -107,6 +113,7 @@ namespace AjaxPro
 					if(etag == ci.ETag)		// TODO: null check
 					{
 						context.Response.StatusCode = 304;
+						context.Response.SuppressContent = true;
 						return;
 					}
 				}
@@ -125,6 +132,7 @@ namespace AjaxPro
 						if(DateTime.Compare(modSinced, ci.LastModified.ToUniversalTime()) >= 0)
 						{
 							context.Response.StatusCode = 304;
+							context.Response.SuppressContent = true;
 							return;
 						}
 					}
@@ -135,7 +143,7 @@ namespace AjaxPro
 				}
 			}
 
-			etag = type.AssemblyQualifiedName; // + "_" + type.Assembly. DateTime.Now.ToString(System.Globalization.DateTimeFormatInfo.CurrentInfo.SortableDateTimePattern);
+			etag = type.AssemblyQualifiedName;
 			etag = MD5Helper.GetHash(System.Text.Encoding.Default.GetBytes(etag));
 
 			DateTime now = DateTime.Now;
@@ -151,114 +159,98 @@ namespace AjaxPro
 			// Build the javascript source and save it to the current
 			// Application context.
 
-			System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
+			string url = context.Request.ApplicationPath + (context.Request.ApplicationPath.EndsWith("/") ? "" : "/") + Utility.HandlerPath + "/" + AjaxPro.Utility.GetSessionUri() + path + Utility.HandlerExtension;
 
 
-			AjaxNamespaceAttribute[] cma = (AjaxNamespaceAttribute[])type.GetCustomAttributes(typeof(AjaxNamespaceAttribute), true);
-			string clientNS = type.FullName;
 
-			if(cma.Length > 0 && cma[0].ClientNamespace != null)
-				clientNS = cma[0].ClientNamespace;
 
-			sb.Append(JavaScriptUtil.GetClientNamespaceRepresentation(clientNS));
 
-			sb.Append(clientNS);
-			sb.Append("_class = function() {};\r\n");
-			
+			// find all methods that are able to be used with AjaxPro
 
-			sb.Append("Object.extend(");
-			sb.Append(clientNS);
-			sb.Append("_class.prototype, Object.extend(new AjaxPro.AjaxClass(), {\r\n");
+			MethodInfo method;
+			List<MethodInfo> methods = new List<MethodInfo>();
+			MethodInfo[] mi = type.GetMethods();
 
-			System.Reflection.MethodInfo method;
-
-			for(int y=0; y<mi.Length; y++)
+			for (int y = 0; y < mi.Length; y++)
 			{
 				method = mi[y];
 
-				if(!method.IsPublic)
+				if (!method.IsPublic)
 					continue;
 
-				AjaxNamespaceAttribute[] cmam = (AjaxNamespaceAttribute[])method.GetCustomAttributes(typeof(AjaxNamespaceAttribute), true);
 				AjaxMethodAttribute[] ma = (AjaxMethodAttribute[])method.GetCustomAttributes(typeof(AjaxMethodAttribute), true);
 
-				if(ma.Length == 0)
+				if (ma.Length == 0)
 					continue;
 
-				System.Reflection.ParameterInfo[] pi = method.GetParameters();
-
-				// Render the function header
-
-				sb.Append("\t");
-
-				if(cmam.Length == 0)
-					sb.Append(method.Name);
-				else
-					sb.Append(cmam[0].ClientNamespace);
-
-				sb.Append(": function(");
-
-
-				// Render all parameters
-
-				for(int i=0; i<pi.Length; i++)
+				PrincipalPermissionAttribute[] ppa = (PrincipalPermissionAttribute[])method.GetCustomAttributes(typeof(PrincipalPermissionAttribute), true);
+				if (ppa.Length > 0)
 				{
-					sb.Append(pi[i].Name);
+					bool permissionDenied = true;
+					for (int p = 0; p < ppa.Length && permissionDenied; p++)
+					{
+#if(NET20)
+						if (1 == 2 && Roles.Enabled)
+						{
+							try
+							{
+								if (!String.IsNullOrEmpty(ppa[p].Role) && !Roles.IsUserInRole(ppa[p].Role))
+									continue;
+							}
+							catch (Exception)
+							{
+								// Should we disable this AjaxMethod of there is an exception?
+								continue;
+							}
 
-					if(i<pi.Length -1)
-						sb.Append(", ");
-				}
-	
-				sb.Append(") {\r\n");
+						}
+						else
+#endif
+							if (ppa[p].Role != null && ppa[p].Role.Length > 0 && context.User != null && context.User.Identity.IsAuthenticated && !context.User.IsInRole(ppa[p].Role))
+								continue;
 
+						permissionDenied = false;
+					}
 
-				// Create the XMLHttpRequest object
-
-				sb.Append("\t\treturn this.invoke(\"");
-
-				if (cmam.Length == 0)
-					sb.Append(method.Name);
-				else
-					sb.Append(cmam[0].ClientNamespace);
-
-				sb.Append("\", {");
-
-				for(int i=0; i<pi.Length; i++)
-				{
-					sb.Append("\"");
-					sb.Append(pi[i].Name);
-					sb.Append("\":");
-					sb.Append(pi[i].Name);
-
-					if(i<pi.Length -1)
-						sb.Append(", ");
+					if (permissionDenied)
+						continue;
 				}
 
-				sb.Append("}, this.");
-				
-				if(cmam.Length == 0)
-					sb.Append(method.Name);
-				else
-					sb.Append(cmam[0].ClientNamespace);
-
-				sb.Append(".getArguments().slice(");
-				sb.Append(pi.Length.ToString());
-				sb.Append("));\r\n\t},\r\n");
+				methods.Add(method);
 			}
 
-			sb.Append("\turl: '");
-			string url = context.Request.ApplicationPath + (context.Request.ApplicationPath.EndsWith("/") ? "" : "/") + Utility.HandlerPath + "/" + AjaxPro.Utility.GetSessionUri() + path + Utility.HandlerExtension;
-			sb.Append(url);
-			sb.Append("'\r\n");
 
 
-			sb.Append("}));\r\n");
+			// render client-side proxy file
 
+			System.Text.StringBuilder sb = new System.Text.StringBuilder();
+			TypeJavaScriptProvider jsp = null;
 
-			sb.Append(clientNS);
-			sb.Append(" = new ");
-			sb.Append(clientNS);
-			sb.Append("_class();\r\n");
+			if (Utility.Settings.TypeJavaScriptProvider != null)
+			{
+				try
+				{
+					Type jspt = Type.GetType(Utility.Settings.TypeJavaScriptProvider);
+					if (jspt != null && typeof(TypeJavaScriptProvider).IsAssignableFrom(jspt))
+					{
+						jsp = (TypeJavaScriptProvider)Activator.CreateInstance(jspt, new object[3] { type, url, sb });
+					}
+				}
+				catch (Exception)
+				{
+				}
+			}
+
+			if (jsp == null)
+			{
+				jsp = new TypeJavaScriptProvider(type, url, sb);
+			}
+
+			jsp.RenderNamespace();
+			jsp.RenderClassBegin();
+			jsp.RenderMethods(methods);
+			jsp.RenderClassEnd();
 
 			context.Response.Write(sb.ToString());
 			context.Response.Write("\r\n");
