@@ -1,7 +1,7 @@
 /*
  * JavaScriptSerializer.cs
  * 
- * Copyright © 2006 Michael Schwarz (http://www.ajaxpro.info).
+ * Copyright © 2007 Michael Schwarz (http://www.ajaxpro.info).
  * All Rights Reserved.
  * 
  * Permission is hereby granted, free of charge, to any person 
@@ -36,7 +36,7 @@
  * MS	06-09-26	improved performance using StringBuilder
  * MS	06-10-06	fixed write-only property bug
  * MS	07-01-24	fixed bug when trying to use AjaxNonSerializable attribute on properties (workitem #5337)
- * 
+ * MS	07-04-24	added IncludeTypeProperty to remove __type JSON property
  * 
  */
 using System;
@@ -204,6 +204,8 @@ namespace AjaxPro
 			bool b = true;
 
 			sb.Append('{');
+
+			if (!roa) roa = !Utility.Settings.IncludeTypeProperty;
 
 			if (!roa)
 			{
