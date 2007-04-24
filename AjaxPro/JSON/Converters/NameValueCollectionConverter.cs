@@ -1,7 +1,7 @@
 /*
  * NameValueCollection.cs
  * 
- * Copyright © 2006 Michael Schwarz (http://www.ajaxpro.info).
+ * Copyright © 2007 Michael Schwarz (http://www.ajaxpro.info).
  * All Rights Reserved.
  * 
  * Permission is hereby granted, free of charge, to any person 
@@ -34,7 +34,7 @@
  * MS	06-09-22	added inheritance to get HttpValueCollection working again
  * MS	06-09-24	use QuoteString instead of Serialize
  * MS	06-09-26	improved performance using StringBuilder
- * 
+ * MS	07-04-24	added renderJsonCompliant serialization
  * 
  * 
  */
@@ -71,6 +71,9 @@ namespace AjaxPro
         /// <returns>Returns JavaScript code.</returns>
 		public override string GetClientScript()
 		{
+			if (AjaxPro.Utility.Settings.OldStyle.Contains("renderJsonCompliant"))
+				return "";
+
 			return JavaScriptUtil.GetClientNamespaceRepresentation(clientType) + @"
 " + clientType + @" = function(items) {
 	this.__type = ""System.Collections.Specialized.NameValueCollection"";
@@ -135,18 +138,29 @@ Object.extend(" + clientType + @".prototype, {
 
 			NameValueCollection list = (NameValueCollection)Activator.CreateInstance(t);
 
-			if (!jso.Contains("keys") || !jso.Contains("values"))
-				throw new ArgumentException("Missing values for 'keys' and 'values'.");
-
-			JavaScriptArray keys = (JavaScriptArray)jso["keys"];
-			JavaScriptArray values = (JavaScriptArray)jso["values"];
-
-			if (keys.Count != values.Count)
-				throw new IndexOutOfRangeException("'keys' and 'values' have different length.");
-
-			for(int i=0; i<keys.Count; i++)
+			if (!AjaxPro.Utility.Settings.OldStyle.Contains("renderJsonCompliant"))
 			{
-				list.Add(keys[i].ToString(), values[i].ToString());
+
+				if (!jso.Contains("keys") || !jso.Contains("values"))
+					throw new ArgumentException("Missing values for 'keys' and 'values'.");
+
+				JavaScriptArray keys = (JavaScriptArray)jso["keys"];
+				JavaScriptArray values = (JavaScriptArray)jso["values"];
+
+				if (keys.Count != values.Count)
+					throw new IndexOutOfRangeException("'keys' and 'values' have different length.");
+
+				for (int i = 0; i < keys.Count; i++)
+				{
+					list.Add(keys[i].ToString(), values[i].ToString());
+				}
+			}
+			else
+			{
+				foreach (string key in jso.Keys)
+				{
+					list.Add(key, jso[key].ToString());
+				}
 			}
 
 			return list;
@@ -178,24 +192,46 @@ Object.extend(" + clientType + @".prototype, {
 
 			bool b = true;
 
-			sb.Append("new ");
-			sb.Append(clientType);
-			sb.Append("([");
-
-			for (int i = 0; i < list.Keys.Count; i++)
+			if (!AjaxPro.Utility.Settings.OldStyle.Contains("renderJsonCompliant"))
 			{
-				if (!b) sb.Append(",");
+				sb.Append("new ");
+				sb.Append(clientType);
+				sb.Append("(");
+				sb.Append("[");
 
-				sb.Append('[');
-				JavaScriptUtil.QuoteString(list.Keys[i], sb);
-				sb.Append(',');
-				JavaScriptUtil.QuoteString(list[list.Keys[i]], sb);
-				sb.Append(']');
+				for (int i = 0; i < list.Keys.Count; i++)
+				{
+					if (!b) sb.Append(",");
 
-				b = false;
+					sb.Append('[');
+					JavaScriptUtil.QuoteString(list.Keys[i], sb);
+					sb.Append(',');
+					JavaScriptUtil.QuoteString(list[list.Keys[i]], sb);
+					sb.Append(']');
+
+					b = false;
+				}
+
+				sb.Append("]");
+				sb.Append(")");
 			}
+			else
+			{
+				sb.Append("{");
 
-			sb.Append("])");
+				for (int i = 0; i < list.Keys.Count; i++)
+				{
+					if (!b) sb.Append(",");
+
+					JavaScriptUtil.QuoteString(list.Keys[i], sb);
+					sb.Append(':');
+					JavaScriptUtil.QuoteString(list[list.Keys[i]], sb);
+
+					b = false;
+				}
+
+				sb.Append("}");
+			}
 		}
 	}
 }

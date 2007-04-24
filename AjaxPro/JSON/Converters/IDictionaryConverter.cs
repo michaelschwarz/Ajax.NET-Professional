@@ -1,7 +1,7 @@
 /*
  * IDictionaryConverter.cs
  * 
- * Copyright © 2006 Michael Schwarz (http://www.ajaxpro.info).
+ * Copyright © 2007 Michael Schwarz (http://www.ajaxpro.info).
  * All Rights Reserved.
  * 
  * Permission is hereby granted, free of charge, to any person 
@@ -33,7 +33,7 @@
  * MS	06-06-09	removed addNamespace use
  * MS	06-06-14	changed access to keys and values
  * MS	06-09-26	improved performance using StringBuilder
- * 
+ * MS	07-04-24	added renderJsonCompliant serialization
  * 
  * 
 */
@@ -74,6 +74,9 @@ namespace AjaxPro
         /// <returns>Returns JavaScript code.</returns>
 		public override string GetClientScript()
 		{
+			if (AjaxPro.Utility.Settings.OldStyle.Contains("renderJsonCompliant"))
+				return "";
+
 			return JavaScriptUtil.GetClientNamespaceRepresentation(clientType) + @"
 " + clientType + @" = function(type,items) {
 	this.__type = type;
@@ -189,15 +192,19 @@ Object.extend(" + clientType + @".prototype, {
 			enumerable.Reset();
 			bool b = true;
 
-			sb.Append("new ");
-			sb.Append(clientType);
-			sb.Append("(");
-
 			bool readFirst = enumerable.MoveNext();		// read the first item
 			Type t = o.GetType();
 
-			sb.Append(JavaScriptSerializer.Serialize(t.FullName));
-			sb.Append(",[");
+			if (!AjaxPro.Utility.Settings.OldStyle.Contains("renderJsonCompliant"))
+			{
+				sb.Append("new ");
+				sb.Append(clientType);
+				sb.Append("(");
+				sb.Append(JavaScriptSerializer.Serialize(t.FullName));
+				sb.Append(",");
+			}
+			
+			sb.Append("[");
 
 			if (readFirst)
 			{
@@ -216,7 +223,9 @@ Object.extend(" + clientType + @".prototype, {
 			}
 
 			sb.Append("]");
-			sb.Append(")");
+
+			if (!AjaxPro.Utility.Settings.OldStyle.Contains("renderJsonCompliant"))
+				sb.Append(")");
 		}
 
         /// <summary>

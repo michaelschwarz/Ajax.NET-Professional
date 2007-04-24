@@ -1,7 +1,7 @@
 /*
  * ExceptionConverter.cs
  * 
- * Copyright © 2006 Michael Schwarz (http://www.ajaxpro.info).
+ * Copyright © 2007 Michael Schwarz (http://www.ajaxpro.info).
  * All Rights Reserved.
  * 
  * Permission is hereby granted, free of charge, to any person 
@@ -83,9 +83,6 @@ namespace AjaxPro
 			// return null to res.value and have an additional property res.error
 			// in the object the callback JavaScript method will get.
 
-			sb.Append("null; r.error = ");
-			
-			
 			sb.Append("{\"Message\":");
 			JavaScriptUtil.QuoteString(ex.Message, sb);
 			sb.Append(",\"Type\":");
