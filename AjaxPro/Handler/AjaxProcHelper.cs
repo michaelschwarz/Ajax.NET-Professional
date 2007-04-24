@@ -1,7 +1,7 @@
 /*
  * AjaxProcHelper.cs
  * 
- * Copyright © 2006 Michael Schwarz (http://www.ajaxpro.info).
+ * Copyright © 2007 Michael Schwarz (http://www.ajaxpro.info).
  * All Rights Reserved.
  * 
  * Permission is hereby granted, free of charge, to any person 
@@ -35,7 +35,7 @@
  * MS	06-06-06	using ContentType from IAjaxProcessor
  * MS	06-06-11	removed WebEvent because of SecurityPermissions not available in medium trust environments
  * MS	06-10-04	set UTF-8 encoding for XML documents
- * 
+ * MS	07-04-24	fixed Ajax token
  * 
  */
 using System;
@@ -103,8 +103,9 @@ namespace AjaxPro
 				p.Context.Response.ContentType = p.ContentType;
 				p.Context.Response.ContentEncoding = System.Text.Encoding.UTF8;
 
-				if(!p.IsValidAjaxToken(Utility.CurrentAjaxToken))
+				if(!p.IsValidAjaxToken())
 				{
+					// TODO: maybe we want to throw a special exception type.
 					p.SerializeObject(new System.Security.SecurityException("The AjaxPro-Token is not valid."));
 
 					if(p.Context.Trace.IsEnabled) p.Context.Trace.Write(Constant.AjaxID, "End ProcessRequest");
