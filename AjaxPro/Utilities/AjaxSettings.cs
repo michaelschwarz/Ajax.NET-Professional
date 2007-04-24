@@ -1,7 +1,7 @@
 /*
  * AjaxSettings.cs
  * 
- * Copyright © 2006 Michael Schwarz (http://www.ajaxpro.info).
+ * Copyright © 2007 Michael Schwarz (http://www.ajaxpro.info).
  * All Rights Reserved.
  * 
  * Permission is hereby granted, free of charge, to any person 
@@ -30,6 +30,10 @@
  * MS	06-05-30	changed to new converter dictionary
  * MS	06-06-07	added OnlyAllowTypesInList property (see web.config)
  * MS	06-10-06	using new JavaScriptConverterList for .NET 1.1
+ * MS	07-04-24	added IncludeTypeProperty
+ *					added UseSimpleObjectNaming
+ *					using new AjaxSecurityProvider
+ *					fixed Ajax token
  * 
  */
 using System;
@@ -82,11 +86,12 @@ namespace AjaxPro
 
 		private bool m_DebugEnabled = false;
 		private bool m_UseAssemblyQualifiedName = false;
+		private bool m_IncludeTypeProperty = false;
+		private bool m_UseSimpleObjectNaming = false;
 
 		private System.Collections.Specialized.StringCollection m_OldStyle = new System.Collections.Specialized.StringCollection();
 
-		private AjaxEncryption m_AjaxEncryption = null;
-		private bool m_TokenEnabled = false;
+		private AjaxSecurity m_AjaxSecurity = null;
 		private string m_TokenSitePassword = "ajaxpro";
 
 #if(NET20)
@@ -96,6 +101,8 @@ namespace AjaxPro
 		internal JavaScriptConverterList SerializableConverters;
 		internal JavaScriptConverterList DeserializableConverters;
 #endif
+		private string m_TypeJavaScriptProvider = null;
+
 		private bool m_OnlyAllowTypesInList = false;
 
 		private string m_CoreScript = null;
@@ -116,6 +123,12 @@ namespace AjaxPro
 		}
 
 		#region Public Properties
+
+		internal string TypeJavaScriptProvider
+		{
+			get { return m_TypeJavaScriptProvider; }
+			set { m_TypeJavaScriptProvider = value; }
+		}
 
         /// <summary>
         /// Gets or sets the URL namespace mappings.
@@ -161,6 +174,18 @@ namespace AjaxPro
 			set { m_UseAssemblyQualifiedName = value; }
 		}
 
+		internal bool IncludeTypeProperty
+		{
+			get { return m_IncludeTypeProperty; }
+			set { m_IncludeTypeProperty = value; }
+		}
+
+		internal bool UseSimpleObjectNaming
+		{
+			get { return m_UseSimpleObjectNaming; }
+			set { m_UseSimpleObjectNaming = value; }
+		}
+
         /// <summary>
         /// Gets or sets several settings that will be used for old styled web applications.
         /// </summary>
@@ -175,20 +200,10 @@ namespace AjaxPro
         /// Gets or sets the encryption.
         /// </summary>
         /// <value>The encryption.</value>
-		internal AjaxEncryption Encryption
+		internal AjaxSecurity Security
 		{
-			get { return m_AjaxEncryption; }
-			set { m_AjaxEncryption = value; }
-		}
-
-        /// <summary>
-        /// Gets or sets a value indicating whether token use is enabled.
-        /// </summary>
-        /// <value><c>true</c> if [token enabled]; otherwise, <c>false</c>.</value>
-		internal bool TokenEnabled
-		{
-			get{ return m_TokenEnabled; }
-			set{ m_TokenEnabled = value; }
+			get { return m_AjaxSecurity; }
+			set { m_AjaxSecurity = value; }
 		}
 
         /// <summary>

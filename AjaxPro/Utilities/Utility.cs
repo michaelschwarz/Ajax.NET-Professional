@@ -1,7 +1,7 @@
 /*
  * Utility.cs
  * 
- * Copyright © 2006 Michael Schwarz (http://www.ajaxpro.info).
+ * Copyright © 2007 Michael Schwarz (http://www.ajaxpro.info).
  * All Rights Reserved.
  * 
  * Permission is hereby granted, free of charge, to any person 
@@ -44,7 +44,8 @@
  * MS	06-06-07	removed Obsolete(true) for RegisterConverterForAjax
  * MS	06-06-09	fixed check if converter is already in list
  * MS	06-09-15	fixed IDictionary bug, wrong sequence for converters
- * 
+ * MS	07-04-24	fixed Ajax token
+ *					using new AjaxSecurityProvider
  * 
  * 
  * 
@@ -398,24 +399,20 @@ namespace AjaxPro
 		{
 			get
 			{
-				if(System.Web.HttpContext.Current == null || System.Web.HttpContext.Current.Request == null)
+				if (Utility.Settings == null || Utility.Settings.Security == null || Utility.Settings.Security.SecurityProvider == null)
 					return null;
 
-				if(Utility.Settings == null)
-					return null;
+				string token = null;
 
-				string token = "";
+				try
+				{
+					token = Utility.Settings.Security.SecurityProvider.GetAjaxToken(Utility.Settings.TokenSitePassword);
+				}
+				catch (Exception)
+				{
+				}
 
-				string ip = MD5Helper.GetHash(System.Web.HttpContext.Current.Request.UserHostAddress);
-				string agent = MD5Helper.GetHash(System.Web.HttpContext.Current.Request.UserAgent);
-				string site = MD5Helper.GetHash("Michael Schwarz" + Utility.Settings.TokenSitePassword);
-                
-				if(ip == null || ip.Length == 0 || agent == null || agent.Length == 0 || site == null || site.Length == 0)
-					return null;
-
-				token = ip.Substring(0, 5) + "-" + agent.Substring(0, 5) + "-" + site.Substring(0, 5);
-
-				return MD5Helper.GetHash(token);
+				return token;
 			}
 		}
 
@@ -492,11 +489,11 @@ namespace AjaxPro
 			
 			StringBuilder sb = new StringBuilder();
 
-			if(Settings.TokenEnabled)
+			if(Settings.Security != null && Settings.Security.SecurityProvider != null && Settings.Security.SecurityProvider.AjaxTokenEnabled)
 				sb.Append("AjaxPro.token = \"" + CurrentAjaxToken + "\";\r\n");
 
-			if (Settings.OldStyle.Contains("noUtcTime"))
-				sb.Append("AjaxPro.noUtcTime = true;\r\n");
+			if (Settings.OldStyle.Contains("noUtcTime") && coreJs.Length > 0)
+				sb.Append("if(typeof AjaxPro != \"undefined\") AjaxPro.noUtcTime = true;\r\n");
 
 			if (sb.Length > 0)
 			{
@@ -587,6 +584,14 @@ namespace AjaxPro
 			StringBuilder sb = new StringBuilder();
 
 			sb.Append("\r\n");
+
+			//HttpContext context = HttpContext.Current;
+			//string url = context.Request.ApplicationPath + (context.Request.ApplicationPath.EndsWith("/") ? "" : "/") + Utility.HandlerPath + "/" + AjaxPro.Utility.GetSessionUri();
+
+			//sb.Append("<script type=\"text/javascript\">\r\n");
+			//sb.Append("var AjaxPro_path = " + JavaScriptUtil.QuoteString(url) + ";\r\n");
+			//sb.Append("</script>\r\n");
+
 
 			foreach(string script in scripts.Values)
 			{

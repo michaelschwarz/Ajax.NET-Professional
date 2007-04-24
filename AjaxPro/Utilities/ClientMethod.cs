@@ -1,7 +1,7 @@
 /*
  * ClientMethod.cs
  * 
- * Copyright © 2006 Michael Schwarz (http://www.ajaxpro.info).
+ * Copyright © 2007 Michael Schwarz (http://www.ajaxpro.info).
  * All Rights Reserved.
  * 
  * Permission is hereby granted, free of charge, to any person 
@@ -25,7 +25,7 @@
  */
 /*
  * MS	06-06-11	added .ToString for client-side usage
- * 
+ * MS	07-04-24	added UseSimpleObjectNaming
  * 
  */
 using System;
@@ -54,10 +54,15 @@ namespace AjaxPro
 
 			ClientMethod cm = new ClientMethod();
 
-			if(classns.Length > 0)
+			if (classns.Length > 0)
 				cm.ClassName = classns[0].ClientNamespace;
 			else
-				cm.ClassName = method.ReflectedType.FullName;
+			{
+				if (Utility.Settings.UseSimpleObjectNaming)
+					cm.ClassName = method.ReflectedType.Name;
+				else
+					cm.ClassName = method.ReflectedType.FullName;
+			}
 
 			if(methodns.Length > 0)
 				cm.MethodName += methodns[0].ClientNamespace;
