@@ -1,7 +1,7 @@
 /*
  * MD5Helper.cs
  * 
- * Copyright © 2006 Michael Schwarz (http://www.ajaxpro.info).
+ * Copyright © 2007 Michael Schwarz (http://www.ajaxpro.info).
  * All Rights Reserved.
  * 
  * Permission is hereby granted, free of charge, to any person 
@@ -23,6 +23,11 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+/* 
+ * MS	07-04-12	changed MD5 compute hash (using BitConverter, now)
+ * 
+ * 
+ */
 using System;
 using System.Text;
 using System.Security.Cryptography;
@@ -32,14 +37,14 @@ namespace AjaxPro
 	/// <summary>
 	/// Provides methods to get a MD5 hash from a string or byte array.
 	/// </summary>
-	internal class MD5Helper
+	public class MD5Helper
 	{
         /// <summary>
         /// Gets the hash.
         /// </summary>
         /// <param name="data">The data.</param>
         /// <returns></returns>
-		internal static string GetHash(string data)
+		public static string GetHash(string data)
 		{
 			byte[] b = System.Text.Encoding.Default.GetBytes(data);
 
@@ -51,24 +56,12 @@ namespace AjaxPro
         /// </summary>
         /// <param name="data">The data.</param>
         /// <returns></returns>
-		internal static string GetHash(byte[] data)
+		public static string GetHash(byte[] data)
 		{
-			string sMD5HashHexa = "";
-			
-			string[] tabStringHexa = new string[16];
-
 			// This is one implementation of the abstract class MD5.
 			MD5 md5 = new MD5CryptoServiceProvider();
 
-			byte[] result = md5.ComputeHash(data);
-
-			for (int i = 0; i < result.Length; i++) 
-			{
-				tabStringHexa[i] = (result[i]).ToString( "x" );
-				sMD5HashHexa += tabStringHexa[i];
-			}
-
-			return sMD5HashHexa;
+			return BitConverter.ToString(md5.ComputeHash(data)).Replace("-", String.Empty); 
 		}
 	}
 }
