@@ -1,7 +1,7 @@
 /*
  * JavaScriptUtil.cs
  * 
- * Copyright © 2006 Michael Schwarz (http://www.ajaxpro.info).
+ * Copyright © 2007 Michael Schwarz (http://www.ajaxpro.info).
  * All Rights Reserved.
  * 
  * Permission is hereby granted, free of charge, to any person 
@@ -36,12 +36,14 @@
  * MS	06-09-26	improved performance using StringBuilder for quotestring methods
  * MS	06-09-29	removed addNamespace use for GetEnumRepresentation
  * MS	06-10-03	fixed GetClientNamespaceRepresentation when using more than one point in namespace
+ * MS	07-04-24	fixed client-side namespace representation
  * 
  * 
  */
 using System;
 using System.Xml;
 using System.Text;
+using System.Globalization;
 
 namespace AjaxPro
 {
@@ -65,11 +67,14 @@ namespace AjaxPro
 			StringBuilder sb = new StringBuilder();
 
 			string[] nsParts = ns.Split('.');
+
+			if (nsParts.Length <= 1) return "";
+
 			string _ns = nsParts[0];
 
 			sb.Append("if(typeof " + _ns + " == \"undefined\") " + _ns + "={};\r\n");
 
-			for (int i = 1; i < nsParts.Length; i++)
+			for (int i = 1; i < nsParts.Length -1; i++)
 			{
 				_ns += "." + nsParts[i];
 				sb.Append("if(typeof " + _ns + " == \"undefined\") " + _ns + "={};\r\n");
@@ -126,10 +131,9 @@ namespace AjaxPro
 					default:
 						if (c < ' ')
 						{
-							// string us = "000" + int.Parse(new string(c, 1), System.Globalization.NumberStyles.HexNumber);
-							string us = "000" + (byte)c;
+							sb.Append("\\u");
+							sb.Append(((int)c).ToString("x4", CultureInfo.InvariantCulture));
 
-							sb.Append("\\u" + us.Substring(us.Length - 4));
 						}
 						else if (c == quoteChar)
 						{
