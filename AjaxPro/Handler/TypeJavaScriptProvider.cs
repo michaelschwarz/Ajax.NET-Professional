@@ -28,9 +28,11 @@
  * 
  */
 using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Reflection;
+#if(NET20)
+using System.Collections.Generic;
+#endif
 
 namespace AjaxPro
 {
@@ -151,15 +153,14 @@ namespace AjaxPro
 			sb.Append("_class();\r\n");
 		}
 
-		public virtual void RenderMethods(List<MethodInfo> methods)
+		public virtual void RenderMethods(MethodInfo[] methods)
 		{
-			for(int i=0; i<methods.Count; i++)
+			for(int i=0; i<methods.Length; i++)
 			{
 				MethodInfo method = methods[i];
 				string methodName = GetClientMethodName(method);
 				ParameterInfo[] pi = method.GetParameters();
 				
-
 				sb.Append("\t");
 				sb.Append(methodName);
 				sb.Append(": function(");
@@ -210,11 +211,11 @@ namespace AjaxPro
 			
 		}
 
-		public override void RenderMethods(List<MethodInfo> methods)
+		public override void RenderMethods(MethodInfo[] methods)
 		{
 			string clientNS = GetClientNamespace();
 
-			for (int i = 0; i < methods.Count; i++)
+			for (int i = 0; i < methods.Length; i++)
 			{
 				MethodInfo method = methods[i];
 				string methodName = GetClientMethodName(method);

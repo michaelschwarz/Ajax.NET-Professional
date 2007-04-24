@@ -46,7 +46,9 @@ using System.Web.Caching;
 using System.IO;
 using System.Security.Permissions;
 using System.Web.Security;
+#if(NET20)
 using System.Collections.Generic;
+#endif
 
 namespace AjaxPro
 {
@@ -168,10 +170,15 @@ namespace AjaxPro
 
 			// find all methods that are able to be used with AjaxPro
 
-			MethodInfo method;
-			List<MethodInfo> methods = new List<MethodInfo>();
 			MethodInfo[] mi = type.GetMethods();
-
+			MethodInfo method;
+#if(NET20)
+			List<MethodInfo> methods = new List<MethodInfo>();
+#else
+			MethodInfo[] methods = new MethodInfo[mi.Length];		// maximum length
+			int mc = 0;
+#endif
+			
 			for (int y = 0; y < mi.Length; y++)
 			{
 				method = mi[y];
@@ -190,8 +197,8 @@ namespace AjaxPro
 					bool permissionDenied = true;
 					for (int p = 0; p < ppa.Length && permissionDenied; p++)
 					{
-#if(NET20)
-						if (1 == 2 && Roles.Enabled)
+#if(_____NET20)
+						if (Roles.Enabled)
 						{
 							try
 							{
@@ -217,7 +224,11 @@ namespace AjaxPro
 						continue;
 				}
 
+#if(NET20)
 				methods.Add(method);
+#else
+				methods[mc++] = method;
+#endif
 			}
 
 
@@ -249,7 +260,11 @@ namespace AjaxPro
 
 			jsp.RenderNamespace();
 			jsp.RenderClassBegin();
+#if(NET20)
+			jsp.RenderMethods(methods.ToArray());
+#else
 			jsp.RenderMethods(methods);
+#endif
 			jsp.RenderClassEnd();
 
 			context.Response.Write(sb.ToString());
