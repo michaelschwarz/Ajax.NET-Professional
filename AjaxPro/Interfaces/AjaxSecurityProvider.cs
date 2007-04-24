@@ -1,5 +1,5 @@
 /*
- * IAjaxCryptProvider.cs
+ * AjaxSecurityProvider.cs
  * 
  * Copyright © 2007 Michael Schwarz (http://www.ajaxpro.info).
  * All Rights Reserved.
@@ -24,7 +24,9 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 /*
- * MS	07-04-24	set interface obsolete, use new AjaxSecurityProvider
+ * MS	07-04-13	initial version
+ *					copied parts from IAjaxCryptProvider
+ *					changed to abstract class from interface
  * 
  * 
  */
@@ -32,25 +34,67 @@ using System;
 
 namespace AjaxPro
 {
-	[Obsolete("Use AjaxSecurityProvider instead.", true)]
-	public interface IAjaxCryptProvider
+	public abstract class AjaxSecurityProvider
 	{
         /// <summary>
         /// Encrypts the specified json.
         /// </summary>
         /// <param name="json">The json.</param>
         /// <returns></returns>
-		string Encrypt(string json);
-        /// <summary>
+		public virtual string Encrypt(string json)
+		{
+			return json;
+		}
+        
+		/// <summary>
         /// Decrypts the specified jsoncrypt.
         /// </summary>
         /// <param name="jsoncrypt">The jsoncrypt.</param>
         /// <returns></returns>
-		string Decrypt(string jsoncrypt);
+		public virtual string Decrypt(string jsoncrypt)
+		{
+			return jsoncrypt;
+		}
+
         /// <summary>
         /// Gets the client script.
         /// </summary>
         /// <value>The client script.</value>
-		string ClientScript{get;}
+		public virtual string ClientScript
+		{
+			get
+			{
+				return null;
+			}
+		}
+
+		/// <summary>
+		/// Checks if the given token is valid.
+		/// </summary>
+		/// <param name="token">The token from the Ajax request.</param>
+		/// <param name="sitePassword"></param>
+		/// <returns>Returns true if token is valid and AjaxMethod could be invoked.</returns>
+		public virtual bool IsValidAjaxToken(string token, string sitePassword)
+		{
+			return (token == sitePassword);
+		}
+
+		/// <summary>
+		/// Create a new token.
+		/// </summary>
+		/// <param name="sitePassword"></param>
+		/// <returns></returns>
+		public virtual string GetAjaxToken(string sitePassword)
+		{
+			return sitePassword;
+		}
+
+		public virtual bool AjaxTokenEnabled
+		{
+			get
+			{
+				return false;
+			}
+		}
 	}
 }

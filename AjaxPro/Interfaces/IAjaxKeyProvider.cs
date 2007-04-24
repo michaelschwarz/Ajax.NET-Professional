@@ -1,7 +1,7 @@
 /*
  * IAjaxKeyProvider.cs
  * 
- * Copyright © 2006 Michael Schwarz (http://www.ajaxpro.info).
+ * Copyright © 2007 Michael Schwarz (http://www.ajaxpro.info).
  * All Rights Reserved.
  * 
  * Permission is hereby granted, free of charge, to any person 
@@ -23,10 +23,16 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+/*
+ * MS	07-04-24	set interface obsolete, use new AjaxSecurityProvider
+ * 
+ * 
+ */
 using System;
 
 namespace AjaxPro
 {
+	[Obsolete("This interface is not used any more.", true)]
 	public interface IAjaxKeyProvider
 	{
         /// <summary>
