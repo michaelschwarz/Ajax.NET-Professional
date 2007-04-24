@@ -1,7 +1,7 @@
 /*
  * AjaxSettingsSectionHandler.cs
  * 
- * Copyright © 2006 Michael Schwarz (http://www.ajaxpro.info).
+ * Copyright © 2007 Michael Schwarz (http://www.ajaxpro.info).
  * All Rights Reserved.
  * 
  * Permission is hereby granted, free of charge, to any person 
@@ -31,6 +31,9 @@
  * MS	06-05-09	added all child nodes to oldStyle settings
  * MS	06-05-29	fixed wrong jsonConverters handling
  * MS	06-06-07	added urlNamespaceMappings/allowListOnly
+ * MS	07-04-24	added new settings (oldStyle == configuration)
+ *					added provider settings
+ *					added includeTypeProperty
  * 
  * 
  */
@@ -114,25 +117,36 @@ namespace AjaxPro
 						settings.UrlNamespaceMappings.Add(url.InnerText, ns.InnerText);
 					}
 				}
-				else if(n.Name == "encryption")
+				else if (n.Name == "providers" || n.Name == "provider")
 				{
-					string cryptType = n.SelectSingleNode("@cryptType") != null ? n.SelectSingleNode("@cryptType").InnerText : null;
-					string keyType = n.SelectSingleNode("@keyType") != null ? n.SelectSingleNode("@keyType").InnerText : null;
+					foreach (XmlNode p in n.ChildNodes)
+					{
+						if (p.Name == "securityProvider")
+						{
+							if (p.SelectSingleNode("@type") != null)
+							{
+								string securityProviderType = p.SelectSingleNode("@type").InnerText;
 
-					if(cryptType == null || keyType == null)
-						continue;
-					
+								AjaxSecurity sec = new AjaxSecurity(securityProviderType);
 
-					AjaxEncryption enc = new AjaxEncryption(cryptType, keyType);
-					
-					if(!enc.Init())
-						throw new Exception("Ajax.NET Professional encryption configuration failed.");
-
-					settings.Encryption = enc;
+								if (sec.Init())
+								{
+									settings.Security = sec;
+								}
+							}
+						}
+						else if (p.Name == "typeJavaScriptProvider")
+						{
+							if (p.SelectSingleNode("@type") != null)
+							{
+								settings.TypeJavaScriptProvider = p.SelectSingleNode("@type").InnerText;
+							}
+						}
+					}
 				}
-				else if(n.Name == "token")
+				else if (n.Name == "token")
 				{
-					settings.TokenEnabled = n.SelectSingleNode("@enabled") != null && n.SelectSingleNode("@enabled").InnerText == "true";
+					// settings.TokenEnabled = n.SelectSingleNode("@enabled") != null && n.SelectSingleNode("@enabled").InnerText == "true";
 					settings.TokenSitePassword = n.SelectSingleNode("@sitePassword") != null ? n.SelectSingleNode("@sitePassword").InnerText : settings.TokenSitePassword;
 				}
 				else if (n.Name == "debug")
@@ -140,78 +154,88 @@ namespace AjaxPro
 					if (n.SelectSingleNode("@enabled") != null && n.SelectSingleNode("@enabled").InnerText == "true")
 						settings.DebugEnabled = true;
 				}
-				else if (n.Name == "oldStyle")
+				else if (n.Name == "oldStyle" || n.Name == "configuration")
 				{
 					foreach (XmlNode sn in n.ChildNodes)
-						settings.OldStyle.Add(sn.Name);
+					{
+						switch (sn.Name)
+						{
+							case "useSimpleObjectNaming":
+								settings.UseSimpleObjectNaming = true;
+								break;
 
-					//if (n.SelectSingleNode("objectExtendPrototype") != null)
-					//{
-					//    if (!settings.OldStyle.Contains("objectExtendPrototype"))
-					//        settings.OldStyle.Add("objectExtendPrototype");
-					//}
+							default:
+								settings.OldStyle.Add(sn.Name);
+								break;
+						}
+					}
 				}
-                else
+				else
 #endif
-				if (n.Name == "jsonConverters")
-                {
-                    XmlNodeList jsonConverters = n.SelectNodes("add");
+					if (n.Name == "jsonConverters")
+					{
+						if (n.SelectSingleNode("@includeTypeProperty") != null && n.SelectSingleNode("@includeTypeProperty").InnerText == "true")
+						{
+							settings.IncludeTypeProperty = true;
+						}
 
-                    foreach (XmlNode j in jsonConverters)
-                    {
-                        XmlNode t = j.SelectSingleNode("@type");
+						XmlNodeList jsonConverters = n.SelectNodes("add");
 
-                        if (t == null)
-                            continue;
+						foreach (XmlNode j in jsonConverters)
+						{
+							XmlNode t = j.SelectSingleNode("@type");
 
-                        Type type = Type.GetType(t.InnerText);
+							if (t == null)
+								continue;
 
-                        if (type == null)
-                        {
-                            // throw new ArgumentException("Could not find type " + t.InnerText + ".");
-                            continue;
-                        }
+							Type type = Type.GetType(t.InnerText);
 
-                        if (!typeof(IJavaScriptConverter).IsAssignableFrom(type))
-                        {
-                            // throw new ArgumentException("Type " + t.InnerText + " does not inherit from JavaScriptObjectConverter.");
-                            continue;
-                        }
+							if (type == null)
+							{
+								// throw new ArgumentException("Could not find type " + t.InnerText + ".");
+								continue;
+							}
 
-                        StringDictionary d = new StringDictionary();
-                        foreach (XmlAttribute a in j.Attributes)
-                        {
-                            if (d.ContainsKey(a.Name)) continue;
-                            d.Add(a.Name, a.Value);
-                        }
+							if (!typeof(IJavaScriptConverter).IsAssignableFrom(type))
+							{
+								// throw new ArgumentException("Type " + t.InnerText + " does not inherit from JavaScriptObjectConverter.");
+								continue;
+							}
 
-                        IJavaScriptConverter c = (IJavaScriptConverter)Activator.CreateInstance(type);
-                        c.Initialize(d);
+							StringDictionary d = new StringDictionary();
+							foreach (XmlAttribute a in j.Attributes)
+							{
+								if (d.ContainsKey(a.Name)) continue;
+								d.Add(a.Name, a.Value);
+							}
 
-                        Utility.AddConverter(settings, c, true);
-                    }
+							IJavaScriptConverter c = (IJavaScriptConverter)Activator.CreateInstance(type);
+							c.Initialize(d);
+
+							Utility.AddConverter(settings, c, true);
+						}
 
 
-                    jsonConverters = n.SelectNodes("remove");
+						jsonConverters = n.SelectNodes("remove");
 
-                    foreach (XmlNode j in jsonConverters)
-                    {
-                        XmlNode t = j.SelectSingleNode("@type");
+						foreach (XmlNode j in jsonConverters)
+						{
+							XmlNode t = j.SelectSingleNode("@type");
 
-                        if (t == null)
-                            continue;
+							if (t == null)
+								continue;
 
-                        Type type = Type.GetType(t.InnerText);
+							Type type = Type.GetType(t.InnerText);
 
-                        if (type == null)
-                        {
-                            // throw new ArgumentException("Could not find type " + t.InnerText + ".");
-                            continue;
-                        }
+							if (type == null)
+							{
+								// throw new ArgumentException("Could not find type " + t.InnerText + ".");
+								continue;
+							}
 
-                        Utility.RemoveConverter(settings, type);
-                    }
-                }
+							Utility.RemoveConverter(settings, type);
+						}
+					}
 			}
 
 			return settings;
