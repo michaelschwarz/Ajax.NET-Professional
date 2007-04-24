@@ -157,11 +157,13 @@
     <Compile Include="Handler\TypeJavaScriptHandler.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Interfaces\AjaxSecurityProvider.cs" />
     <Compile Include="Interfaces\IAjaxTokenProvider.cs" />
     <Compile Include="Interfaces\IAjaxCryptProvider.cs" />
     <Compile Include="Interfaces\IAjaxKeyProvider.cs" />
     <Compile Include="Interfaces\IAjaxProcessor.cs" />
     <Compile Include="Interfaces\IContextInitializer.cs" />
+    <Compile Include="Handler\TypeJavaScriptProvider.cs" />
     <Compile Include="JSON\Converters\DataRowConverter.cs">
       <SubType>Code</SubType>
     </Compile>

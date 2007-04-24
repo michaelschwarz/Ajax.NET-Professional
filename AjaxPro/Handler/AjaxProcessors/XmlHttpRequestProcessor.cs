@@ -1,7 +1,7 @@
 /*
  * XmlHttpRequestProcessor.cs
  * 
- * Copyright © 2006 Michael Schwarz (http://www.ajaxpro.info).
+ * Copyright © 2007 Michael Schwarz (http://www.ajaxpro.info).
  * All Rights Reserved.
  * 
  * Permission is hereby granted, free of charge, to any person 
@@ -40,6 +40,12 @@
  * MS	06-07-19	fixed if method argument is from type IJavaScriptObject
  * MS	06-07-20	removed the fix above and put it to JavaScriptConverter
  * MS	06-10-03	fixed bug with CryptProvider
+ * MS	07-04-24	fixed Ajax token
+ *					using new AjaxSecurityProvider
+ *					added optional x-ajaxpro-method to querystring
+ * 
+ * 
+ * 
  * 
  */
 using System;
@@ -106,8 +112,8 @@ namespace AjaxPro
 			hashCode = v.GetHashCode();
 
 			// check if we have to decrypt the JSON string.
-			if(Utility.Settings != null && Utility.Settings.Encryption != null)
-				v = Utility.Settings.Encryption.CryptProvider.Decrypt(v);
+			if(Utility.Settings != null && Utility.Settings.Security != null)
+				v = Utility.Settings.Security.SecurityProvider.Decrypt(v);
 
 			context.Items.Add(Constant.AjaxID + ".JSON", v);
 
@@ -147,11 +153,15 @@ namespace AjaxPro
 			//   - An ordered list of values. In most languages, this is realized 
 			//     as an array. 
 
-			string res = JavaScriptSerializer.Serialize(o) + ";/*";
+			string res;
+			if (o is Exception)
+				res = "{\"error\":" + JavaScriptSerializer.Serialize(o) + "}";
+			else
+				res = "{\"value\":" + JavaScriptSerializer.Serialize(o) + "}";
 
 			// check if we have to encrypt the JSON string.
-			if (Utility.Settings != null && Utility.Settings.Encryption != null)
-				res = Utility.Settings.Encryption.CryptProvider.Encrypt(res);
+			if (Utility.Settings != null && Utility.Settings.Security != null)
+				res = Utility.Settings.Security.SecurityProvider.Encrypt(res);
 
 			context.Response.Write(res);
 
@@ -168,7 +178,13 @@ namespace AjaxPro
 		{
 			get
 			{
-				return context.Request.Headers["X-" + Constant.AjaxID + "-Method"] != null;
+				if (context.Request.Headers["X-" + Constant.AjaxID + "-Method"] != null)
+					return true;
+
+				if (context.Request["X-" + Constant.AjaxID + "-Method"] != null)
+					return true;
+
+				return false;
 			}
 		}
 
@@ -182,10 +198,13 @@ namespace AjaxPro
 			{
 				string m = context.Request.Headers["X-" + Constant.AjaxID + "-Method"];
 
-				if (m == null)
-					return null;
+				if (m == null || m.Length == 0)
+					m = context.Request["X-" + Constant.AjaxID + "-Method"];
 
-				return this.GetMethodInfo(m);
+				if(m != null && m.Length > 0)
+					return this.GetMethodInfo(m);
+
+				return null;
 			}
 		}
 

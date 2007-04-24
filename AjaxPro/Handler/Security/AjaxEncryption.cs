@@ -1,7 +1,7 @@
 /*
  * AjaxEncryption.cs
  * 
- * Copyright © 2006 Michael Schwarz (http://www.ajaxpro.info).
+ * Copyright © 2007 Michael Schwarz (http://www.ajaxpro.info).
  * All Rights Reserved.
  * 
  * Permission is hereby granted, free of charge, to any person 
@@ -23,26 +23,27 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+/*
+ * MS	07-04-13	renamed class from AjaxEncryption to AjaxSecurity
+ * MS	07-04-24	using new AjaxSecurityProvider
+ * 
+ */
 using System;
 
 namespace AjaxPro
 {
-	internal class AjaxEncryption
+	internal class AjaxSecurity
 	{
-		private string m_CryptType = null;
-		private string m_KeyType = null;
-		private IAjaxCryptProvider m_CryptProvider = null;
-		private IAjaxKeyProvider m_KeyProvider = null;
+		private string m_SecurityProviderType = null;
+		private AjaxSecurityProvider m_SecurityProvider = null;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AjaxEncryption"/> class.
         /// </summary>
         /// <param name="cryptType">Type of the crypt.</param>
-        /// <param name="keyType">Type of the key.</param>
-		internal AjaxEncryption(string cryptType, string keyType)
+		internal AjaxSecurity(string securityProviderType)
 		{
-			m_CryptType = cryptType;
-			m_KeyType = keyType;
+			m_SecurityProviderType = securityProviderType;
 		}
 
         /// <summary>
@@ -53,38 +54,33 @@ namespace AjaxPro
 		{
 			try
 			{
-				m_CryptProvider = (IAjaxCryptProvider)Activator.CreateInstance(Type.GetType(m_CryptType), new object[0]);
-				m_KeyProvider = (IAjaxKeyProvider)Activator.CreateInstance(Type.GetType(m_KeyType), new object[0]);
+				if (m_SecurityProviderType != null)
+				{
+					Type t = Type.GetType(m_SecurityProviderType);
 
-				m_CryptProvider.KeyProvider = m_KeyProvider;
+					if (t == null)
+						return false;
 
-				return true;
+					m_SecurityProvider = (AjaxSecurityProvider)Activator.CreateInstance(t, new object[0]);
+				}
 			}
 			catch(Exception)
 			{
+				return false;
 			}
 
-			return false;
+			return true;
 		}
 
 		#region Public Properties
 
         /// <summary>
-        /// Gets the crypt provider.
+        /// Gets the security provider.
         /// </summary>
         /// <value>The crypt provider.</value>
-		public IAjaxCryptProvider CryptProvider
+		public AjaxSecurityProvider SecurityProvider
 		{
-			get{ return m_CryptProvider; }
-		}
-
-        /// <summary>
-        /// Gets the key provider.
-        /// </summary>
-        /// <value>The key provider.</value>
-		public IAjaxKeyProvider KeyProvider
-		{
-			get{ return m_KeyProvider; }
+			get{ return m_SecurityProvider; }
 		}
 
 		#endregion

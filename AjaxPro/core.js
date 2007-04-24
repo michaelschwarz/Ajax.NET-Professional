@@ -129,7 +129,7 @@ AjaxPro.IFrameXmlHttp.prototype = {
 	}
 };
 
-var progids = ["Msxml2.XMLHTTP.4.0", "MSXML2.XMLHTTP", "Microsoft.XMLHTTP"];
+var progids = ["Msxml2.XMLHTTP.6.0", "Msxml2.XMLHTTP.3.0", "MSXML2.XMLHTTP", "Microsoft.XMLHTTP"];
 var progid = null;
 
 if(typeof ActiveXObject != "undefined") {
@@ -169,7 +169,7 @@ Object.extend(AjaxPro, {
 	cryptProvider: null,
 	queue: null,
 	token: "",
-	version: "6.10.6.2",
+	version: "7.4.24.1",
 	ID: "AjaxPro",
 	noActiveX: false,
 	timeoutPeriod: 10*1000,
@@ -342,7 +342,7 @@ AjaxPro.Request.prototype = {
 		if(!noContent) {
 			var responseText = "" + this.xmlHttp.responseText;
 
-			if(AjaxPro.cryptProvider != null && typeof AjaxPro.cryptProvider == "function") {
+			if(AjaxPro.cryptProvider != null && typeof AjaxPro.cryptProvider.decrypt == "function") {
 				responseText = AjaxPro.cryptProvider.decrypt(responseText);
 			}
 
@@ -351,7 +351,13 @@ AjaxPro.Request.prototype = {
 			} else {
 				if(responseText != null && responseText.trim().length > 0) {
 					r.json = responseText;
-					eval("r.value = " + responseText + "*" + "/");
+					var v = null;
+					debugger;
+					eval("v = " + responseText + ";");
+					if(v != null) {
+						if(typeof v.value != "undefined") r.value = v.value;
+						else if(typeof v.error != "undefined") r.error = v.error;
+					}
 				}
 			}
 		}
@@ -395,7 +401,7 @@ AjaxPro.Request.prototype = {
 		}
 		
 		var json = AjaxPro.toJSON(args) + "";
-		if(AjaxPro.cryptProvider != null) {
+		if(AjaxPro.cryptProvider != null && typeof AjaxPro.cryptProvider.encrypt == "function") {
 			json = AjaxPro.cryptProvider.encrypt(json);
 		}
 		
