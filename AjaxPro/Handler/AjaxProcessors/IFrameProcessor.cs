@@ -1,7 +1,7 @@
 /*
  * IFrameProcessor.cs
  * 
- * Copyright © 2006 Michael Schwarz (http://www.ajaxpro.info).
+ * Copyright © 2007 Michael Schwarz (http://www.ajaxpro.info).
  * All Rights Reserved.
  * 
  * Permission is hereby granted, free of charge, to any person 
@@ -41,6 +41,7 @@
  * MS	06-07-19	fixed if method argument is from type IJavaScriptObject
  * MS	06-07-20	removed the fix above and put it to JavaScriptConverter
  * MS	06-10-03	fixed bug with CryptProvider
+ * MS	07-03-24	fixed Ajax token bug
  * 
  */
 using System;
@@ -93,8 +94,8 @@ namespace AjaxPro
 			hashCode = v.GetHashCode();
 
 			// check if we have to decrypt the JSON string.
-			if(Utility.Settings != null && Utility.Settings.Encryption != null)
-				v = Utility.Settings.Encryption.CryptProvider.Decrypt(v);
+			if(Utility.Settings != null && Utility.Settings.Security != null)
+				v = Utility.Settings.Security.SecurityProvider.Decrypt(v);
 
 			context.Items.Add(Constant.AjaxID + ".JSON", v);
 
@@ -131,17 +132,21 @@ namespace AjaxPro
 			//   - An ordered list of values. In most languages, this is realized 
 			//     as an array. 
 
-			string res = JavaScriptSerializer.Serialize(o);
-			System.Text.StringBuilder sb = new System.Text.StringBuilder();
-
-			sb.Append("<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/></head><body>\r\n<script type=\"text/javascript\" defer=\"defer\">\r\ndocument.body.res = \"");
+			string res;
+			if (o is Exception)
+				res = "{\"error\":" + JavaScriptSerializer.Serialize(o) + "}";
+			else
+				res = "{\"value\":" + JavaScriptSerializer.Serialize(o) + "}";
 
 			// check if we have to encrypt the JSON string.
-			if (Utility.Settings != null && Utility.Settings.Encryption != null)
-				res = Utility.Settings.Encryption.CryptProvider.Encrypt(res);
+			if (Utility.Settings != null && Utility.Settings.Security != null)
+				res = Utility.Settings.Security.SecurityProvider.Encrypt(res);
 
+
+			System.Text.StringBuilder sb = new System.Text.StringBuilder();
+			sb.Append("<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/></head><body>\r\n<script type=\"text/javascript\" defer=\"defer\">\r\ndocument.body.res = \"");
 			sb.Append(res.Replace("\\", "\\\\").Replace("\"", "\\\""));
-			sb.Append("/\"+\"*\";\r\n</script>\r\n</body></html>");
+			sb.Append("\";\r\n</script>\r\n</body></html>");
 
 			context.Response.ContentType = this.ContentType;
 			context.Response.ContentEncoding = System.Text.Encoding.UTF8;
@@ -215,6 +220,34 @@ namespace AjaxPro
 			{
 				return "text/html";
 			}
+		}
+
+		public override bool IsValidAjaxToken()
+		{
+			if (context == null)
+				return false;
+
+			if (Utility.Settings == null || Utility.Settings.Security == null || Utility.Settings.Security.SecurityProvider == null)
+				return true;
+
+			if (Utility.Settings.Security.SecurityProvider.AjaxTokenEnabled == false)
+				return true;
+
+			string token = context.Request["X-" + Constant.AjaxID + "-Token"];
+
+			if (token != null)
+			{
+				try
+				{
+					if (Utility.Settings.Security.SecurityProvider.IsValidAjaxToken(token, Utility.Settings.TokenSitePassword))
+						return true;
+				}
+				catch (Exception)
+				{
+				}
+			}
+
+			return false;
 		}
 
 		#endregion
