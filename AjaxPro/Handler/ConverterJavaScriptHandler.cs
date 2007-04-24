@@ -1,7 +1,7 @@
 /*
  * ConverterJavaScriptHandler.cs
  * 
- * Copyright © 2006 Michael Schwarz (http://www.ajaxpro.info).
+ * Copyright © 2007 Michael Schwarz (http://www.ajaxpro.info).
  * All Rights Reserved.
  * 
  * Permission is hereby granted, free of charge, to any person 
@@ -27,7 +27,7 @@
  * MS	06-05-30	changed using new converter collections
  * MS	06-06-06	fixed If-Modified-Since http header if using zip
  * MS	06-06-07	changed to internal
- * 
+ * MS	07-04-24	using new SecurityProvider
  * 
  */
 using System;
@@ -112,13 +112,21 @@ namespace AjaxPro
 
 ");
 
-			if(Utility.Settings != null && Utility.Settings.Encryption != null)
+			if(Utility.Settings != null && Utility.Settings.Security != null)
 			{
-				context.Response.Write(Utility.Settings.Encryption.CryptProvider.ClientScript);
-				context.Response.Write("\r\n");
+				try
+				{
+					string secrityScript = Utility.Settings.Security.SecurityProvider.ClientScript;
 
-				context.Response.Write(Utility.Settings.Encryption.KeyProvider.ClientScript);
-				context.Response.Write("\r\n");
+					if (secrityScript != null && secrityScript.Length > 0)
+					{
+						context.Response.Write(secrityScript);
+						context.Response.Write("\r\n");
+					}
+				}
+				catch (Exception)
+				{
+				}
 			}
 
 			StringCollection convTypes = new StringCollection();
