@@ -23,7 +23,14 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-/*
+/* Developers of Ajax.NET Professional (AjaxPro)
+ * MS	Michael Schwarz		info@schwarz-interactive.de
+ * TB	Tim Byng			
+ * MR	Matthew Raymer
+ * 
+ * 
+ * 
+ * 
  * MS	06-04-03	fixed missing http error status code in core.js
  * MS	06-04-04	added AjaxPro.onError, onTimeout, onStateChanged, onLoading to core.js
  * MS	06-04-05	removed Object.prototype.extend from prototype.js and all othere files using this
