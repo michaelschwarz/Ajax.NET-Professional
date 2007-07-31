@@ -3,7 +3,7 @@ set NET20="%WINDIR%\Microsoft.NET\Framework\v2.0.50727"
 set ZIP="Z:\AjaxPro"
 set ARG=
 set DEFINE=
-set VERSION=7.4.24.1
+set VERSION=7.7.31.1
 
 
 
