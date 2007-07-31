@@ -172,7 +172,7 @@ Object.extend(AjaxPro, {
 	version: "7.7.31.1",
 	ID: "AjaxPro",
 	noActiveX: false,
-	timeoutPeriod: 10*1000,
+	timeoutPeriod: 15*1000,
 	queue: null,
 	noUtcTime: false,
 	m : {
@@ -340,6 +340,11 @@ AjaxPro.Request.prototype = {
 	},
 	createResponse: function(r, noContent) {
 		if(!noContent) {
+			if(typeof(this.xmlHttp.responseText) == "unknown") {
+				r.error = {Message: "XmlHttpRequest error reading property responseText.", Type: "XmlHttpRequestException"};
+				return r;
+			}
+		
 			var responseText = "" + this.xmlHttp.responseText;
 
 			if(AjaxPro.cryptProvider != null && typeof AjaxPro.cryptProvider.decrypt == "function") {
@@ -445,6 +450,8 @@ AjaxPro.RequestQueue = function(conc) {
 		};
 		this.requests[i].callbackHandle = this.requests[i].callback.bind(this.requests[i]);
 	}
+	
+	this.processHandle = this.process.bind(this);
 };
 
 AjaxPro.RequestQueue.prototype = {
@@ -468,13 +475,13 @@ AjaxPro.RequestQueue.prototype = {
 			}
 		}
 		if(this.queue.length > 0 && this.timer == null) {
-			this.timer = setTimeout(this.process.bind(this), 0);
+			this.timer = setTimeout(this.processHandle, 0);
 		}
 	},
 	add: function(url, method, args, e) {
 		this.queue.push([url, method, args, e]);
 		if(this.timer == null) {
-			this.timer = setTimeout(this.process.bind(this), 0);
+			this.timer = setTimeout(this.processHandle, 0);
 		}
 		// this.process();
 	},
