@@ -352,7 +352,6 @@ AjaxPro.Request.prototype = {
 				if(responseText != null && responseText.trim().length > 0) {
 					r.json = responseText;
 					var v = null;
-					debugger;
 					eval("v = " + responseText + ";");
 					if(v != null) {
 						if(typeof v.value != "undefined") r.value = v.value;
