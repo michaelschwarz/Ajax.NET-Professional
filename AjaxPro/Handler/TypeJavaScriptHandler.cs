@@ -33,7 +33,7 @@
  * MS	06-06-06	fixed If-Modified-Since http header if using zip
  * MS	06-06-09	removed addNamespace use
  * MS	07-04-24	using new TypeJavaScriptProvider
- * 
+ *
  * 
  * 
  * 

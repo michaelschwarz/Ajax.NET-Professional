@@ -25,6 +25,10 @@
  */
 /*
  * MS	07-04-24	initial version
+ * TB	07-07-31	added Ext JS framework
+ * 
+ * 
+ * 
  * 
  */
 using System;
@@ -283,6 +287,120 @@ namespace AjaxPro
 				//if (i < methods.Count - 1)
 				//    sb.Append(",");
 			}
+		}
+	}
+
+	public class ExtTypeJavaScriptProvider : TypeJavaScriptProvider
+	{
+		public ExtTypeJavaScriptProvider(Type type, string url, StringBuilder sb)
+			: base(type, url, sb)
+		{
+		}
+
+		public override void RenderClassBegin()
+		{
+			string clientNS = GetClientNamespace();
+
+			sb.Append(clientNS);
+			sb.Append("_class = function() {");
+
+			sb.Append(@"
+    this.connection = new Ext.data.AjaxProConnection({
+        url: """ + m_URL + @""",
+        listeners: {
+            requestcomplete: function(connection, response, options) {
+                var o = Ext.decode(response.responseText);
+                var onsuccess = options.onsuccess;
+                var onerror = options.onerror;
+                if(o != null) {
+                    if (typeof o.value != ""undefined"" && typeof onsuccess == ""function"") {
+                        onsuccess(o.value);
+                        return;
+                    } else if(typeof o.error != ""undefined"" && typeof onerror == ""function"") {
+                        onerror(o.error);
+                        return;
+                    }
+                }
+                if(typeof onerror == ""function"") {
+                    onerror({""Message"": ""Failed.""});
+                }
+            },
+            requestexception: function(connection, response, options, e) {
+                var onerror = options.onerror;
+                if(typeof onerror == ""function"") {
+                    onerror({""Message"": ""Failed.""});
+                }
+            }
+        }
+    });
+};");
+
+			sb.Append("\r\n\r\n");
+			sb.Append(clientNS);
+			sb.Append("_class.prototype = {\r\n");
+		}
+
+		public override void RenderClassEnd()
+		{
+			string clientNS = GetClientNamespace();
+
+			sb.Append("var ");
+			sb.Append(clientNS);
+			sb.Append(" = new ");
+			sb.Append(clientNS);
+			sb.Append("_class();\r\n\r\n");
+		}
+
+		public override void RenderMethods(MethodInfo[] methods)
+		{
+			string clientNS = GetClientNamespace();
+
+			for (int i = 0; i < methods.Length; i++)
+			{
+				MethodInfo method = methods[i];
+				string methodName = GetClientMethodName(method);
+				ParameterInfo[] pi = method.GetParameters();
+
+				sb.Append("    ");
+				sb.Append(methodName);
+				sb.Append(": function(");
+
+				for (int p = 0; p < pi.Length; p++)
+				{
+					sb.Append(pi[p].Name);
+					sb.Append(", ");
+				}
+
+				sb.Append("onsuccess, onerror) {");
+
+				sb.Append(@"
+        return this.connection.request({
+            ajaxProMethod: """ + methodName + @""",
+            ajaxProToken: (typeof AjaxPro !== ""undefined"" && AjaxPro.token !== null) ? AjaxPro.token : """",
+            params: {");
+
+				for (int p = 0; p < pi.Length; p++)
+				{
+					sb.Append("\"");
+					sb.Append(pi[p].Name);
+					sb.Append("\": ");
+					sb.Append(pi[p].Name);
+
+					if (p < pi.Length - 1)
+						sb.Append(", ");
+				}
+
+				sb.Append(@"},
+            onsuccess: onsuccess,
+            onerror: onerror
+        });
+    }");
+
+				if (i < methods.Length - 1)
+					sb.Append(",\r\n");
+			}
+
+			sb.Append("\r\n};\r\n\r\n");
 		}
 	}
 }
