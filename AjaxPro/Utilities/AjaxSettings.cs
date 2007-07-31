@@ -48,7 +48,8 @@ namespace AjaxPro
     internal class AjaxSettings
     {
 		private System.Collections.Specialized.StringCollection m_OldStyle = new System.Collections.Specialized.StringCollection();
-
+		private bool m_IncludeTypeProperty = false;
+		
 #if(NET20)
 		internal Dictionary<Type, IJavaScriptConverter> SerializableConverters;
 		internal Dictionary<Type, IJavaScriptConverter> DeserializableConverters;
@@ -77,6 +78,12 @@ namespace AjaxPro
 		{
 			get { return m_OldStyle; }
 			set { m_OldStyle = value; }
+		}
+
+		internal bool IncludeTypeProperty
+		{
+			get { return m_IncludeTypeProperty; }
+			set { m_IncludeTypeProperty = value; }
 		}
     }
 #else
