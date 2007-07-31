@@ -62,21 +62,21 @@ namespace AjaxPro
         /// using AjaxPro;
         /// namespace Demo
         /// {
-        /// public class WebForm1 : System.Web.UI.Page
-        /// {
-        /// private void Page_Load(object sender, System.EventArgs e)
-        /// {
-        /// string json = "[1,2,3,4,5,6]";
-        /// object o = JavaScriptDeserializer.Deserialize(json, typeof(int[]);
-        /// if(o != null)
-        /// {
-        /// foreach(int i in (int[])o)
-        /// {
-        /// Response.Write(i.ToString());
-        /// }
-        /// }
-        /// }
-        /// }
+        ///		public class WebForm1 : System.Web.UI.Page
+        ///		{
+        ///			private void Page_Load(object sender, System.EventArgs e)
+        ///			{
+        ///				string json = "[1,2,3,4,5,6]";
+        ///				object o = JavaScriptDeserializer.Deserialize(json, typeof(int[]);
+        ///				if(o != null)
+        ///				{
+        ///					foreach(int i in (int[])o)
+        ///					{
+        ///						Response.Write(i.ToString());
+        ///					}
+        ///				}
+        ///			}
+        ///		}
         /// }
         /// </example>
 		public static object DeserializeFromJson(string json, Type type)
@@ -88,6 +88,12 @@ namespace AjaxPro
 		}
 
 #if(NET20)
+		
+		public static T Deserialize<T>(IJavaScriptObject o)
+		{
+			return (T)Deserialize(o, typeof(T));
+		}
+
         /// <summary>
         /// Converts an JSON string into an NET object.
         /// </summary>
