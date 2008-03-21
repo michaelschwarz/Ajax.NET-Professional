@@ -33,6 +33,7 @@
  * MS	06-09-26	improved performance using StringBuilder
  * MS	06-09-29	added new oldStyle/noUtcTime configuration
  *					fixed using rednerDateTimeAsString serialization
+ * MS	08-03-21	using ASP.NET AJAX format for dates (new default)
  * 
  */
 using System;
@@ -49,9 +50,9 @@ namespace AjaxPro
 		private Regex r = new Regex(@"(\d{4}),(\d{1,2}),(\d{1,2}),(\d{1,2}),(\d{1,2}),(\d{1,2}),(\d{1,3})", RegexOptions.Compiled);
 		private double UtcOffsetMinutes = TimeZone.CurrentTimeZone.GetUtcOffset(DateTime.Now).TotalMinutes;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DateTimeConverter"/> class.
-        /// </summary>
+		/// <summary>
+		/// Initializes a new instance of the <see cref="DateTimeConverter"/> class.
+		/// </summary>
 		public DateTimeConverter()
 			: base()
 		{
@@ -59,12 +60,12 @@ namespace AjaxPro
 			m_deserializableTypes = new Type[] { typeof(DateTime) };
 		}
 
-        /// <summary>
-        /// Converts an IJavaScriptObject into an NET object.
-        /// </summary>
-        /// <param name="o">The IJavaScriptObject object to convert.</param>
-        /// <param name="t"></param>
-        /// <returns>Returns a .NET object.</returns>
+		/// <summary>
+		/// Converts an IJavaScriptObject into an NET object.
+		/// </summary>
+		/// <param name="o">The IJavaScriptObject object to convert.</param>
+		/// <param name="t"></param>
+		/// <returns>Returns a .NET object.</returns>
 		public override object Deserialize(IJavaScriptObject o, Type t)
 		{
 			JavaScriptObject ht = o as JavaScriptObject;
@@ -96,7 +97,7 @@ namespace AjaxPro
 					//DateTime d = new DateTime(Year, Month, Day, Hour, Minute, Second, Millisecond);
 
 					string[] p = s.Split(',');
-					return new DateTime(int.Parse(p[0]), int.Parse(p[1])+1, int.Parse(p[2]), int.Parse(p[3]), int.Parse(p[4]), int.Parse(p[5]), int.Parse(p[6])).AddMinutes(UtcOffsetMinutes);
+					return new DateTime(int.Parse(p[0]), int.Parse(p[1]) + 1, int.Parse(p[2]), int.Parse(p[3]), int.Parse(p[4]), int.Parse(p[5]), int.Parse(p[6])).AddMinutes(UtcOffsetMinutes);
 				}
 				else if (s.StartsWith("new Date(") && s.EndsWith(")"))
 				{
@@ -112,8 +113,22 @@ namespace AjaxPro
 					return (Utility.Settings.OldStyle.Contains("noUtcTime") ? d1 : d1.AddMinutes(UtcOffsetMinutes)); // TimeZone.CurrentTimeZone.GetUtcOffset(d1).TotalMinutes);
 				}
 			}
-			else if(o is JavaScriptString)
+			else if (o is JavaScriptString)
 			{
+				string d = o.ToString();
+
+#if(NET20)
+				if (d.StartsWith("/Date(") && d.EndsWith(")/"))
+#else
+				if (d.Length >= 9 && d.Substring(0, 6) == "/Date(" && d.Substring(d.Length -2) == ")/")
+#endif
+				{
+					DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, new System.Globalization.GregorianCalendar(), System.DateTimeKind.Utc);
+
+					return new DateTime(
+							long.Parse(d.Substring(6, d.Length - 6 - 2)) * TimeSpan.TicksPerMillisecond, DateTimeKind.Utc).AddTicks(Epoch.Ticks);
+				}
+
 #if(NET20)
 				DateTime d2;
 
@@ -139,7 +154,7 @@ namespace AjaxPro
 				}
 #endif
 			}
-			
+
 
 			if (ht == null)
 				throw new NotSupportedException();
@@ -156,11 +171,11 @@ namespace AjaxPro
 			return (Utility.Settings.OldStyle.Contains("noUtcTime") ? d5 : d5.AddMinutes(UtcOffsetMinutes)); // TimeZone.CurrentTimeZone.GetUtcOffset(d3).TotalMinutes);
 		}
 
-        /// <summary>
-        /// Converts a .NET object into a JSON string.
-        /// </summary>
-        /// <param name="o">The object to convert.</param>
-        /// <returns>Returns a JSON string.</returns>
+		/// <summary>
+		/// Converts a .NET object into a JSON string.
+		/// </summary>
+		/// <param name="o">The object to convert.</param>
+		/// <returns>Returns a JSON string.</returns>
 		public override string Serialize(object o)
 		{
 			StringBuilder sb = new StringBuilder();
@@ -168,11 +183,11 @@ namespace AjaxPro
 			return sb.ToString();
 		}
 
-        /// <summary>
-        /// Serializes the specified o.
-        /// </summary>
-        /// <param name="o">The o.</param>
-        /// <param name="sb">The sb.</param>
+		/// <summary>
+		/// Serializes the specified o.
+		/// </summary>
+		/// <param name="o">The o.</param>
+		/// <param name="sb">The sb.</param>
 		public override void Serialize(object o, StringBuilder sb)
 		{
 			if (!(o is DateTime))
@@ -180,13 +195,25 @@ namespace AjaxPro
 
 			DateTime dt = (DateTime)o;
 
+			bool noUtcTime = Utility.Settings.OldStyle.Contains("noUtcTime");
+			if (!noUtcTime)
+				dt = dt.ToUniversalTime();
+
+			if (!AjaxPro.Utility.Settings.OldStyle.Contains("renderNotASPAJAXDateTime"))
+			{
+				DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, new System.Globalization.GregorianCalendar(), System.DateTimeKind.Utc);
+
+				sb.Append("\"\\/Date(" + ((dt.Ticks - Epoch.Ticks) / TimeSpan.TicksPerMillisecond) + ")\\/\"");
+				return;
+			}
+
+
+
 #if(JSONLIB)
 			JavaScriptUtil.QuoteString(dt.ToString(System.Globalization.DateTimeFormatInfo.InvariantInfo.UniversalSortableDateTimePattern), sb);
 #else
-			bool noUtcTime = Utility.Settings.OldStyle.Contains("noUtcTime");
 
-			if(!noUtcTime)
-				dt = dt.ToUniversalTime();
+
 
 			if (AjaxPro.Utility.Settings.OldStyle.Contains("renderDateTimeAsString"))
 			{
@@ -194,7 +221,7 @@ namespace AjaxPro
 				return;
 			}
 
-			if(!noUtcTime)
+			if (!noUtcTime)
 				sb.AppendFormat("new Date(Date.UTC({0},{1},{2},{3},{4},{5},{6}))",
 					dt.Year,
 					dt.Month - 1,

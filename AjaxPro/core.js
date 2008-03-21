@@ -175,6 +175,32 @@ Object.extend(AjaxPro, {
 	timeoutPeriod: 15*1000,
 	queue: null,
 	noUtcTime: false,
+	regExDate: function(str,p1, p2,offset,s) {
+        str = str.substring(1).replace('"','');
+        var date = str;
+        
+        if (str.substring(0,7) == "\\\/Date(") {
+            str = str.match(/Date\((.*?)\)/)[1];                        
+            date = "new Date(" +  parseInt(str) + ")";
+        }
+        else { // ISO Date 2007-12-31T23:59:59Z                                     
+            var matches = str.split( /[-,:,T,Z]/);        
+            matches[1] = (parseInt(matches[1],0)-1).toString();                     
+            date = "new Date(Date.UTC(" + matches.join(",") + "))";         
+       }                  
+        return date;
+    },
+    parse: function(text) {
+		// not yet possible as we still return new type() JSON
+//		if (!(!(/[^,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]/.test(
+//		text.replace(/"(\\.|[^"\\])*"/g, '')))  ))
+//			throw new Error("Invalid characters in JSON parse string.");                 
+
+        var regEx = /(\"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}.*?\")|(\"\\\/Date\(.*?\)\\\/")/g;
+        text = text.replace(regEx,this.regExDate);      
+
+        return eval('(' + text + ')');    
+    },
 	m : {
 		'\b': '\\b',
 		'\t': '\\t',
@@ -215,26 +241,26 @@ Object.extend(AjaxPro, {
 			}
 			return "[" + v.join(",") + "]";
 		} else if (c == Date) {
-			var d = {};
-			d.__type = "System.DateTime";
-			if(AjaxPro.noUtcTime == true) {
-				d.Year = o.getFullYear();
-				d.Month = o.getMonth() +1;
-				d.Day = o.getDate();
-				d.Hour = o.getHours();
-				d.Minute = o.getMinutes();
-				d.Second = o.getSeconds();
-				d.Millisecond = o.getMilliseconds();
-			} else {
-				d.Year = o.getUTCFullYear();
-				d.Month = o.getUTCMonth() +1;
-				d.Day = o.getUTCDate();
-				d.Hour = o.getUTCHours();
-				d.Minute = o.getUTCMinutes();
-				d.Second = o.getUTCSeconds();
-				d.Millisecond = o.getUTCMilliseconds();
-			}
-			return AjaxPro.toJSON(d);
+//			var d = {};
+//			d.__type = "System.DateTime";
+//			if(AjaxPro.noUtcTime == true) {
+//				d.Year = o.getFullYear();
+//				d.Month = o.getMonth() +1;
+//				d.Day = o.getDate();
+//				d.Hour = o.getHours();
+//				d.Minute = o.getMinutes();
+//				d.Second = o.getSeconds();
+//				d.Millisecond = o.getMilliseconds();
+//			} else {
+//				d.Year = o.getUTCFullYear();
+//				d.Month = o.getUTCMonth() +1;
+//				d.Day = o.getUTCDate();
+//				d.Hour = o.getUTCHours();
+//				d.Minute = o.getUTCMinutes();
+//				d.Second = o.getUTCSeconds();
+//				d.Millisecond = o.getUTCMilliseconds();
+//			}
+			return AjaxPro.toJSON("/Date(" + new Date(Date.UTC(o.getUTCFullYear(), o.getUTCMonth(), o.getUTCDate(), o.getUTCHours(), o.getUTCMinutes(), o.getUTCSeconds(), o.getUTCMilliseconds())).getTime() + ")/");
 		}
 		if(typeof o.toJSON == "function") {
 			return o.toJSON();
@@ -357,7 +383,7 @@ AjaxPro.Request.prototype = {
 				if(responseText != null && responseText.trim().length > 0) {
 					r.json = responseText;
 					var v = null;
-					eval("v = " + responseText + ";");
+					v = AjaxPro.parse(responseText);
 					if(v != null) {
 						if(typeof v.value != "undefined") r.value = v.value;
 						else if(typeof v.error != "undefined") r.error = v.error;
