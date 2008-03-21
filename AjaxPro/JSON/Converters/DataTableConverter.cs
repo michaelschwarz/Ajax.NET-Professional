@@ -32,7 +32,7 @@
  * MS	06-09-24	use QuoteString instead of Serialize
  * MS	06-09-26	improved performance using StringBuilder
  * MS	07-04-24	added renderJsonCompliant serialization
- * 
+ * MS	08-03-21	fixed DataTable client-side script
  * 
  * 
  * 
@@ -50,10 +50,11 @@ namespace AjaxPro
 	{
 		private string clientType = "Ajax.Web.DataTable";
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DataTableConverter"/> class.
-        /// </summary>
-		public DataTableConverter() : base()
+		/// <summary>
+		/// Initializes a new instance of the <see cref="DataTableConverter"/> class.
+		/// </summary>
+		public DataTableConverter()
+			: base()
 		{
 			m_AllowInheritance = true;
 
@@ -61,14 +62,14 @@ namespace AjaxPro
 			m_deserializableTypes = new Type[] { typeof(DataTable) };
 		}
 
-        /// <summary>
-        /// Render the JavaScript code for prototypes or any other JavaScript method needed from this converter
-        /// on the client-side.
-        /// </summary>
-        /// <returns>Returns JavaScript code.</returns>
+		/// <summary>
+		/// Render the JavaScript code for prototypes or any other JavaScript method needed from this converter
+		/// on the client-side.
+		/// </summary>
+		/// <returns>Returns JavaScript code.</returns>
 		public override string GetClientScript()
 		{
-			if (!AjaxPro.Utility.Settings.OldStyle.Contains("renderJsonCompliant"))
+			if (AjaxPro.Utility.Settings.OldStyle.Contains("renderJsonCompliant"))
 				return "";
 
 			return JavaScriptUtil.GetClientNamespaceRepresentation(clientType) + @"
@@ -113,20 +114,20 @@ namespace AjaxPro
 ";
 		}
 
-        /// <summary>
-        /// Converts an IJavaScriptObject into an NET object.
-        /// </summary>
-        /// <param name="o">The IJavaScriptObject object to convert.</param>
-        /// <param name="t"></param>
-        /// <returns>Returns a .NET object.</returns>
+		/// <summary>
+		/// Converts an IJavaScriptObject into an NET object.
+		/// </summary>
+		/// <param name="o">The IJavaScriptObject object to convert.</param>
+		/// <param name="t"></param>
+		/// <returns>Returns a .NET object.</returns>
 		public override object Deserialize(IJavaScriptObject o, Type t)
 		{
 			JavaScriptObject ht = o as JavaScriptObject;
 
-			if(ht == null)
+			if (ht == null)
 				throw new NotSupportedException();
 
-			if(!ht.Contains("Columns") || !(ht["Columns"] is JavaScriptArray) ||
+			if (!ht.Contains("Columns") || !(ht["Columns"] is JavaScriptArray) ||
 				!ht.Contains("Rows") || !(ht["Rows"] is JavaScriptArray))
 			{
 				throw new NotSupportedException();
@@ -140,24 +141,24 @@ namespace AjaxPro
 			Type colType;
 			JavaScriptArray column;
 
-			if(ht.Contains("TableName") && ht["TableName"] is JavaScriptString)
+			if (ht.Contains("TableName") && ht["TableName"] is JavaScriptString)
 				dt.TableName = ht["TableName"].ToString();
 
-			for(int i=0; i<columns.Count; i++)
+			for (int i = 0; i < columns.Count; i++)
 			{
 				column = (JavaScriptArray)columns[i];
 				colType = Type.GetType(column[1].ToString(), true);
 				dt.Columns.Add(column[0].ToString(), colType);
 			}
-		
+
 			JavaScriptArray cols = null;
 			object obj;
 
 			for (int y = 0; y < rows.Count; y++)
 			{
-//				if(!(r is JavaScriptArray))
-//					continue;
-				
+				//				if(!(r is JavaScriptArray))
+				//					continue;
+
 				cols = (JavaScriptArray)rows[y];
 				row = dt.NewRow();
 
@@ -165,21 +166,21 @@ namespace AjaxPro
 				{
 					//row[i] = JavaScriptDeserializer.Deserialize((IJavaScriptObject)cols[i], dt.Columns[i].DataType);
 
-					obj = JavaScriptDeserializer.Deserialize((IJavaScriptObject)cols[i],dt.Columns[i].DataType);
+					obj = JavaScriptDeserializer.Deserialize((IJavaScriptObject)cols[i], dt.Columns[i].DataType);
 					row[i] = (obj == null) ? DBNull.Value : obj;
 				}
 
 				dt.Rows.Add(row);
 			}
-	
+
 			return dt;
 		}
 
-        /// <summary>
-        /// Converts a .NET object into a JSON string.
-        /// </summary>
-        /// <param name="o">The object to convert.</param>
-        /// <returns>Returns a JSON string.</returns>
+		/// <summary>
+		/// Converts a .NET object into a JSON string.
+		/// </summary>
+		/// <param name="o">The object to convert.</param>
+		/// <returns>Returns a JSON string.</returns>
 		public override string Serialize(object o)
 		{
 			StringBuilder sb = new StringBuilder();
@@ -187,18 +188,18 @@ namespace AjaxPro
 			return sb.ToString();
 		}
 
-        /// <summary>
-        /// Serializes the specified o.
-        /// </summary>
-        /// <param name="o">The o.</param>
-        /// <param name="sb">The sb.</param>
+		/// <summary>
+		/// Serializes the specified o.
+		/// </summary>
+		/// <param name="o">The o.</param>
+		/// <param name="sb">The sb.</param>
 		public override void Serialize(object o, StringBuilder sb)
 		{
 			DataTable dt = o as DataTable;
 
-			if(dt == null)
+			if (dt == null)
 				throw new NotSupportedException();
-			
+
 			DataColumnCollection cols = dt.Columns;
 			DataRowCollection rows = dt.Rows;
 
