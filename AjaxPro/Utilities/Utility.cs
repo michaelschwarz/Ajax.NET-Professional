@@ -59,563 +59,563 @@ using System.Collections.Specialized;
 
 namespace AjaxPro
 {
+    /// <summary>
+    /// Provides methods to register Ajax methods.
+    /// </summary>
+    public sealed class Utility
+    {
+#if(!JSONLIB)
 	/// <summary>
-	/// Provides methods to register Ajax methods.
+	/// Set the HandlerExtension configured in web.config/configuration/system.web/httpHandlers/add/@path:
 	/// </summary>
-	public sealed class Utility
+	public static string HandlerExtension = ".ashx";
+
+	/// <summary>
+	/// Set the HandlerPath configured in web.config/configuration/system.web/httpHandlers/add/@path:
+	/// </summary>
+	public static string HandlerPath = "ajaxpro";
+#endif
+	private static AjaxSettings m_Settings = null;
+	private static object m_SettingsLock = new object();
+	internal static bool ConverterRegistered = false;
+
+	/// <summary>
+	/// Gets the ajax ID.
+	/// </summary>
+	/// <value>The ajax ID.</value>
+	public static string AjaxID
 	{
+	    get
+	    {
+		return Constant.AjaxID;
+	    }
+	}
 #if(!JSONLIB)
-		/// <summary>
-		/// Set the HandlerExtension configured in web.config/configuration/system.web/httpHandlers/add/@path:
-		/// </summary>
-		public static string HandlerExtension = ".ashx";
+	/// <summary>
+	/// Returns the session identifier.
+	/// </summary>
+	/// <returns>
+	/// Returns the URL part for the session identifier.
+	/// </returns>
+	internal static string GetSessionUri()
+	{
+	    string cookieUri = "";
 
-		/// <summary>
-		/// Set the HandlerPath configured in web.config/configuration/system.web/httpHandlers/add/@path:
-		/// </summary>
-		public static string HandlerPath = "ajaxpro";
-#endif
-		private static AjaxSettings m_Settings = null;
-		private static object m_SettingsLock = new object();
-		internal static bool ConverterRegistered = false;
-
-        /// <summary>
-        /// Gets the ajax ID.
-        /// </summary>
-        /// <value>The ajax ID.</value>
-		public static string AjaxID
-		{
-			get
-			{
-				return Constant.AjaxID;
-			}
-		}
-#if(!JSONLIB)
-        /// <summary>
-        /// Returns the session identifier.
-        /// </summary>
-        /// <returns>
-        /// Returns the URL part for the session identifier.
-        /// </returns>
-		internal static string GetSessionUri()
-		{
-			string cookieUri = "";
-			
-			if ((System.Web.HttpContext.Current.Session != null && System.Web.HttpContext.Current.Session.IsCookieless)
+	    if ((System.Web.HttpContext.Current.Session != null && System.Web.HttpContext.Current.Session.IsCookieless)
 #if(NET20)
-				 || (!System.Web.Security.FormsAuthentication.CookiesSupported && System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+ || (!System.Web.Security.FormsAuthentication.CookiesSupported && System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
 #endif
-				)
-			{
+)
+	    {
 #if(NET20)
-				cookieUri = "(" + System.Web.HttpContext.Current.Request.ServerVariables["HTTP_ASPFILTERSESSIONID"] + ")";
+		cookieUri = "(" + System.Web.HttpContext.Current.Request.ServerVariables["HTTP_ASPFILTERSESSIONID"] + ")";
 #else
 				cookieUri = "(" + System.Web.HttpContext.Current.Session.SessionID + ")";
 #endif
-			}
+	    }
 
-			if (cookieUri != null && cookieUri.Length != 0)
-				cookieUri += "/";
+	    if (cookieUri != null && cookieUri.Length != 0)
+		cookieUri += "/";
 
-			return cookieUri;
-		}
+	    return cookieUri;
+	}
 
-        /// <summary>
-        /// Returns the name of the class and method the AjaxMethod will be rendered to the client-side JavaScript.
-        /// </summary>
-        /// <param name="method">The method you want to call.</param>
-        /// <returns>
-        /// Returns a string separated by a comma, i.e. "MyNamespace.MyClass,MyMethod"
-        /// </returns>
-		[Obsolete("The recommended alternative is AjaxPro.ClientMethod.FromMethodInfo.", false)]
-		public static string GetClientMethod(MethodInfo method)
-		{
-			ClientMethod cm = ClientMethod.FromMethodInfo(method);
+	/// <summary>
+	/// Returns the name of the class and method the AjaxMethod will be rendered to the client-side JavaScript.
+	/// </summary>
+	/// <param name="method">The method you want to call.</param>
+	/// <returns>
+	/// Returns a string separated by a comma, i.e. "MyNamespace.MyClass,MyMethod"
+	/// </returns>
+	[Obsolete("The recommended alternative is AjaxPro.ClientMethod.FromMethodInfo.", false)]
+	public static string GetClientMethod(MethodInfo method)
+	{
+	    ClientMethod cm = ClientMethod.FromMethodInfo(method);
 
-			if(cm == null)
-				return null;
+	    if (cm == null)
+		return null;
 
-			return cm.ClassName + "," + cm.MethodName;
-		}
+	    return cm.ClassName + "," + cm.MethodName;
+	}
 
-        /// <summary>
-        /// Writes an enum representation to the current page.
-        /// </summary>
-        /// <param name="type">The type of the enum.</param>
-		public static void RegisterEnumForAjax(Type type)
-		{
-			System.Web.UI.Page page = (System.Web.UI.Page)System.Web.HttpContext.Current.Handler;
+	/// <summary>
+	/// Writes an enum representation to the current page.
+	/// </summary>
+	/// <param name="type">The type of the enum.</param>
+	public static void RegisterEnumForAjax(Type type)
+	{
+	    System.Web.UI.Page page = (System.Web.UI.Page)System.Web.HttpContext.Current.Handler;
 
-			RegisterEnumForAjax(type, page);
-		}
+	    RegisterEnumForAjax(type, page);
+	}
 
-        /// <summary>
-        /// Writes an enum representation to the current page.
-        /// </summary>
-        /// <param name="type">The type of the enum.</param>
-        /// <param name="page">The page where the JavaScript shoult be rendered in.</param>
-		public static void RegisterEnumForAjax(Type type, System.Web.UI.Page page)
-		{
-			RegisterCommonAjax(page);
+	/// <summary>
+	/// Writes an enum representation to the current page.
+	/// </summary>
+	/// <param name="type">The type of the enum.</param>
+	/// <param name="page">The page where the JavaScript shoult be rendered in.</param>
+	public static void RegisterEnumForAjax(Type type, System.Web.UI.Page page)
+	{
+	    RegisterCommonAjax(page);
 
-			RegisterClientScriptBlock(page, Constant.AjaxID + ".AjaxEnum." + type.FullName,
-				"<script type=\"text/javascript\">\r\n" + JavaScriptUtil.GetEnumRepresentation(type) + "\r\n</script>");
-		}
+	    RegisterClientScriptBlock(page, Constant.AjaxID + ".AjaxEnum." + type.FullName,
+		    "<script type=\"text/javascript\">\r\n" + JavaScriptUtil.GetEnumRepresentation(type) + "\r\n</script>");
+	}
 
 
-        /// <summary>
-        /// Register the specified type (class) for the current page. This will also add the common JavaScript file.
-        /// </summary>
-        /// <param name="type">The tpye to register i.e. RegisterTypeForAjax(typeof(WebApplication1.WebForm1));</param>
-		public static void RegisterTypeForAjax(Type type)
-		{
-			System.Web.UI.Page page = (System.Web.UI.Page)System.Web.HttpContext.Current.Handler;
+	/// <summary>
+	/// Register the specified type (class) for the current page. This will also add the common JavaScript file.
+	/// </summary>
+	/// <param name="type">The tpye to register i.e. RegisterTypeForAjax(typeof(WebApplication1.WebForm1));</param>
+	public static void RegisterTypeForAjax(Type type)
+	{
+	    System.Web.UI.Page page = (System.Web.UI.Page)System.Web.HttpContext.Current.Handler;
 
-			RegisterTypeForAjax(type, page);
-		}
+	    RegisterTypeForAjax(type, page);
+	}
 
-        /// <summary>
-        /// Register the specified type (class) for the current page. This will also add the common JavaScript file.
-        /// </summary>
-        /// <param name="type">The tpye to register i.e. RegisterTypeForAjax(typeof(WebApplication1.WebForm1));</param>
-        /// <param name="page">The Page the script should rendered on.</param>
-		public static void RegisterTypeForAjax(Type type, System.Web.UI.Page page)
-		{
-			RegisterCommonAjax(page);
+	/// <summary>
+	/// Register the specified type (class) for the current page. This will also add the common JavaScript file.
+	/// </summary>
+	/// <param name="type">The tpye to register i.e. RegisterTypeForAjax(typeof(WebApplication1.WebForm1));</param>
+	/// <param name="page">The Page the script should rendered on.</param>
+	public static void RegisterTypeForAjax(Type type, System.Web.UI.Page page)
+	{
+	    RegisterCommonAjax(page);
 
-			string path = type.FullName + "," + type.Assembly.FullName.Substring(0, type.Assembly.FullName.IndexOf(","));
+	    string path = type.FullName + "," + type.Assembly.FullName.Substring(0, type.Assembly.FullName.IndexOf(","));
 #if(NET20)
-			if (!Settings.OldStyle.Contains("appCodeQualifiedFullName") && type.Assembly.FullName.StartsWith("App_Code."))
-				path = type.FullName + ",App_Code";
+	    if (!Settings.OldStyle.Contains("appCodeQualifiedFullName") && type.Assembly.FullName.StartsWith("App_Code."))
+		path = type.FullName + ",App_Code";
 #endif
 
-			if(Utility.Settings.UseAssemblyQualifiedName) path = type.AssemblyQualifiedName;
+	    if (Utility.Settings.UseAssemblyQualifiedName) path = type.AssemblyQualifiedName;
 
-			if(Utility.Settings != null && Utility.Settings.UrlNamespaceMappings.ContainsValue(path))
-			{
-				foreach(string key in Utility.Settings.UrlNamespaceMappings.Keys)
-				{
-					if(Utility.Settings.UrlNamespaceMappings[key].ToString() == path)
-					{
-						path = key;
-						break;
-					}
-				}
-			}
-
-			RegisterClientScriptBlock(page, "AjaxType." + type.FullName,
-				"<script type=\"text/javascript\" src=\"" + System.Web.HttpContext.Current.Request.ApplicationPath + (System.Web.HttpContext.Current.Request.ApplicationPath.EndsWith("/") ? "" : "/") + Utility.HandlerPath + "/" + Utility.GetSessionUri() + path + Utility.HandlerExtension + "\"></script>");
+	    if (Utility.Settings != null && Utility.Settings.UrlNamespaceMappings.ContainsValue(path))
+	    {
+		foreach (string key in Utility.Settings.UrlNamespaceMappings.Keys)
+		{
+		    if (Utility.Settings.UrlNamespaceMappings[key].ToString() == path)
+		    {
+			path = key;
+			break;
+		    }
 		}
+	    }
+
+	    RegisterClientScriptBlock(page, "AjaxType." + type.FullName,
+		    "<script type=\"text/javascript\" src=\"" + System.Web.HttpContext.Current.Request.ApplicationPath + (System.Web.HttpContext.Current.Request.ApplicationPath.EndsWith("/") ? "" : "/") + Utility.HandlerPath + "/" + Utility.GetSessionUri() + path + Utility.HandlerExtension + "\"></script>");
+	}
 #endif
-        /// <summary>
-        /// Register the specified converter to be used with Ajax.NET.
-        /// </summary>
-        /// <param name="converter">The IJavaScriptConverter.</param>
-		[Obsolete("The recommended alternative is to add the converter type to ajaxNet/ajaxSettings/jsonConverters.", false)]
-		public static void RegisterConverterForAjax(IJavaScriptConverter converter)
-		{
-			Utility.AddConverter(Utility.Settings, converter);
-		}
+	/// <summary>
+	/// Register the specified converter to be used with Ajax.NET.
+	/// </summary>
+	/// <param name="converter">The IJavaScriptConverter.</param>
+	[Obsolete("The recommended alternative is to add the converter type to ajaxNet/ajaxSettings/jsonConverters.", false)]
+	public static void RegisterConverterForAjax(IJavaScriptConverter converter)
+	{
+	    Utility.AddConverter(Utility.Settings, converter);
+	}
 
-		#region Internal Members
+	#region Internal Members
 
-        /// <summary>
-        /// Adds the default converter.
-        /// </summary>
-        /// <param name="settings">The settings.</param>
-		internal static void AddDefaultConverter(AjaxSettings settings)
-		{
-			#region Default Converters
+	/// <summary>
+	/// Adds the default converter.
+	/// </summary>
+	/// <param name="settings">The settings.</param>
+	internal static void AddDefaultConverter(AjaxSettings settings)
+	{
+	    #region Default Converters
 
-			AddConverter(settings, new StringConverter());
-			AddConverter(settings, new PrimitiveConverter());
-			AddConverter(settings, new GuidConverter());
-			AddConverter(settings, new ExceptionConverter());
-			AddConverter(settings, new EnumConverter());
-			AddConverter(settings, new DecimalConverter());
+	    AddConverter(settings, new StringConverter());
+	    AddConverter(settings, new PrimitiveConverter());
+	    AddConverter(settings, new GuidConverter());
+	    AddConverter(settings, new ExceptionConverter());
+	    AddConverter(settings, new EnumConverter());
+	    AddConverter(settings, new DecimalConverter());
 
-			AddConverter(settings, new NameValueCollectionConverter());
+	    AddConverter(settings, new NameValueCollectionConverter());
 
-			AddConverter(settings, new DateTimeConverter());
+	    AddConverter(settings, new DateTimeConverter());
 
-			AddConverter(settings, new DataSetConverter());
-			AddConverter(settings, new DataTableConverter());
-			AddConverter(settings, new DataViewConverter());
+	    AddConverter(settings, new DataSetConverter());
+	    AddConverter(settings, new DataTableConverter());
+	    AddConverter(settings, new DataViewConverter());
 
-			AddConverter(settings, new IJavaScriptObjectConverter());
+	    AddConverter(settings, new IJavaScriptObjectConverter());
 
 #if(NET20)
-			AddConverter(settings, new ProfileBaseConverter());
+	    AddConverter(settings, new ProfileBaseConverter());
 #endif
 
-			AddConverter(settings, new IDictionaryConverter());
-			AddConverter(settings, new IListConverter());
-			AddConverter(settings, new HashtableConverter());
-			AddConverter(settings, new IEnumerableConverter());
+	    AddConverter(settings, new IDictionaryConverter());
+	    AddConverter(settings, new IListConverter());
+	    AddConverter(settings, new HashtableConverter());
+	    AddConverter(settings, new IEnumerableConverter());
 
-			AddConverter(settings, new DataRowConverter());
-			AddConverter(settings, new HtmlControlConverter());
+	    AddConverter(settings, new DataRowConverter());
+	    AddConverter(settings, new HtmlControlConverter());
 
-			#endregion
+	    #endregion
+	}
+
+	/// <summary>
+	/// Removes the converter.
+	/// </summary>
+	/// <param name="settings">The settings.</param>
+	/// <param name="t">The t.</param>
+	internal static void RemoveConverter(AjaxSettings settings, Type t)
+	{
+	    Type key;
+	    bool removed = false;
+	    IEnumerator m = settings.SerializableConverters.Keys.GetEnumerator();
+
+	    while (!removed && m.MoveNext())
+	    {
+		key = (Type)m.Current;
+		if (settings.SerializableConverters[key].GetType() == t)
+		{
+		    settings.SerializableConverters.Remove(key);
+		    removed = true;
+		}
+	    }
+
+	    removed = false;
+	    m = settings.DeserializableConverters.Keys.GetEnumerator();
+
+	    while (!removed && m.MoveNext())
+	    {
+		key = (Type)m.Current;
+		if (settings.DeserializableConverters[key].GetType() == t)
+		{
+		    settings.DeserializableConverters.Remove(key);
+		    removed = true;
+		}
+	    }
+	}
+
+	/// <summary>
+	/// Adds the converter.
+	/// </summary>
+	/// <param name="settings">The settings.</param>
+	/// <param name="converter">The converter.</param>
+	internal static void AddConverter(AjaxSettings settings, IJavaScriptConverter converter)
+	{
+	    AddConverter(settings, converter, false);
+	}
+
+	/// <summary>
+	/// Adds the converter.
+	/// </summary>
+	/// <param name="settings">The settings.</param>
+	/// <param name="converter">The converter.</param>
+	/// <param name="replace">if set to <c>true</c> [replace].</param>
+	internal static void AddConverter(AjaxSettings settings, IJavaScriptConverter converter, bool replace)
+	{
+	    Type t;
+
+	    for (int i = 0; i < converter.SerializableTypes.Length; i++)
+	    {
+		t = converter.SerializableTypes[i];
+
+		if (settings.SerializableConverters.ContainsKey(t))
+		{
+		    if (replace)
+			settings.SerializableConverters[t] = converter;
+		    continue;
 		}
 
-        /// <summary>
-        /// Removes the converter.
-        /// </summary>
-        /// <param name="settings">The settings.</param>
-        /// <param name="t">The t.</param>
-		internal static void RemoveConverter(AjaxSettings settings, Type t)
+		settings.SerializableConverters.Add(t, converter);
+	    }
+
+	    for (int i = 0; i < converter.DeserializableTypes.Length; i++)
+	    {
+		t = converter.DeserializableTypes[i];
+
+		if (settings.DeserializableConverters.ContainsKey(t))
 		{
-			Type key;
-			bool removed = false;
-			IEnumerator m = settings.SerializableConverters.Keys.GetEnumerator();
-
-			while (!removed && m.MoveNext())
-			{
-				key = (Type)m.Current;
-				if (settings.SerializableConverters[key].GetType() == t)
-				{
-					settings.SerializableConverters.Remove(key);
-					removed = true;
-				}
-			}
-
-			removed = false;
-			m = settings.DeserializableConverters.Keys.GetEnumerator();
-
-			while (!removed && m.MoveNext())
-			{
-				key = (Type)m.Current;
-				if (settings.DeserializableConverters[key].GetType() == t)
-				{
-					settings.DeserializableConverters.Remove(key);
-					removed = true;
-				}
-			}
+		    if (replace)
+			settings.DeserializableConverters[t] = converter;
+		    continue;
 		}
 
-        /// <summary>
-        /// Adds the converter.
-        /// </summary>
-        /// <param name="settings">The settings.</param>
-        /// <param name="converter">The converter.</param>
-		internal static void AddConverter(AjaxSettings settings, IJavaScriptConverter converter)
+		settings.DeserializableConverters.Add(t, converter);
+	    }
+	}
+
+	/// <summary>
+	/// Get the settings configured in web.config.
+	/// </summary>
+	/// <value>The settings.</value>
+	internal static AjaxSettings Settings
+	{
+	    get
+	    {
+		if (m_Settings != null)
+		    return m_Settings;
+
+		lock (m_SettingsLock)
 		{
-			AddConverter(settings, converter, false);
-		}
+		    if (m_Settings != null)
+			return m_Settings;      // Ok, one other thread has already initialized this value.
 
-        /// <summary>
-        /// Adds the converter.
-        /// </summary>
-        /// <param name="settings">The settings.</param>
-        /// <param name="converter">The converter.</param>
-        /// <param name="replace">if set to <c>true</c> [replace].</param>
-		internal static void AddConverter(AjaxSettings settings, IJavaScriptConverter converter, bool replace)
-		{
-			Type t;
+		    AjaxSettings settings = null;
 
-			for (int i = 0; i < converter.SerializableTypes.Length; i++)
-			{
-				t = converter.SerializableTypes[i];
-
-				if (settings.SerializableConverters.ContainsKey(t))
-				{
-					if(replace)
-						settings.SerializableConverters[t] = converter;
-					continue;
-				}
-
-				settings.SerializableConverters.Add(t, converter);
-			}
-
-			for (int i = 0; i < converter.DeserializableTypes.Length; i++)
-			{
-				t = converter.DeserializableTypes[i];
-
-				if (settings.DeserializableConverters.ContainsKey(t))
-				{
-					if(replace)
-						settings.DeserializableConverters[t] = converter;
-					continue;
-				}
-
-				settings.DeserializableConverters.Add(t, converter);
-			}
-		}
-
-        /// <summary>
-        /// Get the settings configured in web.config.
-        /// </summary>
-        /// <value>The settings.</value>
-		internal static AjaxSettings Settings
-		{
-			get
-			{
-				if(m_Settings != null)
-					return m_Settings;
-
-				lock(m_SettingsLock)
-				{
-                    if (m_Settings != null)
-                        return m_Settings;      // Ok, one other thread has already initialized this value.
-
-					AjaxSettings settings = null;
-
-					try
-					{
+		    try
+		    {
 #if(NET20)
-						settings = (AjaxSettings)System.Configuration.ConfigurationManager.GetSection("ajaxNet/ajaxSettings");
+			settings = (AjaxSettings)System.Configuration.ConfigurationManager.GetSection("ajaxNet/ajaxSettings");
 #else
 						settings = (AjaxSettings)System.Configuration.ConfigurationSettings.GetConfig("ajaxNet/ajaxSettings");
 #endif
 
-					}
+		    }
 #if(NET20)
-					catch (System.Configuration.ConfigurationErrorsException)
+		    catch (System.Configuration.ConfigurationErrorsException)
 #else
 					catch (Exception)
 #endif
-					{}
+		    { }
 
-					if (settings == null)
-					{
-						settings = new AjaxSettings();
-						AddDefaultConverter(settings);
-					}
+		    if (settings == null)
+		    {
+			settings = new AjaxSettings();
+			AddDefaultConverter(settings);
+		    }
 
-					// now make the setting visible to all threads
-					m_Settings = settings;
+		    // now make the setting visible to all threads
+		    m_Settings = settings;
 
-					return m_Settings;
-				}
-			}
+		    return m_Settings;
 		}
+	    }
+	}
 #if(!JSONLIB)
-        /// <summary>
-        /// Gets the current ajax token.
-        /// </summary>
-        /// <value>The current ajax token.</value>
-		internal static string CurrentAjaxToken
+	/// <summary>
+	/// Gets the current ajax token.
+	/// </summary>
+	/// <value>The current ajax token.</value>
+	internal static string CurrentAjaxToken
+	{
+	    get
+	    {
+		if (Utility.Settings == null || Utility.Settings.Security == null || Utility.Settings.Security.SecurityProvider == null)
+		    return null;
+
+		string token = null;
+
+		try
 		{
-			get
-			{
-				if (Utility.Settings == null || Utility.Settings.Security == null || Utility.Settings.Security.SecurityProvider == null)
-					return null;
-
-				string token = null;
-
-				try
-				{
-					token = Utility.Settings.Security.SecurityProvider.GetAjaxToken(Utility.Settings.TokenSitePassword);
-				}
-				catch (Exception)
-				{
-				}
-
-				return token;
-			}
+		    token = Utility.Settings.Security.SecurityProvider.GetAjaxToken(Utility.Settings.TokenSitePassword);
+		}
+		catch (Exception)
+		{
 		}
 
-        /// <summary>
-        /// Register the common JavaScript to the current handler.
-        /// </summary>
-		internal static void RegisterCommonAjax()
+		return token;
+	    }
+	}
+
+	/// <summary>
+	/// Register the common JavaScript to the current handler.
+	/// </summary>
+	internal static void RegisterCommonAjax()
+	{
+	    RegisterCommonAjax((System.Web.UI.Page)System.Web.HttpContext.Current.Handler);
+	}
+
+	/// <summary>
+	/// Register the common JavaScript file for the specified page.
+	/// </summary>
+	/// <param name="page">The Page the client script should be rendered to.</param>
+	internal static void RegisterCommonAjax(System.Web.UI.Page page)
+	{
+	    if (page == null)
+		return;
+
+	    // If there is a configuration for this fileName in
+	    // web.config AjaxPro section scriptReplacements we will
+	    // redirect to this file.
+
+	    string rootFolder = System.Web.HttpContext.Current.Request.ApplicationPath + (System.Web.HttpContext.Current.Request.ApplicationPath.EndsWith("/") ? "" : "/");
+
+	    string prototypeJs = rootFolder + Utility.HandlerPath + "/" + Utility.GetSessionUri() + "prototype" + Utility.HandlerExtension;
+	    string coreJs = rootFolder + Utility.HandlerPath + "/" + Utility.GetSessionUri() + "core" + Utility.HandlerExtension;
+	    string convertersJs = rootFolder + Utility.HandlerPath + "/" + Utility.GetSessionUri() + "converter" + Utility.HandlerExtension;
+
+	    if (Utility.Settings != null)
+	    {
+		if (Utility.Settings.ScriptReplacements.ContainsKey("prototype"))
 		{
-			RegisterCommonAjax((System.Web.UI.Page)System.Web.HttpContext.Current.Handler);
+		    prototypeJs = Utility.Settings.ScriptReplacements["prototype"];
+		    if (prototypeJs.Length > 0 && prototypeJs.StartsWith("~/"))
+			prototypeJs = rootFolder + prototypeJs.Substring(2);
+		}
+		if (Utility.Settings.ScriptReplacements.ContainsKey("core"))
+		{
+		    coreJs = Utility.Settings.ScriptReplacements["core"];
+		    if (coreJs.Length > 0 && coreJs.StartsWith("~/"))
+			coreJs = rootFolder + coreJs.Substring(2);
 		}
 
-        /// <summary>
-        /// Register the common JavaScript file for the specified page.
-        /// </summary>
-        /// <param name="page">The Page the client script should be rendered to.</param>
-		internal static void RegisterCommonAjax(System.Web.UI.Page page)
+		if (Utility.Settings.ScriptReplacements.ContainsKey("converter"))
 		{
-			if(page == null)
-				return;
+		    convertersJs = Utility.Settings.ScriptReplacements["converter"];
+		    if (convertersJs.Length > 0 && convertersJs.StartsWith("~/"))
+			convertersJs = rootFolder + convertersJs.Substring(2);
+		}
+	    }
 
-			// If there is a configuration for this fileName in
-			// web.config AjaxPro section scriptReplacements we will
-			// redirect to this file.
+	    if (prototypeJs.Length > 0)
+		RegisterClientScriptBlock(page, Constant.AjaxID + ".prototype",
+			"<script type=\"text/javascript\" src=\"" + prototypeJs + "\"></script>");
 
-			string rootFolder = System.Web.HttpContext.Current.Request.ApplicationPath + (System.Web.HttpContext.Current.Request.ApplicationPath.EndsWith("/") ? "" : "/");
+	    if (coreJs.Length > 0)
+		RegisterClientScriptBlock(page, Constant.AjaxID + ".core",
+			"<script type=\"text/javascript\" src=\"" + coreJs + "\"></script>");
 
-			string prototypeJs = rootFolder + Utility.HandlerPath + "/" + Utility.GetSessionUri() + "prototype" + Utility.HandlerExtension;
-			string coreJs = rootFolder + Utility.HandlerPath + "/" + Utility.GetSessionUri() + "core" + Utility.HandlerExtension;
-			string convertersJs = rootFolder + Utility.HandlerPath + "/" + Utility.GetSessionUri() + "converter" + Utility.HandlerExtension;
+	    if (Utility.Settings.OldStyle.Contains("includeMsPrototype"))
+	    {
+		string msJs = rootFolder + Utility.HandlerPath + "/" + Utility.GetSessionUri() + "ms" + Utility.HandlerExtension;
 
-			if(Utility.Settings != null)
-			{
-				if(Utility.Settings.ScriptReplacements.ContainsKey("prototype"))
-				{
-					prototypeJs = Utility.Settings.ScriptReplacements["prototype"];
-					if(prototypeJs.Length > 0 && prototypeJs.StartsWith("~/"))
-						prototypeJs = rootFolder + prototypeJs.Substring(2);
-				}
-				if(Utility.Settings.ScriptReplacements.ContainsKey("core"))
-				{
-					coreJs = Utility.Settings.ScriptReplacements["core"];
-					if(coreJs.Length > 0 && coreJs.StartsWith("~/"))
-						coreJs = rootFolder + coreJs.Substring(2);
-				}
+		RegisterClientScriptBlock(page, Constant.AjaxID + ".ms",
+			"<script type=\"text/javascript\" src=\"" + msJs + "\"></script>");
+	    }
 
-				if(Utility.Settings.ScriptReplacements.ContainsKey("converter"))
-				{
-					convertersJs = Utility.Settings.ScriptReplacements["converter"];
-					if(convertersJs.Length > 0 && convertersJs.StartsWith("~/"))
-						convertersJs = rootFolder + convertersJs.Substring(2);
-				}
-			}
+	    if (convertersJs.Length > 0)
+		RegisterClientScriptBlock(page, Constant.AjaxID + ".converters",
+			"<script type=\"text/javascript\" src=\"" + convertersJs + "\"></script>");
 
-			if(prototypeJs.Length > 0)
-				RegisterClientScriptBlock(page, Constant.AjaxID + ".prototype",
-					"<script type=\"text/javascript\" src=\"" + prototypeJs + "\"></script>");
 
-			if(coreJs.Length > 0)
-				RegisterClientScriptBlock(page, Constant.AjaxID + ".core",
-					"<script type=\"text/javascript\" src=\"" + coreJs + "\"></script>");
+	    StringBuilder sb = new StringBuilder();
 
-			if (Utility.Settings.OldStyle.Contains("includeMsPrototype"))
-			{
-				string msJs = rootFolder + Utility.HandlerPath + "/" + Utility.GetSessionUri() + "ms" + Utility.HandlerExtension;
+	    if (Settings.Security != null && Settings.Security.SecurityProvider != null && Settings.Security.SecurityProvider.AjaxTokenEnabled)
+		sb.Append("AjaxPro.token = \"" + CurrentAjaxToken + "\";\r\n");
 
-				RegisterClientScriptBlock(page, Constant.AjaxID + ".ms",
-					"<script type=\"text/javascript\" src=\"" + msJs + "\"></script>");
-			}
+	    if (Settings.OldStyle.Contains("noUtcTime") && coreJs.Length > 0)
+		sb.Append("if(typeof AjaxPro != \"undefined\") AjaxPro.noUtcTime = true;\r\n");
 
-			if(convertersJs.Length > 0)
-				RegisterClientScriptBlock(page, Constant.AjaxID + ".converters",
-					"<script type=\"text/javascript\" src=\"" + convertersJs + "\"></script>");
+	    if (sb.Length > 0)
+	    {
+		RegisterClientScriptBlock(page, Constant.AjaxID + ".ajaxproinit",
+			"<script type=\"text/javascript\">\r\n" + sb.ToString() + "</script>\r\n");
+	    }
+	}
 
-			
-			StringBuilder sb = new StringBuilder();
+	internal static HybridDictionary pages = new HybridDictionary();
 
-			if(Settings.Security != null && Settings.Security.SecurityProvider != null && Settings.Security.SecurityProvider.AjaxTokenEnabled)
-				sb.Append("AjaxPro.token = \"" + CurrentAjaxToken + "\";\r\n");
+	/// <summary>
+	/// Gets the scripts.
+	/// </summary>
+	/// <returns></returns>
+	internal static ListDictionary GetScripts()
+	{
+	    return GetScripts(false);
+	}
 
-			if (Settings.OldStyle.Contains("noUtcTime") && coreJs.Length > 0)
-				sb.Append("if(typeof AjaxPro != \"undefined\") AjaxPro.noUtcTime = true;\r\n");
+	/// <summary>
+	/// Gets the scripts.
+	/// </summary>
+	/// <param name="RemoveFromCollection">if set to <c>true</c> [remove from collection].</param>
+	/// <returns></returns>
+	internal static ListDictionary GetScripts(bool RemoveFromCollection)
+	{
+	    Guid pageID = (Guid)System.Web.HttpContext.Current.Items[Constant.AjaxID + ".pageID"];
 
-			if (sb.Length > 0)
-			{
-				RegisterClientScriptBlock(page, Constant.AjaxID + ".ajaxproinit",
-					"<script type=\"text/javascript\">\r\n" + sb.ToString() + "</script>\r\n");
-			}
+	    lock (pages.SyncRoot)
+	    {
+		ListDictionary scripts = (ListDictionary)pages[pageID];
+
+		if (RemoveFromCollection && scripts != null)
+		{
+		    pages.Remove(pageID);
 		}
 
-		internal static HybridDictionary pages = new HybridDictionary();
-
-        /// <summary>
-        /// Gets the scripts.
-        /// </summary>
-        /// <returns></returns>
-		internal static ListDictionary GetScripts()
+		if (!RemoveFromCollection && scripts == null)
 		{
-			return GetScripts(false);
+		    scripts = new System.Collections.Specialized.ListDictionary();
+		    pages[pageID] = scripts;
 		}
 
-        /// <summary>
-        /// Gets the scripts.
-        /// </summary>
-        /// <param name="RemoveFromCollection">if set to <c>true</c> [remove from collection].</param>
-        /// <returns></returns>
-		internal static ListDictionary GetScripts(bool RemoveFromCollection)
-		{
-			Guid pageID = (Guid)System.Web.HttpContext.Current.Items[Constant.AjaxID + ".pageID"];
+		return scripts;
+	    }
+	}
 
-			lock(pages.SyncRoot)
-			{
-				ListDictionary scripts = (ListDictionary)pages[pageID];
+	/// <summary>
+	/// Registers the client script block.
+	/// </summary>
+	/// <param name="page">The page.</param>
+	/// <param name="key">The key.</param>
+	/// <param name="script">The script.</param>
+	internal static void RegisterClientScriptBlock(System.Web.UI.Page page, string key, string script)
+	{
+	    Guid pageID = Guid.Empty;
 
-				if(RemoveFromCollection && scripts != null)
-				{
-					pages.Remove(pageID);
-				}
+	    if (!System.Web.HttpContext.Current.Items.Contains(Constant.AjaxID + ".pageID"))
+	    {
+		pageID = Guid.NewGuid();
+		System.Web.HttpContext.Current.Items.Add(Constant.AjaxID + ".pageID", pageID);
+	    }
+	    else
+		pageID = (Guid)System.Web.HttpContext.Current.Items[Constant.AjaxID + ".pageID"];
 
-				if(!RemoveFromCollection && scripts == null)
-				{
-					scripts = new System.Collections.Specialized.ListDictionary();
-					pages[pageID] = scripts;
-				}
+	    page.PreRender += new EventHandler(page_PreRender);
 
-				return scripts;
-			}
-		}
+	    ListDictionary scripts = GetScripts();
 
-        /// <summary>
-        /// Registers the client script block.
-        /// </summary>
-        /// <param name="page">The page.</param>
-        /// <param name="key">The key.</param>
-        /// <param name="script">The script.</param>
-		internal static void RegisterClientScriptBlock(System.Web.UI.Page page, string key, string script)
-		{
-			Guid pageID = Guid.Empty;
+	    if (scripts.Contains(key))
+		return;
 
-			if (!System.Web.HttpContext.Current.Items.Contains(Constant.AjaxID + ".pageID"))
-			{
-				pageID = Guid.NewGuid();
-				System.Web.HttpContext.Current.Items.Add(Constant.AjaxID + ".pageID", pageID);
-			}
-			else
-				pageID = (Guid)System.Web.HttpContext.Current.Items[Constant.AjaxID + ".pageID"];
+	    scripts.Add(key, script);
+	}
 
-			page.PreRender += new EventHandler(page_PreRender);
+	/// <summary>
+	/// Handles the PreRender event of the page control.
+	/// </summary>
+	/// <param name="sender">The source of the event.</param>
+	/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+	private static void page_PreRender(object sender, EventArgs e)
+	{
+	    ListDictionary scripts = GetScripts(true);
 
-			ListDictionary scripts = GetScripts();
+	    if (scripts == null)
+		return;
 
-			if (scripts.Contains(key))
-				return;
-            
-			scripts.Add(key, script);
-		}
+	    StringBuilder sb = new StringBuilder();
 
-        /// <summary>
-        /// Handles the PreRender event of the page control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-		private static void page_PreRender(object sender, EventArgs e)
-		{
-			ListDictionary scripts = GetScripts(true);
+	    sb.Append("\r\n");
 
-			if (scripts == null)
-				return;
+	    //HttpContext context = HttpContext.Current;
+	    //string url = context.Request.ApplicationPath + (context.Request.ApplicationPath.EndsWith("/") ? "" : "/") + Utility.HandlerPath + "/" + AjaxPro.Utility.GetSessionUri();
 
-			StringBuilder sb = new StringBuilder();
-
-			sb.Append("\r\n");
-
-			//HttpContext context = HttpContext.Current;
-			//string url = context.Request.ApplicationPath + (context.Request.ApplicationPath.EndsWith("/") ? "" : "/") + Utility.HandlerPath + "/" + AjaxPro.Utility.GetSessionUri();
-
-			//sb.Append("<script type=\"text/javascript\">\r\n");
-			//sb.Append("var AjaxPro_path = " + JavaScriptUtil.QuoteString(url) + ";\r\n");
-			//sb.Append("</script>\r\n");
+	    //sb.Append("<script type=\"text/javascript\">\r\n");
+	    //sb.Append("var AjaxPro_path = " + JavaScriptUtil.QuoteString(url) + ";\r\n");
+	    //sb.Append("</script>\r\n");
 
 
-			foreach(string script in scripts.Values)
-			{
-				sb.Append(script);
-				sb.Append("\r\n");
-			}
+	    foreach (string script in scripts.Values)
+	    {
+		sb.Append(script);
+		sb.Append("\r\n");
+	    }
 
-			System.Web.UI.Page page = (System.Web.UI.Page)sender;
-			if (page != null)
-			{
+	    System.Web.UI.Page page = (System.Web.UI.Page)sender;
+	    if (page != null)
+	    {
 #if(NET20)
-				// TODO: replace with new .NET 2.0 method
-				// page.ClientScript.RegisterClientScriptInclude("name", "file.js");
-				// we have to put only the filename to the list
+		// TODO: replace with new .NET 2.0 method
+		// page.ClientScript.RegisterClientScriptInclude("name", "file.js");
+		// we have to put only the filename to the list
 
-				page.RegisterClientScriptBlock(Constant.AjaxID + ".javascript", sb.ToString());
+		page.RegisterClientScriptBlock(Constant.AjaxID + ".javascript", sb.ToString());
 #else
 				page.RegisterClientScriptBlock(Constant.AjaxID + ".javascript", sb.ToString());
 #endif
-			}
-        }
+	    }
+	}
 
 #endif
-        #endregion
+	#endregion
 
     }
 }
