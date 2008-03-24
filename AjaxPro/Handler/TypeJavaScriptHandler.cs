@@ -33,7 +33,7 @@
  * MS	06-06-06	fixed If-Modified-Since http header if using zip
  * MS	06-06-09	removed addNamespace use
  * MS	07-04-24	using new TypeJavaScriptProvider
- *
+ * MS	08-03-24	added patch 47, mdissel, NullReference exception when compiling .NET 1.1
  * 
  * 
  * 
@@ -175,10 +175,12 @@ namespace AjaxPro
 #if(NET20)
 			List<MethodInfo> methods = new List<MethodInfo>();
 #else
-			MethodInfo[] methods = new MethodInfo[mi.Length];		// maximum length
+			MethodInfo[] methods;
+			System.Collections.ArrayList methodList = new System.Collections.ArrayList();
+
 			int mc = 0;
 #endif
-			
+
 			for (int y = 0; y < mi.Length; y++)
 			{
 				method = mi[y];
@@ -227,11 +229,14 @@ namespace AjaxPro
 #if(NET20)
 				methods.Add(method);
 #else
-				methods[mc++] = method;
+				//methods[mc++] = method;
+				methodList.Add(method);
 #endif
 			}
 
-
+#if(!NET20)
+			methods = (MethodInfo[])methodList.ToArray(typeof(MethodInfo));
+#endif
 
 			// render client-side proxy file
 
