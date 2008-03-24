@@ -26,7 +26,7 @@
 /*
  * MS	07-04-24	initial version
  * TB	07-07-31	added Ext JS framework
- * 
+ * MS	08-03-24	patch V1p3r, work item 12114
  * 
  * 
  * 
@@ -45,7 +45,7 @@ namespace AjaxPro
 		protected Type m_Type;
 		protected string m_URL;
 		protected StringBuilder sb;
-		
+
 		public TypeJavaScriptProvider(Type type, string url, StringBuilder sb)
 		{
 			m_Type = type;
@@ -70,10 +70,9 @@ namespace AjaxPro
 		}
 
 		protected string GetClientMethodName(MethodInfo method)
-		{			
+		{
 			AjaxNamespaceAttribute[] cmam = (AjaxNamespaceAttribute[])method.GetCustomAttributes(typeof(AjaxNamespaceAttribute), true);
-
-			if(cmam.Length > 0)
+			if (cmam.Length > 0)
 				return cmam[0].ClientNamespace;
 
 			return method.Name;
@@ -159,12 +158,16 @@ namespace AjaxPro
 
 		public virtual void RenderMethods(MethodInfo[] methods)
 		{
-			for(int i=0; i<methods.Length; i++)
+			for (int i = 0; i < methods.Length; i++)
 			{
+				if (methods[i] == null)
+				{
+					break;
+				}
 				MethodInfo method = methods[i];
 				string methodName = GetClientMethodName(method);
 				ParameterInfo[] pi = method.GetParameters();
-				
+
 				sb.Append("\t");
 				sb.Append(methodName);
 				sb.Append(": function(");
@@ -175,8 +178,8 @@ namespace AjaxPro
 
 
 				RenderXHR(methodName, pi);
-				
-				
+
+
 				sb.Append("\t},\r\n");
 
 				//if (i < methods.Count - 1)
@@ -198,7 +201,7 @@ namespace AjaxPro
 
 			sb.Append(clientNS);
 			sb.Append("_class = function() {};\r\n");
-			
+
 			sb.Append(clientNS);
 			sb.Append("_class.prototype.url = '" + m_URL + "';\r\n");
 		}
@@ -212,7 +215,7 @@ namespace AjaxPro
 			sb.Append(" = new ");
 			sb.Append(clientNS);
 			sb.Append("_class();\r\n\r\n");
-			
+
 		}
 
 		public override void RenderMethods(MethodInfo[] methods)
@@ -221,6 +224,10 @@ namespace AjaxPro
 
 			for (int i = 0; i < methods.Length; i++)
 			{
+				if (methods[i] == null)
+				{
+					break;
+				}
 				MethodInfo method = methods[i];
 				string methodName = GetClientMethodName(method);
 				ParameterInfo[] pi = method.GetParameters();
@@ -243,7 +250,7 @@ namespace AjaxPro
 		type: ""POST"",
 		url: this.url,
 		data: {");
-				
+
 
 				for (int p = 0; p < pi.Length; p++)
 				{
@@ -252,11 +259,11 @@ namespace AjaxPro
 					sb.Append("\":");
 					sb.Append(pi[p].Name);
 
-					if(p < pi.Length -1)
+					if (p < pi.Length - 1)
 						sb.Append(", ");
 				}
 
-				
+
 				sb.Append(@"}.toJSONString(),
 		beforeSend: function(xhr) {
 			xhr.setRequestHeader(""X-AjaxPro-Method"", """ + methodName + @""");
@@ -281,7 +288,7 @@ namespace AjaxPro
 		}
 	}); 
 ");
-				
+
 				sb.Append("};\r\n");
 
 				//if (i < methods.Count - 1)
@@ -357,6 +364,10 @@ namespace AjaxPro
 
 			for (int i = 0; i < methods.Length; i++)
 			{
+				if (methods[i] == null)
+				{
+					break;
+				}
 				MethodInfo method = methods[i];
 				string methodName = GetClientMethodName(method);
 				ParameterInfo[] pi = method.GetParameters();
