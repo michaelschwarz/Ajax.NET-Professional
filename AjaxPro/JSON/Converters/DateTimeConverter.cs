@@ -196,6 +196,7 @@ namespace AjaxPro
 			if (!noUtcTime)
 				dt = dt.ToUniversalTime();
 
+#if(NET20)
 			if (!AjaxPro.Utility.Settings.OldStyle.Contains("renderNotASPAJAXDateTime"))
 			{
 				DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, new System.Globalization.GregorianCalendar(), System.DateTimeKind.Utc);
@@ -203,7 +204,7 @@ namespace AjaxPro
 				sb.Append("\"\\/Date(" + ((dt.Ticks - Epoch.Ticks) / TimeSpan.TicksPerMillisecond) + ")\\/\"");
 				return;
 			}
-
+#endif
 
 
 #if(JSONLIB)
