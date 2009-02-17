@@ -169,7 +169,7 @@ Object.extend(AjaxPro, {
 	cryptProvider: null,
 	queue: null,
 	token: "",
-	version: "7.7.31.1",
+	version: "9.2.17.1",
 	ID: "AjaxPro",
 	noActiveX: false,
 	timeoutPeriod: 15*1000,

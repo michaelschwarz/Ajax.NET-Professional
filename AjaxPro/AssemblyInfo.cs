@@ -1,7 +1,7 @@
 /*
  * AssemblyInfo.cs
  * 
- * Copyright © 2007 Michael Schwarz (http://www.ajaxpro.info).
+ * Copyright © 2009 Michael Schwarz (http://www.ajaxpro.info).
  * All Rights Reserved.
  * 
  * Permission is hereby granted, free of charge, to any person 
@@ -70,7 +70,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Michael Schwarz")]
 [assembly: AssemblyProduct("Ajax.NET Professional")]
-[assembly: AssemblyCopyright("2007, Michael Schwarz")]
+[assembly: AssemblyCopyright("2009, Michael Schwarz")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]	
 [assembly: System.Security.AllowPartiallyTrustedCallersAttribute()]
@@ -91,7 +91,7 @@ using System.Runtime.CompilerServices;
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 
-[assembly:				AssemblyVersion("7.7.31.1")]		// do not remove the blanks!!!!
+[assembly:				AssemblyVersion("9.2.17.1")]		// do not remove the blanks!!!!
 
 //
 // In order to sign your assembly you must specify a key to use. Refer to the 
