@@ -539,18 +539,18 @@ AjaxPro.AjaxClass = function(url) {
 };
 
 AjaxPro.AjaxClass.prototype = {
-	invoke: function(method, args, e) {
-	
-		if(e != null) {
-			if(e.length != 6) {
-				for(;e.length<6;) { e.push(null); }
-			}
-			if(e[0] != null && typeof(e[0]) == "function") {
-				return AjaxPro.queue.add(this.url, method, args, e);
-			}
-		}
-		var r = new AjaxPro.Request();
-		r.url = this.url;
-		return r.invoke(method, args);
-	}
+    invoke: function(method, args, e) {
+
+        if (e != null) {
+            if (e.length != 6) {
+                for (; e.length < 6; ) { e.push(null); }
+            }
+            if (e[0] != null && typeof (e[0]) == "function") {
+                return AjaxPro.queue.add(this.url, method, args, e);
+            }
+        }
+        var r = new AjaxPro.Request();
+        r.url = this.url;
+        return r.invoke(method, args);
+    }
 };
