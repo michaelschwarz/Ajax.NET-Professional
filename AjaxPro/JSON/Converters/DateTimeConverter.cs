@@ -119,9 +119,7 @@ namespace AjaxPro
 
 #if(NET20)
 				if (d.StartsWith("/Date(") && d.EndsWith(")/"))
-#else
-				if (d.Length >= 9 && d.Substring(0, 6) == "/Date(" && d.Substring(d.Length -2) == ")/")
-#endif
+				// if (d.Length >= 9 && d.Substring(0, 6) == "/Date(" && d.Substring(d.Length -2) == ")/")
 				{
 					DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, new System.Globalization.GregorianCalendar(), System.DateTimeKind.Utc);
 
@@ -129,7 +127,6 @@ namespace AjaxPro
 							long.Parse(d.Substring(6, d.Length - 6 - 2)) * TimeSpan.TicksPerMillisecond, DateTimeKind.Utc).AddTicks(Epoch.Ticks);
 				}
 
-#if(NET20)
 				DateTime d2;
 
 				if (DateTime.TryParseExact(o.ToString(),
