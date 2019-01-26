@@ -41,7 +41,7 @@ namespace MyDemo
   {
     protected void Page_Load(object sender, EventArgs e)
     {
-      AjaxPro.Utility.RegisterTypeForAjax(typeof(_Default));
+      AjaxPro.Utility.RegisterTypeForAjax(typeof(DefaultWebPage));
     }
 
     [AjaxPro.AjaxMethod]
