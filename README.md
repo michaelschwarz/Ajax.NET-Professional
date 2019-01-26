@@ -37,7 +37,7 @@ public DateTime GetServerTime()
 ```C#
 namespace MyDemo
 {
-  public class _Default
+  public class DefaultWebPage
   {
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -58,7 +58,7 @@ namespace MyDemo
 
 ```JavaScript
 function getServerTime() {
-  MyDemo._Default.GetServerTime(getServerTime_callback);  // asynchronous call
+  MyDemo.DefaultWebPage.GetServerTime(getServerTime_callback);  // asynchronous call
 }
 
 // This method will be called after the method has been executed
