@@ -45,7 +45,7 @@ namespace MyDemo
     }
 
     [AjaxPro.AjaxMethod]
-    public DateTime GetServerTime()
+    public static DateTime GetServerTime()
     {
       return DateTime.Now;
     }
