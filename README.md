@@ -1,4 +1,4 @@
-# Ajax.NET-Professional
+# Ajax.NET Professional
 
 Ajax.NET Professional (AjaxPro) is one of the first AJAX frameworks available for Microsoft ASP.NET.
 
