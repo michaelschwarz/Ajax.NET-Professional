@@ -396,8 +396,16 @@ AjaxPro.Request.prototype = {
 		} */
 		return r;
 	},
-	timeout: function() {
-		this.duration = new Date().getTime() - this.__start;
+
+  	timeout: function() {
+  	    this.duration = new Date().getTime() - this.__start;
+  	    if (typeof this.onTimeout === 'undefined') {
+  	        this.abort();
+  	    }
+  	    if (typeof this.onTimeout != 'function') {
+  	        this.timeoutTimer = setTimeout(this.timeout.bind(this), AjaxPro.timeoutPeriod);
+  	        return;
+  	    }
 		var r = this.onTimeout(this.duration, this);
 		if(typeof r == "undefined" || r != false) {
 			this.abort();
@@ -405,6 +413,7 @@ AjaxPro.Request.prototype = {
 			this.timeoutTimer = setTimeout(this.timeout.bind(this), AjaxPro.timeoutPeriod);
 		}
 	},
+
 	invoke: function(method, args, callback, context) {
 		this.__start = new Date().getTime();
 

@@ -1,0 +1,10 @@
+C:\Users\Matthew.Cownie\git\Ajax.NET-Professional\AjaxPro\bin\Debug\AjaxPro.dll
+C:\Users\Matthew.Cownie\git\Ajax.NET-Professional\AjaxPro\bin\Debug\AjaxPro.pdb
+C:\Users\Matthew.Cownie\git\Ajax.NET-Professional\AjaxPro\obj\Debug\AjaxPro.csprojAssemblyReference.cache
+C:\Users\Matthew.Cownie\git\Ajax.NET-Professional\AjaxPro\obj\Debug\AjaxPro.csproj.CoreCompileInputs.cache
+C:\Users\Matthew.Cownie\git\Ajax.NET-Professional\AjaxPro\obj\Debug\AjaxPro.dll
+C:\Users\Matthew.Cownie\git\Ajax.NET-Professional\AjaxPro\obj\Debug\AjaxPro.pdb
+D:\git\Ajax.NET-Professional\AjaxPro\bin\Debug\AjaxPro.dll
+D:\git\Ajax.NET-Professional\AjaxPro\bin\Debug\AjaxPro.pdb
+D:\git\Ajax.NET-Professional\AjaxPro\obj\Debug\AjaxPro.dll
+D:\git\Ajax.NET-Professional\AjaxPro\obj\Debug\AjaxPro.pdb

@@ -1,0 +1,2 @@
+D:\git\Ajax.NET-Professional\AjaxPro\bin\Release\AjaxPro.dll
+D:\git\Ajax.NET-Professional\AjaxPro\obj\Release\AjaxPro.dll
