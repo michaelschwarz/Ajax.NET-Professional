@@ -355,7 +355,7 @@ AjaxPro.Request.prototype = {
 			clearTimeout(this.timeoutTimer);
 		}
 		var res = this.getEmptyRes();
-		if(this.xmlHttp.status == 200 && this.xmlHttp.statusText == "OK") {
+		if(this.xmlHttp.status == 200 ) {
 			res = this.createResponse(res);
 		} else {
 			res = this.createResponse(res, true);
