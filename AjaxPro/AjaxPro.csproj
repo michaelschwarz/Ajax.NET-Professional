@@ -127,10 +127,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Attributes\AjaxNoTypeUsageAttribute.cs" />
-    <Compile Include="Attributes\__AjaxClassAttribute.cs">
+    <Compile Include="Attributes\AjaxClassAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Attributes\__AjaxEnumAttribute.cs">
+    <Compile Include="Attributes\AjaxEnumAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Configuration\AjaxSettingsSectionHandler.cs">
