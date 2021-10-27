@@ -143,9 +143,31 @@ namespace AjaxPro
 			{
 				Type t = Type.GetType(jso["__type"].ToString());
 				if (type == null || type.IsAssignableFrom(t))
+				{
 					type = t;
-			}
 
+					if (AjaxPro.Utility.Settings.IsJsonDeserializationCustomTypesDenied)
+					{
+						bool isCustomTypeAllowed = false;
+
+						foreach (var s in AjaxPro.Utility.Settings.JsonDeserializationCustomTypesAllowed)
+							if ((s.EndsWith("*") && type.FullName.StartsWith(s.Substring(0, s.Length - 1), StringComparison.InvariantCultureIgnoreCase)) || s == type.FullName)
+							{
+								isCustomTypeAllowed = true;
+								break;
+							}
+
+						if (!isCustomTypeAllowed)
+							throw new System.Security.SecurityException("This cusomized type is not allowed as argument for this method.");
+					}
+					else
+					{
+						foreach (var s in AjaxPro.Utility.Settings.JsonDeserializationCustomTypesDenied)
+							if ((s.EndsWith("*") && type.FullName.StartsWith(s.Substring(0, s.Length -1), StringComparison.InvariantCultureIgnoreCase)) || s == type.FullName)
+								throw new System.Security.SecurityException("This cusomized type is not allowed as argument for this method.");
+					}
+				}
+			}
 
 			IJavaScriptConverter c = null;
 #if(NET20)
@@ -213,27 +235,6 @@ namespace AjaxPro
         /// <returns></returns>
 		internal static object DeserializeCustomObject(JavaScriptObject o, Type type)
 		{
-			if (AjaxPro.Utility.Settings.IsJsonDeserializationCustomTypesDenied)
-			{
-				bool isCustomTypeAllowed = false;
-
-				foreach (var s in AjaxPro.Utility.Settings.JsonDeserializationCustomTypesAllowed)
-					if (type.FullName.StartsWith(s, StringComparison.InvariantCultureIgnoreCase))
-					{
-						isCustomTypeAllowed = true;
-						break;
-					}
-
-				if (!isCustomTypeAllowed)
-					throw new System.Security.SecurityException("This cusomized type is not allowed as argument for this method.");
-			}
-			else
-			{
-				foreach (var s in AjaxPro.Utility.Settings.JsonDeserializationCustomTypesDenied)
-					if (type.FullName.StartsWith(s, StringComparison.InvariantCultureIgnoreCase))
-						throw new System.Security.SecurityException("This cusomized type is not allowed as argument for this method.");
-			}
-
 			object c = Activator.CreateInstance(type);
 
 			MemberInfo[] members = type.GetMembers(BindingFlags.GetField | BindingFlags.GetProperty | BindingFlags.Public | BindingFlags.Instance);
