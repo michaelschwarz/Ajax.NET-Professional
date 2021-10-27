@@ -34,6 +34,7 @@
  * MS	07-04-24	added new settings (oldStyle == configuration)
  *					added provider settings
  *					added includeTypeProperty
+ * MS	21-10-27	added allowed customized types for JSON deserialization
  * 
  * 
  */
@@ -153,6 +154,24 @@ namespace AjaxPro
 				{
 					if (n.SelectSingleNode("@enabled") != null && n.SelectSingleNode("@enabled").InnerText == "true")
 						settings.DebugEnabled = true;
+				}
+				else if (n.Name == "jsonDeserializationCustomTypes")
+				{
+					settings.IsJsonDeserializationCustomTypesDenied = n.Attributes["default"] == null || n.Attributes["default"].InnerText.ToLower() != "allow";
+
+					foreach (XmlNode sn in n.ChildNodes)
+					{
+						switch (sn.Name)
+						{
+							case "allow":
+								settings.JsonDeserializationCustomTypesAllowed.Add(sn.InnerText);
+								break;
+
+							case "deny":
+								settings.JsonDeserializationCustomTypesDenied.Add(sn.InnerText);
+								break;
+						}
+					}
 				}
 				else if (n.Name == "oldStyle" || n.Name == "configuration")
 				{

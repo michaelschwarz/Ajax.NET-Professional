@@ -34,7 +34,7 @@
  *					added UseSimpleObjectNaming
  *					using new AjaxSecurityProvider
  *					fixed Ajax token
- * 
+ * MS	21-10-27	added allowed customized types for JSON deserialization
  */
 using System;
 using System.Collections;
@@ -127,6 +127,9 @@ namespace AjaxPro
 			SerializableConverters = new JavaScriptConverterList();
 			DeserializableConverters = new JavaScriptConverterList();
 #endif
+
+			JsonDeserializationCustomTypesAllowed = new List<string>();
+			JsonDeserializationCustomTypesDenied = new List<string>();
 		}
 
 		#region Public Properties
@@ -243,6 +246,11 @@ namespace AjaxPro
 			get{ return m_ScriptReplacements; }
 			set{ m_ScriptReplacements = value; }
 		}
+
+		public bool IsJsonDeserializationCustomTypesDenied { get; set; }
+
+		public List<string> JsonDeserializationCustomTypesAllowed { get; set; }
+		public List<string> JsonDeserializationCustomTypesDenied { get; set; }
 
 		#endregion
 	}

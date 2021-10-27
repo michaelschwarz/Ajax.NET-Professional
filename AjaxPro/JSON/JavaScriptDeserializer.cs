@@ -36,6 +36,7 @@
  * MS	06-05-30	changed to new converter usage
  * MS	06-07-11	added generic method for DeserializeFromJson
  * MS	06-09-26	improved performance removing three-times cast
+ * MS	21-10-27	added allowed customized types for JSON deserialization
  * 
  * 
  */
@@ -212,11 +213,28 @@ namespace AjaxPro
         /// <returns></returns>
 		internal static object DeserializeCustomObject(JavaScriptObject o, Type type)
 		{
-			object c = Activator.CreateInstance(type);
+			if (AjaxPro.Utility.Settings.IsJsonDeserializationCustomTypesDenied)
+			{
+				bool isCustomTypeAllowed = false;
 
-			// TODO: is this a security problem?
-			// if(o.GetType().GetCustomAttributes(typeof(AjaxClassAttribute), true).Length == 0)
-			//	throw new System.Security.SecurityException("Could not create class '" + type.FullName + "' because of missing AjaxClass attribute.");
+				foreach (var s in AjaxPro.Utility.Settings.JsonDeserializationCustomTypesAllowed)
+					if (type.FullName.StartsWith(s, StringComparison.InvariantCultureIgnoreCase))
+					{
+						isCustomTypeAllowed = true;
+						break;
+					}
+
+				if (!isCustomTypeAllowed)
+					throw new System.Security.SecurityException("This cusomized type is not allowed as argument for this method.");
+			}
+			else
+			{
+				foreach (var s in AjaxPro.Utility.Settings.JsonDeserializationCustomTypesDenied)
+					if (type.FullName.StartsWith(s, StringComparison.InvariantCultureIgnoreCase))
+						throw new System.Security.SecurityException("This cusomized type is not allowed as argument for this method.");
+			}
+
+			object c = Activator.CreateInstance(type);
 
 			MemberInfo[] members = type.GetMembers(BindingFlags.GetField | BindingFlags.GetProperty | BindingFlags.Public | BindingFlags.Instance);
 			foreach (MemberInfo memberInfo in members)
