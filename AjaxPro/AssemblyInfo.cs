@@ -39,7 +39,7 @@
  * MS	06-04-25	added ComVisible and CLSCompliant attribute
  * MS	06-06-11	added ReflectionPermission attribute
  * MS	06-07-19	removed ReflectionPermission attribute (why did we add it?)
- * 
+ * MS	21-10-30	added contentSecurityPolicy to specify a nonce for all scripts
  * 
  */
 using System;
@@ -70,7 +70,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Michael Schwarz")]
 [assembly: AssemblyProduct("Ajax.NET Professional")]
-[assembly: AssemblyCopyright("2009, Michael Schwarz")]
+[assembly: AssemblyCopyright("2021, Michael Schwarz")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]	
 [assembly: System.Security.AllowPartiallyTrustedCallersAttribute()]
@@ -91,7 +91,7 @@ using System.Runtime.CompilerServices;
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 
-[assembly:				AssemblyVersion("9.2.17.1")]		// do not remove the blanks!!!!
+[assembly:				AssemblyVersion("21.10.30.1")]		// do not remove the blanks!!!!
 
 //
 // In order to sign your assembly you must specify a key to use. Refer to the 

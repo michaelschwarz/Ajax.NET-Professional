@@ -35,6 +35,9 @@
  *					using new AjaxSecurityProvider
  *					fixed Ajax token
  * MS	21-10-27	added allowed customized types for JSON deserialization
+ * MS	21-10-30	added contentSecurityPolicy to specify a nonce for all scripts
+ * 
+ * 
  */
 using System;
 using System.Collections;
@@ -251,6 +254,16 @@ namespace AjaxPro
 
 		public List<string> JsonDeserializationCustomTypesAllowed { get; set; }
 		public List<string> JsonDeserializationCustomTypesDenied { get; set; }
+
+		public string ContentSecurityPolicyNonce { get; set; }
+
+		public string AppendContentSecurityPolicyNonce()
+		{
+			if (!string.IsNullOrEmpty(ContentSecurityPolicyNonce))
+				return " nounce=\"" + ContentSecurityPolicyNonce + "\"";
+
+			return "";
+		}
 
 		#endregion
 	}
