@@ -82,19 +82,18 @@ One of the most important is to set a (Content-Security-Policy)[https://develope
 
 ```XML
 <configuration>
-	[...]
-	<ajaxNet>
-		<ajaxSettings>
-			<contentSecurityPolicy nonce="abcdefghijklmnopqrstuvwxyz" />
-			[...]
-		</ajaxSettings>
-	</ajaxNet>
-	<system.webServer>
-		<httpProtocol>
-			<customHeaders>
-				<add name ="Content-Security-Policy" value ="frame-ancestors www.mydomain.com; script-src 'self' https://www.mydomain.com 'unsafe-eval' 'unsafe-hashes' 'nonce-abcdefghijklmnopqrstuvwxyz';" />
-			</customHeaders>
-		</httpProtocol>
-	</system.webServer>
+ <ajaxNet>
+ <ajaxSettings>
+   <contentSecurityPolicy nonce="abcdefghijklmnopqrstuvwxyz" />
+  </ajaxSettings>
+ </ajaxNet>
+ <system.webServer>
+  <httpProtocol>
+   <customHeaders>
+    <add name="Content-Security-Policy" 
+         value="frame-ancestors www.mydomain.com; script-src 'self' https://www.mydomain.com 'unsafe-eval' 'unsafe-hashes' 'nonce-abcdefghijklmnopqrstuvwxyz';" />
+   </customHeaders>
+  </httpProtocol>
+ </system.webServer>
 </configuration>
 ```
