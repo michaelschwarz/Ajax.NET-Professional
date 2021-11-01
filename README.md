@@ -78,7 +78,7 @@ function getServerTime_callback(res) {
 
 In web.config you can configure different security related settings.
 
-One of the most important is to set a (Content-Security-Policy)[https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy] HTTP response header to ensure to trust only JavaScript and other resources that are coming from your web server or trusted locations. As (AjaxPro)[https://www.ajaxpro.info] is generating some JavaScript files on-the-fly you can set the JavaScript nonce in your web.config:
+One of the most important is to set a [Content-Security-Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy) HTTP response header to ensure to trust only JavaScript and other resources that are coming from your web server or trusted locations. As [AjaxPro](https://www.ajaxpro.info) is generating some JavaScript files on-the-fly you can set the JavaScript nonce in your web.config:
 
 ```XML
 <configuration>
