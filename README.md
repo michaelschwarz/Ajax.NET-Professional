@@ -11,7 +11,6 @@ The framework will create proxy JavaScript classes that are used on client-side 
 - Add following lines to your web.config
 
 ```XML
-<?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <system.web>
     <httpHandlers>
@@ -74,3 +73,28 @@ function getServerTime_callback(res) {
 - `JSONLIB` compiles JSON parser only (AjaxPro.JSON.2.dll or AjaxPro.JSON.dll)
 - `NET20external` is setting the assembly name to AjaxPro.2.dll, compatibility
 - `TRACE` is no longer used
+
+# Security Settings
+
+In web.config you can configure different security related settings.
+
+One of the most important is to set a (Content-Security-Policy)[https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy] HTTP response header to ensure to trust only JavaScript and other resources that are coming from your web server or trusted locations. As (AjaxPro)[https://www.ajaxpro.info] is generating some JavaScript files on-the-fly you can set the JavaScript nonce in your web.config:
+
+```XML
+<configuration>
+	[...]
+	<ajaxNet>
+		<ajaxSettings>
+			<contentSecurityPolicy nonce="abcdefghijklmnopqrstuvwxyz" />
+			[...]
+		</ajaxSettings>
+	</ajaxNet>
+	<system.webServer>
+		<httpProtocol>
+			<customHeaders>
+				<add name ="Content-Security-Policy" value ="frame-ancestors www.mydomain.com; script-src 'self' https://www.mydomain.com 'unsafe-eval' 'unsafe-hashes' 'nonce-abcdefghijklmnopqrstuvwxyz';" />
+			</customHeaders>
+		</httpProtocol>
+	</system.webServer>
+</configuration>
+```
