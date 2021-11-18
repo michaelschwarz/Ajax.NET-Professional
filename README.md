@@ -67,7 +67,7 @@ function getServerTime_callback(res) {
 }
 ```
 
-# Compiler Options
+## Compiler Options
 
 - `NET20` compiles .NET 2.0 assemblies AjaxPro.2.dll (otherwise original it was .NET 1.1, AjaxPro.dll)
 - `JSONLIB` compiles JSON parser only (AjaxPro.JSON.2.dll or AjaxPro.JSON.dll)
