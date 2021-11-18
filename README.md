@@ -4,7 +4,7 @@ Ajax.NET Professional (AjaxPro) is one of the first AJAX frameworks available fo
 
 The framework will create proxy JavaScript classes that are used on client-side to invoke methods on the web server with full data type support working on all common web browsers including mobile devices. Return your own classes, structures, DataSets, enums,... as you are doing directly in .NET.
 
-# Quick Guide
+## Quick Guide
 
 - Download the latest Ajax.NET Professional
 - Add a reference to the AjaxPro.2.dll (for the .NET 1.1 Framework use AjaxPro.dll)
@@ -74,7 +74,7 @@ function getServerTime_callback(res) {
 - `NET20external` is setting the assembly name to AjaxPro.2.dll, compatibility
 - `TRACE` is no longer used
 
-# Security Settings
+## Security Settings
 
 In web.config you can configure different security related settings.
 
