@@ -12,12 +12,11 @@ The framework will create proxy JavaScript classes that are used on client-side 
 
 ```XML
 <configuration>
-  <system.web>
-    <httpHandlers>
-      <add verb="POST,GET" path="ajaxpro/*.ashx" type="AjaxPro.AjaxHandlerFactory, AjaxPro.2"/>
-    </httpHandlers>
-    [...]
-  </system.web>
+	<system.web>
+		<httpHandlers>
+			<add verb="POST,GET" path="ajaxpro/*.ashx" type="AjaxPro.AjaxHandlerFactory, AjaxPro.2"/>
+		</httpHandlers>
+	</system.web>
 </configuration>
 ```
 
@@ -27,7 +26,7 @@ The framework will create proxy JavaScript classes that are used on client-side 
 [AjaxPro.AjaxMethod]
 public DateTime GetServerTime()
 {
-  return DateTime.Now;
+	return DateTime.Now;
 }
 ```
 
@@ -36,19 +35,19 @@ public DateTime GetServerTime()
 ```C#
 namespace MyDemo
 {
-  public class DefaultWebPage
-  {
-    protected void Page_Load(object sender, EventArgs e)
-    {
-      AjaxPro.Utility.RegisterTypeForAjax(typeof(DefaultWebPage));
-    }
+	public class DefaultWebPage
+	{
+		protected void Page_Load(object sender, EventArgs e)
+		{
+			AjaxPro.Utility.RegisterTypeForAjax(typeof(DefaultWebPage));
+		}
 
-    [AjaxPro.AjaxMethod]
-    public static DateTime GetServerTime()
-    {
-      return DateTime.Now;
-    }
-  }
+		[AjaxPro.AjaxMethod]
+		public static DateTime GetServerTime()
+		{
+			return DateTime.Now;
+		}
+	}
 }
 ```
 
@@ -57,13 +56,13 @@ namespace MyDemo
 
 ```JavaScript
 function getServerTime() {
-  MyDemo.DefaultWebPage.GetServerTime(getServerTime_callback);  // asynchronous call
+	MyDemo.DefaultWebPage.GetServerTime(getServerTime_callback);  // asynchronous call
 }
 
 // This method will be called after the method has been executed
 // and the result has been sent to the client.
 function getServerTime_callback(res) {
-  alert(res.value);
+	alert(res.value);
 }
 ```
 
@@ -82,19 +81,19 @@ One of the most important is to set a [Content-Security-Policy](https://develope
 
 ```XML
 <configuration>
- <ajaxNet>
- <ajaxSettings>
-   <contentSecurityPolicy nonce="abcdefghijklmnopqrstuvwxyz" />
-  </ajaxSettings>
- </ajaxNet>
- <system.webServer>
-  <httpProtocol>
-   <customHeaders>
-    <add name="Content-Security-Policy" 
-         value="frame-ancestors www.mydomain.com; script-src 'self' https://www.mydomain.com 'unsafe-eval' 'unsafe-hashes' 'nonce-abcdefghijklmnopqrstuvwxyz';" />
-   </customHeaders>
-  </httpProtocol>
- </system.webServer>
+	<ajaxNet>
+		<ajaxSettings>
+			<contentSecurityPolicy nonce="abcdefghijklmnopqrstuvwxyz" />
+		</ajaxSettings>
+	</ajaxNet>
+	<system.webServer>
+		<httpProtocol>
+			<customHeaders>
+				<add name="Content-Security-Policy" 
+					 value="frame-ancestors www.mydomain.com; script-src 'self' https://www.mydomain.com 'unsafe-eval' 'unsafe-hashes' 'nonce-abcdefghijklmnopqrstuvwxyz';" />
+			</customHeaders>
+		</httpProtocol>
+	</system.webServer>
 </configuration>
 ```
 
