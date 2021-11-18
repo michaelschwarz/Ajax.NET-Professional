@@ -97,3 +97,35 @@ One of the most important is to set a [Content-Security-Policy](https://develope
  </system.webServer>
 </configuration>
 ```
+
+## Serialization settings
+
+For security reasons, [AjaxPro](https://www.ajaxpro.info) does not allow serialization/deserialization of arbitrary .NET classes in its default settings. Serialization support for individual classes or namespaces can be enabled within the "web.config", using the `jsonDeserializationCustomTypes` setting:
+
+```XML
+<configuration>
+	<ajaxNet>
+		<ajaxSettings>
+			<jsonDeserializationCustomTypes default="deny">
+				<allow>MyOwnNamespace.*</allow>
+			</jsonDeserializationCustomTypes>
+		</ajaxSettings>
+	</ajaxNet>
+  ...
+</configuration>
+```
+
+It is further possible to generally enable serialization support for all .NET classes and only block the deserialization of specifc "dangerous" classes. However, this is not recommended as you need to maintain a list of dangerous classes.
+
+```XML
+<configuration>
+	<ajaxNet>
+		<ajaxSettings>
+			<jsonDeserializationCustomTypes default="allow">
+				<deny>System.Configuration.Install.AssemblyInstaller</deny>
+			</jsonDeserializationCustomTypes>
+		</ajaxSettings>
+	</ajaxNet>
+  ...
+</configuration>
+```
