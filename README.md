@@ -100,9 +100,9 @@ One of the most important is to set a [Content-Security-Policy](https://develope
 
 ## Serialization settings
 
-[AjaxPro](https://www.ajaxpro.info) allows the deserialization of arbitrary .NET classes as long as they are a subtype of the expected class. This can be dangerous if the expected class is a base class like `System.Object` with a large number of derived classes. In such a case, a attacker can try to provide any class to AjaxPro. The .NET framework contains several "dangerous" classes that can be abused to execute arbitrary code during the deserialization process.   
+[AjaxPro](https://www.ajaxpro.info) allows the deserialization of arbitrary .NET classes as long as they are a subtype of the expected class. This can be dangerous if the expected class is a base class like `System.Object` with a large number of derived classes. The .NET framework contains several "dangerous" classes that can be abused to execute arbitrary code during the deserialization process.   
 
-For security reasons, [AjaxPro](https://www.ajaxpro.info) provides the `jsonDeserializationCustomTypes` setting, which allows to restrict the classes that can be deserialized. The setting supports allow- and blocklists.
+For security reasons [AjaxPro](https://www.ajaxpro.info) provides the `jsonDeserializationCustomTypes` setting, which allows to restrict the classes that can be deserialized. The setting supports allow- and blocklists.
 
 The following example shows an allow list configuration that only allows the deserialization of objects from a specific namespace: 
 
@@ -119,7 +119,7 @@ The following example shows an allow list configuration that only allows the des
 </configuration>
 ```
 
-The following example shows the block-list approach were only the deserialization of specifc "dangerous" classes is blcoekd. This is not recommended as developers need to maintain a list of dangerous classes.
+The following example shows the block-list approach were only the deserialization of specifc "dangerous" classes gets blocked. This is not recommended as developers need to maintain a list of dangerous classes.
 
 ```XML
 <configuration>
