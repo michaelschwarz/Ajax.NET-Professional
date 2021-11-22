@@ -101,7 +101,7 @@ One of the most important is to set a [Content-Security-Policy](https://develope
 
 [AjaxPro](https://www.ajaxpro.info) allows the deserialization of arbitrary .NET classes as long as they are a subtype of the expected class. This can be dangerous if the expected class is a base class like `System.Object` with a large number of derived classes. The .NET framework contains several "dangerous" classes that can be abused to execute arbitrary code during the deserialization process.   
 
-For security reasons [AjaxPro](https://www.ajaxpro.info) provides the `jsonDeserializationCustomTypes` setting, which allows to restrict the classes that can be deserialized. The setting supports allow- and blocklists.
+For security reasons [AjaxPro](https://www.ajaxpro.info) provides the `jsonDeserializationCustomTypes` setting, which allows to restrict the classes that can be deserialized. The setting supports allow- and blocklists, the default behaviour is `deny`.
 
 The following example shows an allow list configuration that only allows the deserialization of objects from a specific namespace: 
 
