@@ -37,6 +37,7 @@
  * MS	06-07-11	added generic method for DeserializeFromJson
  * MS	06-09-26	improved performance removing three-times cast
  * MS	21-10-27	added allowed customized types for JSON deserialization
+ * MS	21-11-22	changed error message when type is not allowed
  * 
  * 
  */
@@ -146,7 +147,7 @@ namespace AjaxPro
 				{
 					type = t;
 
-					if (AjaxPro.Utility.Settings.IsJsonDeserializationCustomTypesDenied)
+					if (AjaxPro.Utility.Settings.IsCustomTypesDeserializationDisabled)
 					{
 						bool isCustomTypeAllowed = false;
 
@@ -158,13 +159,13 @@ namespace AjaxPro
 							}
 
 						if (!isCustomTypeAllowed)
-							throw new System.Security.SecurityException("This cusomized type is not allowed as argument for this method.");
+							throw new System.Security.SecurityException("This type is not allowed as argument for this method.");
 					}
 					else
 					{
 						foreach (var s in AjaxPro.Utility.Settings.JsonDeserializationCustomTypesDenied)
 							if ((s.EndsWith("*") && type.FullName.StartsWith(s.Substring(0, s.Length -1), StringComparison.InvariantCultureIgnoreCase)) || s == type.FullName)
-								throw new System.Security.SecurityException("This cusomized type is not allowed as argument for this method.");
+								throw new System.Security.SecurityException("This type is not allowed as argument for this method.");
 					}
 				}
 			}

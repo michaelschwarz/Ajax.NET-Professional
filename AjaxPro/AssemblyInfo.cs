@@ -24,7 +24,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 /* Developers of Ajax.NET Professional (AjaxPro)
- * MS	Michael Schwarz		info@schwarz-interactive.de
+ * MS	Michael Schwarz
  * TB	Tim Byng			
  * MR	Matthew Raymer
  * 
@@ -40,6 +40,8 @@
  * MS	06-06-11	added ReflectionPermission attribute
  * MS	06-07-19	removed ReflectionPermission attribute (why did we add it?)
  * MS	21-10-30	added contentSecurityPolicy to specify a nonce for all scripts
+ * MS	21-11-22	changed default behavior of passing types during deserialization to deny
+ * 
  * 
  */
 using System;
@@ -91,7 +93,7 @@ using System.Runtime.CompilerServices;
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 
-[assembly:				AssemblyVersion("21.10.30.1")]		// do not remove the blanks!!!!
+[assembly:				AssemblyVersion("21.11.22.1")]		// do not remove the blanks!!!!
 
 //
 // In order to sign your assembly you must specify a key to use. Refer to the 

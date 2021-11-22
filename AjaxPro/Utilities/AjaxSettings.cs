@@ -36,6 +36,7 @@
  *					fixed Ajax token
  * MS	21-10-27	added allowed customized types for JSON deserialization
  * MS	21-10-30	added contentSecurityPolicy to specify a nonce for all scripts
+ * MS	21-11-22	changed to set the default behavior to not allow custom types
  * 
  * 
  */
@@ -133,6 +134,9 @@ namespace AjaxPro
 
 			JsonDeserializationCustomTypesAllowed = new List<string>();
 			JsonDeserializationCustomTypesDenied = new List<string>();
+
+			// disable all custom types by default, either add allow list (or not recommended change default to 'allow')
+			IsCustomTypesDeserializationDisabled = true;
 		}
 
 		#region Public Properties
@@ -250,7 +254,7 @@ namespace AjaxPro
 			set{ m_ScriptReplacements = value; }
 		}
 
-		public bool IsJsonDeserializationCustomTypesDenied { get; set; }
+		public bool IsCustomTypesDeserializationDisabled { get; set; }
 
 		public List<string> JsonDeserializationCustomTypesAllowed { get; set; }
 		public List<string> JsonDeserializationCustomTypesDenied { get; set; }

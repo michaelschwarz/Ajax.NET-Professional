@@ -167,7 +167,7 @@ namespace AjaxPro
 				}
 				else if (n.Name == "jsonDeserializationCustomTypes")
 				{
-					settings.IsJsonDeserializationCustomTypesDenied = n.Attributes["default"] == null || n.Attributes["default"].InnerText.ToLower() != "allow";
+					settings.IsCustomTypesDeserializationDisabled = n.Attributes["default"] == null || n.Attributes["default"].InnerText.ToLower() != "allow";
 
 					foreach (XmlNode sn in n.ChildNodes)
 					{
