@@ -48,7 +48,7 @@
  *					using new AjaxSecurityProvider
  * MS   09-02-17    fixed memory problem
  * MS	21-10-30	added contentSecurityPolicy to specify a nonce for all scripts
- * 
+ * MS	21-11-29	removed HtmlControlConverter from default converters
  * 
  */
 using System;
@@ -254,7 +254,7 @@ namespace AjaxPro
             AddConverter(settings, new IEnumerableConverter());
 
             AddConverter(settings, new DataRowConverter());
-            AddConverter(settings, new HtmlControlConverter());
+            //AddConverter(settings, new HtmlControlConverter());
 
             #endregion
         }

@@ -29,8 +29,6 @@
  * MR	Matthew Raymer
  * 
  * 
- * 
- * 
  * MS	06-04-03	fixed missing http error status code in core.js
  * MS	06-04-04	added AjaxPro.onError, onTimeout, onStateChanged, onLoading to core.js
  * MS	06-04-05	removed Object.prototype.extend from prototype.js and all othere files using this
@@ -41,7 +39,7 @@
  * MS	06-07-19	removed ReflectionPermission attribute (why did we add it?)
  * MS	21-10-30	added contentSecurityPolicy to specify a nonce for all scripts
  * MS	21-11-22	changed default behavior of passing types during deserialization to deny
- * 
+ * MS	21-11-29	added check for custom type deserialization
  * 
  */
 using System;
@@ -93,7 +91,7 @@ using System.Runtime.CompilerServices;
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 
-[assembly:				AssemblyVersion("21.11.22.1")]		// do not remove the blanks!!!!
+[assembly:				AssemblyVersion("21.11.29.1")]		// do not remove the blanks!!!!
 
 //
 // In order to sign your assembly you must specify a key to use. Refer to the 
