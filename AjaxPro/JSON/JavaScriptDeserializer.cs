@@ -237,7 +237,7 @@ namespace AjaxPro
 
 				if (!isCustomTypeAllowed)
 				{
-					ex = new SecurityException("This type is not allowed as argument for this method.");
+					ex = new SecurityException(AjaxPro.Utility.Settings.DebugEnabled ? "The type '" + type.Name + "' is not allowed to be deserialized." : "At least one type passed is not allowed to be deserialized.");
 					return false;
 				}
 			}
@@ -246,7 +246,7 @@ namespace AjaxPro
 				foreach (var s in AjaxPro.Utility.Settings.JsonDeserializationCustomTypesDenied)
 					if ((s.EndsWith("*") && type.FullName.StartsWith(s.Substring(0, s.Length - 1), StringComparison.InvariantCultureIgnoreCase)) || s == type.FullName)
 					{
-						ex = new SecurityException("This type is not allowed as argument for this method.");
+						ex = new SecurityException(AjaxPro.Utility.Settings.DebugEnabled ? "The type '" + type.Name + "' is not allowed to be deserialized." : "At least one type passed is not allowed to be deserialized.");
 						return false;
 					}
 			}

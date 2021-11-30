@@ -40,6 +40,7 @@
  * MS	21-10-30	added contentSecurityPolicy to specify a nonce for all scripts
  * MS	21-11-22	changed default behavior of passing types during deserialization to deny
  * MS	21-11-29	added check for custom type deserialization
+ * MS	21-11-30	changed error message for unsupported deserialization types in debug mode
  * 
  */
 using System;
@@ -91,7 +92,7 @@ using System.Runtime.CompilerServices;
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 
-[assembly:				AssemblyVersion("21.11.29.1")]		// do not remove the blanks!!!!
+[assembly:				AssemblyVersion("21.11.30.1")]		// do not remove the blanks!!!!
 
 //
 // In order to sign your assembly you must specify a key to use. Refer to the 
