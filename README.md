@@ -1,3 +1,5 @@
+[![NuGet Status](https://img.shields.io/nuget/v/Paket.svg?style=flat)](https://www.nuget.org/packages/AjaxNetProfessional/)
+
 # Ajax.NET Professional
 
 Ajax.NET Professional (AjaxPro) is one of the first AJAX frameworks available for Microsoft ASP.NET.
