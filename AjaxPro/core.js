@@ -355,8 +355,9 @@ AjaxPro.Request.prototype = {
 			clearTimeout(this.timeoutTimer);
 		}
 		var res = this.getEmptyRes();
-		if(this.xmlHttp.status == 200 && this.xmlHttp.statusText == "OK") {
-			res = this.createResponse(res);
+		//Ignore empty statustext to be http2 compatible
+		if (this.xmlHttp.status == 200 && this.xmlHttp.statusText == "OK" || !this.xmlHttp.statusText) {
+			res = this.createResponse(res); 
 		} else {
 			res = this.createResponse(res, true);
 			res.error = {Message:this.xmlHttp.statusText,Type:"ConnectFailure",Status:this.xmlHttp.status};
