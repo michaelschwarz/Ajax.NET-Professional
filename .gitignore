@@ -1,0 +1,7 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/AjaxPro/obj/Debug/AjaxPro.csproj.AssemblyReference.cache
+/.vs/slnx.sqlite
+/.vs/Ajax.NET-Professional/v17/.suo
