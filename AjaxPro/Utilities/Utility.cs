@@ -47,8 +47,8 @@
  * MS	07-04-24	fixed Ajax token
  *					using new AjaxSecurityProvider
  * MS   09-02-17    fixed memory problem
- * 
- * 
+ * MS	21-10-30	added contentSecurityPolicy to specify a nonce for all scripts
+ * MS	21-11-29	removed HtmlControlConverter from default converters
  * 
  */
 using System;
@@ -159,7 +159,7 @@ namespace AjaxPro
             RegisterCommonAjax(page);
 
             RegisterClientScriptBlock(page, Constant.AjaxID + ".AjaxEnum." + type.FullName,
-                "<script type=\"text/javascript\">\r\n" + JavaScriptUtil.GetEnumRepresentation(type) + "\r\n</script>");
+				"<script" + AjaxPro.Utility.Settings.AppendContentSecurityPolicyNonce() + " type=\"text/javascript\">\r\n" + JavaScriptUtil.GetEnumRepresentation(type) + "\r\n</script>");
         }
 
 
@@ -204,7 +204,7 @@ namespace AjaxPro
             }
 
             RegisterClientScriptBlock(page, "AjaxType." + type.FullName,
-                "<script type=\"text/javascript\" src=\"" + System.Web.HttpContext.Current.Request.ApplicationPath + (System.Web.HttpContext.Current.Request.ApplicationPath.EndsWith("/") ? "" : "/") + Utility.HandlerPath + "/" + Utility.GetSessionUri() + path + Utility.HandlerExtension + "\"></script>");
+				"<script" + AjaxPro.Utility.Settings.AppendContentSecurityPolicyNonce() + " type=\"text/javascript\" src=\"" + System.Web.HttpContext.Current.Request.ApplicationPath + (System.Web.HttpContext.Current.Request.ApplicationPath.EndsWith("/") ? "" : "/") + Utility.HandlerPath + "/" + Utility.GetSessionUri() + path + Utility.HandlerExtension + "\"></script>");
         }
 #endif
         /// <summary>
@@ -254,7 +254,7 @@ namespace AjaxPro
             AddConverter(settings, new IEnumerableConverter());
 
             AddConverter(settings, new DataRowConverter());
-            AddConverter(settings, new HtmlControlConverter());
+            //AddConverter(settings, new HtmlControlConverter());
 
             #endregion
         }
@@ -383,6 +383,10 @@ namespace AjaxPro
                         AddDefaultConverter(settings);
                     }
 
+					
+
+					
+
                     // now make the setting visible to all threads
                     m_Settings = settings;
 
@@ -468,23 +472,23 @@ namespace AjaxPro
 
             if (prototypeJs.Length > 0)
                 RegisterClientScriptBlock(page, Constant.AjaxID + ".prototype",
-                    "<script type=\"text/javascript\" src=\"" + prototypeJs + "\"></script>");
+					"<script" + AjaxPro.Utility.Settings.AppendContentSecurityPolicyNonce() + " type=\"text/javascript\" src=\"" + prototypeJs + "\"></script>");
 
             if (coreJs.Length > 0)
                 RegisterClientScriptBlock(page, Constant.AjaxID + ".core",
-                    "<script type=\"text/javascript\" src=\"" + coreJs + "\"></script>");
+					"<script" + AjaxPro.Utility.Settings.AppendContentSecurityPolicyNonce() + " type=\"text/javascript\" src=\"" + coreJs + "\"></script>");
 
             if (Utility.Settings.OldStyle.Contains("includeMsPrototype"))
             {
                 string msJs = rootFolder + Utility.HandlerPath + "/" + Utility.GetSessionUri() + "ms" + Utility.HandlerExtension;
 
                 RegisterClientScriptBlock(page, Constant.AjaxID + ".ms",
-                    "<script type=\"text/javascript\" src=\"" + msJs + "\"></script>");
+					"<script" + AjaxPro.Utility.Settings.AppendContentSecurityPolicyNonce() + " type=\"text/javascript\" src=\"" + msJs + "\"></script>");
             }
 
             if (convertersJs.Length > 0)
                 RegisterClientScriptBlock(page, Constant.AjaxID + ".converters",
-                    "<script type=\"text/javascript\" src=\"" + convertersJs + "\"></script>");
+					"<script" + AjaxPro.Utility.Settings.AppendContentSecurityPolicyNonce() + " type=\"text/javascript\" src=\"" + convertersJs + "\"></script>");
 
 
             StringBuilder sb = new StringBuilder();
@@ -498,7 +502,7 @@ namespace AjaxPro
             if (sb.Length > 0)
             {
                 RegisterClientScriptBlock(page, Constant.AjaxID + ".ajaxproinit",
-                    "<script type=\"text/javascript\">\r\n" + sb.ToString() + "</script>\r\n");
+					"<script" + AjaxPro.Utility.Settings.AppendContentSecurityPolicyNonce() + " type=\"text/javascript\">\r\n" + sb.ToString() + "</script>\r\n");
             }
         }
 
