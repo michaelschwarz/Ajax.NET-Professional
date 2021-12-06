@@ -1,7 +1,7 @@
 /*
  * AssemblyInfo.cs
  * 
- * Copyright © 2009 Michael Schwarz (http://www.ajaxpro.info).
+ * Copyright Â© 2009 Michael Schwarz (http://www.ajaxpro.info).
  * All Rights Reserved.
  * 
  * Permission is hereby granted, free of charge, to any person 
@@ -92,7 +92,7 @@ using System.Runtime.CompilerServices;
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 
-[assembly:				AssemblyVersion("21.11.30.1")]		// do not remove the blanks!!!!
+[assembly:				AssemblyVersion("21.12.6.1")]		// do not remove the blanks!!!!
 
 //
 // In order to sign your assembly you must specify a key to use. Refer to the 
