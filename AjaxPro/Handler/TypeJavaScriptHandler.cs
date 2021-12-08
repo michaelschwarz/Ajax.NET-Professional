@@ -161,12 +161,7 @@ namespace AjaxPro
 			// Build the javascript source and save it to the current
 			// Application context.
 
-
 			string url = context.Request.ApplicationPath + (context.Request.ApplicationPath.EndsWith("/") ? "" : "/") + Utility.HandlerPath + "/" + AjaxPro.Utility.GetSessionUri() + path + Utility.HandlerExtension;
-
-
-
-
 
 			// find all methods that are able to be used with AjaxPro
 
