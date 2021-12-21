@@ -184,14 +184,19 @@ Object.extend(AjaxPro, {
 			if (matches.length == 7) {
 				matches[1] = (parseInt(matches[1], 0) - 1).toString();
 				var isDate = true;
+				var s = "";
 				for (var i = 0; i < matches.length; i++) {
 					if (isNaN(parseInt(matches[i], 10))) {
 						isDate = false;
 						break;
+					}
+					if (i > 0) {
+						s += ",";
                     }
+					s += parseInt(matches[i], 10);
 				}
 				if (isDate) {
-					return "new Date(Date.UTC(" + matches.join(",") + "))";
+					return "new Date(Date.UTC(" + s + "))";
 				}
 			}
 		}
