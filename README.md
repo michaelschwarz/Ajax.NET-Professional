@@ -1,4 +1,4 @@
-[![NuGet Status](https://img.shields.io/nuget/v/Paket.svg?style=flat)](https://www.nuget.org/packages/AjaxNetProfessional/)
+[![NuGet Status](https://img.shields.io/nuget/v/AjaxNetProfessional?style=flat)](https://www.nuget.org/packages/AjaxNetProfessional/)
 
 # Ajax.NET Professional
 
