@@ -259,7 +259,7 @@
     <Compile Include="Utilities\Constant.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Utilities\MD5Helper.cs">
+    <Compile Include="Utilities\HashHelper.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Utilities\Utility.cs">
