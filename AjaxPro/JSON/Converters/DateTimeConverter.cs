@@ -47,7 +47,7 @@ namespace AjaxPro
 	/// </summary>
 	public class DateTimeConverter : IJavaScriptConverter
 	{
-		private Regex r = new Regex(@"(\d{4}),(\d{1,2}),(\d{1,2}),(\d{1,2}),(\d{1,2}),(\d{1,2}),(\d{1,3})", RegexOptions.Compiled);
+		private static readonly Regex r = new Regex(@"(\d{4}),(\d{1,2}),(\d{1,2}),(\d{1,2}),(\d{1,2}),(\d{1,2}),(\d{1,3})", RegexOptions.Compiled);
 		private double UtcOffsetMinutes = TimeZone.CurrentTimeZone.GetUtcOffset(DateTime.Now).TotalMinutes;
 
 		/// <summary>

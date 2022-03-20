@@ -343,7 +343,7 @@ AjaxPro.Request.prototype = {
 		}
 		var res = this.getEmptyRes();
 		//Ignore empty statustext to be http2 compatible
-		if (this.xmlHttp.status == 200 && this.xmlHttp.statusText == "OK" || !this.xmlHttp.statusText) {
+		if (this.xmlHttp.status == 200 || !this.xmlHttp.statusText) {
 			res = this.createResponse(res);
 		} else {
 			res = this.createResponse(res, true);
@@ -386,11 +386,15 @@ AjaxPro.Request.prototype = {
 	},
 	timeout: function () {
 		this.duration = new Date().getTime() - this.__start;
-		var r = this.onTimeout(this.duration, this);
-		if (typeof r == "undefined" || r != false) {
+		if (this.onTimeout == null || typeof (this.onTimeout) != "function") {
 			this.abort();
 		} else {
-			this.timeoutTimer = setTimeout(this.timeout.bind(this), AjaxPro.timeoutPeriod);
+			var r = this.onTimeout(this.duration, this);
+			if (typeof r == "undefined" || r != false) {
+				this.abort();
+			} else {
+				this.timeoutTimer = setTimeout(this.timeout.bind(this), AjaxPro.timeoutPeriod);
+			}
 		}
 	},
 	invoke: function (method, args, callback, context) {

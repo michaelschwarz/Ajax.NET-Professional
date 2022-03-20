@@ -44,6 +44,7 @@ using System;
 using System.Xml;
 using System.Text;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace AjaxPro
 {
@@ -52,7 +53,7 @@ namespace AjaxPro
 	/// </summary>
 	public sealed class JavaScriptUtil
 	{
-		private static System.Text.RegularExpressions.Regex r = new System.Text.RegularExpressions.Regex(@"\w+|\W+", System.Text.RegularExpressions.RegexOptions.Compiled);
+		private static readonly Regex r = new Regex(@"\w+|\W+", System.Text.RegularExpressions.RegexOptions.Compiled);
 
 		/// <summary>
 		/// Get the client-side JavaScript namespace script.
