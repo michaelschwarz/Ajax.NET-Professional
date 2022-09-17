@@ -71,7 +71,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Michael Schwarz")]
 [assembly: AssemblyProduct("Ajax.NET Professional")]
-[assembly: AssemblyCopyright("2021, Michael Schwarz")]
+[assembly: AssemblyCopyright("2022, Michael Schwarz")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]	
 [assembly: System.Security.AllowPartiallyTrustedCallersAttribute()]
