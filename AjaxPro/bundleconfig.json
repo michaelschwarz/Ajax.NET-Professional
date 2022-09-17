@@ -1,0 +1,20 @@
+[
+  {
+    "outputFileName": "core.min.js",
+    "inputFiles": [
+      "core.js"
+    ]
+  },
+  {
+    "outputFileName": "ms.min.js",
+    "inputFiles": [
+      "ms.js"
+    ]
+  },
+  {
+    "outputFileName": "prototype.min.js",
+    "inputFiles": [
+      "prototype.js"
+    ]
+  }
+]

@@ -276,10 +276,22 @@
     <EmbeddedResource Include="core.js" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="bundleconfig.json" />
     <None Include="web.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ms.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="core.min.js">
+      <DependentUpon>core.js</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ms.min.js">
+      <DependentUpon>ms.js</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="prototype.min.js">
+      <DependentUpon>prototype.js</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
