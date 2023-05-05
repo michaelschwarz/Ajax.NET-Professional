@@ -13,6 +13,7 @@ The framework will create proxy JavaScript classes that are used on client-side 
 - Add following lines to your web.config
 
 ```XML
+<!-- IIS Managed Pipeline Mode Integrated -->
 <configuration>
 	<system.web>
 		<httpHandlers>
@@ -20,6 +21,17 @@ The framework will create proxy JavaScript classes that are used on client-side 
 		</httpHandlers>
 	</system.web>
 </configuration>
+```
+
+```XML
+<!-- IIS Managed Pipeline Mode  Classic -->
+<location path="ajaxpro">
+	<system.web>
+		<httpHandlers>
+			<add verb="*" path="*.ashx" type="AjaxPro.AjaxHandlerFactory,AjaxPro.2"/>
+		</httpHandlers>
+	</system.web>
+</location>
 ```
 
 - Now, you have to mark your .NET methods with an AjaxMethod attribute
@@ -70,7 +82,7 @@ function getServerTime_callback(res) {
 
 ## Compiler Options
 
-- `NET20` compiles .NET 2.0 assemblies AjaxPro.2.dll (otherwise original it was .NET 1.1, AjaxPro.dll)
+- `NET20` compiles .NET 4.8 assemblies AjaxPro.2.dll (otherwise original it was .NET 1.1, AjaxPro.dll)
 - `JSONLIB` compiles JSON parser only (AjaxPro.JSON.2.dll or AjaxPro.JSON.dll)
 - `NET20external` is setting the assembly name to AjaxPro.2.dll, compatibility
 - `TRACE` is no longer used
