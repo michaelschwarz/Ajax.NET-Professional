@@ -388,3 +388,4 @@ FodyWeavers.xsd
 *.sln.iml
 
 /DemoWebSite
+/NuGet
