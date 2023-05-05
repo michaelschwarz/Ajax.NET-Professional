@@ -10,28 +10,32 @@ The framework will create proxy JavaScript classes that are used on client-side 
 
 - Download the latest Ajax.NET Professional
 - Add a reference to the AjaxPro.2.dll (for the .NET 1.1 Framework use AjaxPro.dll)
-- Add following lines to your web.config
+- Add following lines to your web.config, either for Integrated IIS pipeline mode
 
 ```XML
-<!-- IIS Managed Pipeline Mode Integrated -->
 <configuration>
-	<system.web>
-		<httpHandlers>
-			<add verb="POST,GET" path="ajaxpro/*.ashx" type="AjaxPro.AjaxHandlerFactory, AjaxPro.2"/>
-		</httpHandlers>
-	</system.web>
+	<location path="ajaxpro">
+		<system.webServer>
+			<handlers>
+				<add name="AjaxPro" verb="GET,POST" path="*.ashx" type="AjaxPro.AjaxHandlerFactory,AjaxPro.2" />
+			</handlers>
+		</system.webServer>
+	</location>
 </configuration>
 ```
 
+- Or if you are using Classic IIS pipeline mode:
+
 ```XML
-<!-- IIS Managed Pipeline Mode  Classic -->
-<location path="ajaxpro">
-	<system.web>
-		<httpHandlers>
-			<add verb="*" path="*.ashx" type="AjaxPro.AjaxHandlerFactory,AjaxPro.2"/>
-		</httpHandlers>
-	</system.web>
-</location>
+<configuration>
+	<location path="ajaxpro">
+		<system.web>
+			<httpHandlers>
+				<add verb="GET,POST" path="*.ashx" type="AjaxPro.AjaxHandlerFactory,AjaxPro.2"/>
+			</httpHandlers>
+		</system.web>
+	</location>
+</configuration>
 ```
 
 - Now, you have to mark your .NET methods with an AjaxMethod attribute
