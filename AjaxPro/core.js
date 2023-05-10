@@ -299,7 +299,9 @@ AjaxPro.Request.prototype = {
 		}
 		if (this.isRunning) {
 			this.isRunning = false;
-			this.onLoading(false);
+			if (this.onLoading !== null) {
+				this.onLoading(false);
+			}
 		}
 	},
 	dispose: function () {
@@ -524,7 +526,7 @@ AjaxPro.RequestQueue.prototype = {
 	}
 };
 
-AjaxPro.queue = new AjaxPro.RequestQueue(2);	// 2 http connections
+AjaxPro.queue = new AjaxPro.RequestQueue(2);	// max 2 http connections
 
 AjaxPro.AjaxClass = function (url) {
 	this.url = url;
@@ -542,7 +544,10 @@ AjaxPro.AjaxClass.prototype = {
 			}
 		}
 		var r = new AjaxPro.Request();
+		// r.onLoading = AjaxPro.onLoading;
 		r.url = this.url;
-		return r.invoke(method, args);
+		var res = r.invoke(method, args);
+		r.abort();
+		return res;
 	}
 };

@@ -26,6 +26,7 @@
 /*
  * MS	06-03-10	changed assembly version to correct version from assembly info
  * MS	06-04-04	fixed if external version is using different assembly name
+ * MS	23-05-10	fixed an issue with global timeout when using synchronous calls
  * 
  * 
  */
@@ -52,6 +53,6 @@ namespace AjaxPro
         /// <summary>
 		/// The assembly version.
 		/// </summary>
-        public const string AssemblyVersion = "23.5.5.1";
+        public const string AssemblyVersion = "23.5.10.1";
 	}
 }
