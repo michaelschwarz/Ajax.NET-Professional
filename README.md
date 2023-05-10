@@ -9,7 +9,7 @@ The framework will create proxy JavaScript classes that are used on client-side 
 ## Quick Guide
 
 - Download the latest Ajax.NET Professional
-- Add a reference to the AjaxPro.2.dll (for the .NET 1.1 Framework use AjaxPro.dll)
+- Add a reference to the AjaxPro.2.dll
 - Add following lines to your web.config if you are using Integrated IIS pipeline mode:
 
 ```XML
