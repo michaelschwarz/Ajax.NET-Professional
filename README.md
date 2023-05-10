@@ -84,6 +84,10 @@ function getServerTime_callback(res) {
 }
 ```
 
+## Example Projects
+
+I have created some example web projects that I am using also using for testing. Please download the code from [Ajax.NET Professional Starter Kit](https://github.com/michaelschwarz/Ajax.NET-Professional-Starter-Kit).
+
 ## Compiler Options
 
 - `NET20` compiles .NET 4.8 assemblies AjaxPro.2.dll (otherwise original it was .NET 1.1, AjaxPro.dll)
