@@ -1,7 +1,7 @@
 /*
  * ExceptionConverter.cs
  * 
- * Copyright © 2007 Michael Schwarz (http://www.ajaxpro.info).
+ * Copyright © 2023 Michael Schwarz (http://www.ajaxpro.info).
  * All Rights Reserved.
  * 
  * Permission is hereby granted, free of charge, to any person 
@@ -32,31 +32,30 @@
  */
 using System;
 using System.Text;
-using System.Data;
 
 namespace AjaxPro
 {
-	/// <summary>
-	/// Provides methods to serialize and deserialize a Exception object.
-	/// </summary>
-	public class ExceptionConverter : IJavaScriptConverter
-	{
+    /// <summary>
+    /// Provides methods to serialize and deserialize a Exception object.
+    /// </summary>
+    public class ExceptionConverter : IJavaScriptConverter
+    {
         /// <summary>
         /// Initializes a new instance of the <see cref="ExceptionConverter"/> class.
         /// </summary>
 		public ExceptionConverter()
-			: base()
-		{
-			m_AllowInheritance = true;
+            : base()
+        {
+            m_AllowInheritance = true;
 
-			m_serializableTypes = new Type[] {
-				typeof(Exception),
-				typeof(NotImplementedException),
-				typeof(NotSupportedException),
-				typeof(NullReferenceException),
-				typeof(System.Security.SecurityException)
-			};
-		}
+            m_serializableTypes = new Type[] {
+                typeof(Exception),
+                typeof(NotImplementedException),
+                typeof(NotSupportedException),
+                typeof(NullReferenceException),
+                typeof(System.Security.SecurityException)
+            };
+        }
 
         /// <summary>
         /// Converts a .NET object into a JSON string.
@@ -64,11 +63,11 @@ namespace AjaxPro
         /// <param name="o">The object to convert.</param>
         /// <returns>Returns a JSON string.</returns>
 		public override string Serialize(object o)
-		{
-			StringBuilder sb = new StringBuilder();
-			Serialize(o, sb);
-			return sb.ToString();
-		}
+        {
+            StringBuilder sb = new StringBuilder();
+            Serialize(o, sb);
+            return sb.ToString();
+        }
 
         /// <summary>
         /// Serializes the specified o.
@@ -76,35 +75,35 @@ namespace AjaxPro
         /// <param name="o">The o.</param>
         /// <param name="sb">The sb.</param>
 		public override void Serialize(object o, StringBuilder sb)
-		{
-			Exception ex = (Exception)o;
+        {
+            Exception ex = (Exception)o;
 
-			// The following line is NON-JSON format, it is used to 
-			// return null to res.value and have an additional property res.error
-			// in the object the callback JavaScript method will get.
+            // The following line is NON-JSON format, it is used to 
+            // return null to res.value and have an additional property res.error
+            // in the object the callback JavaScript method will get.
 
-			sb.Append("{\"Message\":");
-			JavaScriptUtil.QuoteString(ex.Message, sb);
-			sb.Append(",\"Type\":");
-			JavaScriptUtil.QuoteString(o.GetType().FullName, sb);
-#if(!JSONLIB)
-			if (AjaxPro.Utility.Settings.DebugEnabled)
-			{
-				sb.Append(",\"Stack\":");
-				JavaScriptUtil.QuoteString(ex.StackTrace, sb);
+            sb.Append("{\"Message\":");
+            JavaScriptUtil.QuoteString(ex.Message, sb);
+            sb.Append(",\"Type\":");
+            JavaScriptUtil.QuoteString(o.GetType().FullName, sb);
+#if (!JSONLIB)
+            if (AjaxPro.Utility.Settings.DebugEnabled)
+            {
+                sb.Append(",\"Stack\":");
+                JavaScriptUtil.QuoteString(ex.StackTrace, sb);
 
-				if (ex.TargetSite != null)
-				{
-					sb.Append(",\"TargetSite\":");
-					JavaScriptUtil.QuoteString(ex.TargetSite.ToString(), sb);
-				}
+                if (ex.TargetSite != null)
+                {
+                    sb.Append(",\"TargetSite\":");
+                    JavaScriptUtil.QuoteString(ex.TargetSite.ToString(), sb);
+                }
 
-				sb.Append(",\"Source\":");
-				JavaScriptUtil.QuoteString(ex.Source, sb);
-			}
+                sb.Append(",\"Source\":");
+                JavaScriptUtil.QuoteString(ex.Source, sb);
+            }
 #endif
-			sb.Append("}");
-		}
+            sb.Append("}");
+        }
 
         /// <summary>
         /// Tries the serialize value.
@@ -114,15 +113,15 @@ namespace AjaxPro
         /// <param name="sb">The sb.</param>
         /// <returns></returns>
 		public override bool TrySerializeValue(object o, Type t, StringBuilder sb)
-		{
-			Exception ex = o as Exception;
-			if (ex != null)
-			{
-				this.Serialize(ex, sb);
-				return true;
-			}
+        {
+            Exception ex = o as Exception;
+            if (ex != null)
+            {
+                Serialize(ex, sb);
+                return true;
+            }
 
-			return base.TrySerializeValue(o, t, sb);
-		}
-	}
+            return base.TrySerializeValue(o, t, sb);
+        }
+    }
 }

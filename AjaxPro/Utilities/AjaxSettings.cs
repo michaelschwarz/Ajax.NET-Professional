@@ -1,7 +1,7 @@
 /*
  * AjaxSettings.cs
  * 
- * Copyright © 2007 Michael Schwarz (http://www.ajaxpro.info).
+ * Copyright © 2023 Michael Schwarz (http://www.ajaxpro.info).
  * All Rights Reserved.
  * 
  * Permission is hereby granted, free of charge, to any person 
@@ -37,24 +37,24 @@
  * MS	21-10-27	added allowed customized types for JSON deserialization
  * MS	21-10-30	added contentSecurityPolicy to specify a nonce for all scripts
  * MS	21-11-22	changed to set the default behavior to not allow custom types
+ * MS   23-05-25    added a configuration to not throw an exception when a property is not supported to read from
  * 
  * 
  */
 using System;
-using System.Collections;
 #if(NET20)
 using System.Collections.Generic;
 #endif
 
 namespace AjaxPro
 {
-#if(JSONLIB)
+#if (JSONLIB)
     internal class AjaxSettings
     {
 		private System.Collections.Specialized.StringCollection m_OldStyle = new System.Collections.Specialized.StringCollection();
 		private bool m_IncludeTypeProperty = false;
 		
-#if(NET20)
+#if (NET20)
 		internal Dictionary<Type, IJavaScriptConverter> SerializableConverters;
 		internal Dictionary<Type, IJavaScriptConverter> DeserializableConverters;
 #else
@@ -66,7 +66,7 @@ namespace AjaxPro
 		/// </summary>
 		internal AjaxSettings()
 		{
-#if(NET20)
+#if (NET20)
 			SerializableConverters = new Dictionary<Type, IJavaScriptConverter>();
 			DeserializableConverters = new Dictionary<Type, IJavaScriptConverter>();
 #else
@@ -91,71 +91,71 @@ namespace AjaxPro
 		}
     }
 #else
-	internal class AjaxSettings
-	{
-		private System.Collections.Hashtable m_UrlNamespaceMappings = new System.Collections.Hashtable();
+    internal class AjaxSettings
+    {
+        private System.Collections.Hashtable m_UrlNamespaceMappings = new System.Collections.Hashtable();
 
-		private bool m_DebugEnabled = false;
-		private bool m_UseAssemblyQualifiedName = false;
-		private bool m_IncludeTypeProperty = false;
-		private bool m_UseSimpleObjectNaming = false;
+        private bool m_IsDebugEnabled = false;
+        private bool m_IsUseAssemblyQualifiedName = false;
+        private bool m_IsIncludeTypeProperty = false;
+        private bool m_IsUseSimpleObjectNaming = false;
+        private bool m_IsOnlyAllowTypesInList = false;
+        private bool m_IsIgnoreNotSupportedProperties = false;
 
-		private System.Collections.Specialized.StringCollection m_OldStyle = new System.Collections.Specialized.StringCollection();
+        private System.Collections.Specialized.StringCollection m_OldStyle = new System.Collections.Specialized.StringCollection();
 
-		private AjaxSecurity m_AjaxSecurity = null;
-		private string m_TokenSitePassword = "ajaxpro";
+        private AjaxSecurity m_AjaxSecurity = null;
+        private string m_TokenSitePassword = "ajaxpro";
 
-#if(NET20)
-		internal Dictionary<Type, IJavaScriptConverter> SerializableConverters;
-		internal Dictionary<Type, IJavaScriptConverter> DeserializableConverters;
+#if (NET20)
+        internal Dictionary<Type, IJavaScriptConverter> SerializableConverters;
+        internal Dictionary<Type, IJavaScriptConverter> DeserializableConverters;
 #else
 		internal JavaScriptConverterList SerializableConverters;
 		internal JavaScriptConverterList DeserializableConverters;
 #endif
-		private string m_TypeJavaScriptProvider = null;
+        private string m_TypeJavaScriptProvider = null;
 
-		private bool m_OnlyAllowTypesInList = false;
-
-		private string m_CoreScript = null;
-		private System.Collections.Specialized.StringDictionary m_ScriptReplacements = new System.Collections.Specialized.StringDictionary();
+        private string m_CoreScript = null;
+        private System.Collections.Specialized.StringDictionary m_ScriptReplacements = new System.Collections.Specialized.StringDictionary();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AjaxSettings"/> class.
         /// </summary>
 		internal AjaxSettings()
-		{
-#if(NET20)
-			SerializableConverters = new Dictionary<Type, IJavaScriptConverter>();
-			DeserializableConverters = new Dictionary<Type, IJavaScriptConverter>();
+        {
+#if (NET20)
+            SerializableConverters = new Dictionary<Type, IJavaScriptConverter>();
+            DeserializableConverters = new Dictionary<Type, IJavaScriptConverter>();
 #else
 			SerializableConverters = new JavaScriptConverterList();
 			DeserializableConverters = new JavaScriptConverterList();
 #endif
 
-			JsonDeserializationCustomTypesAllowed = new List<string>();
-			JsonDeserializationCustomTypesDenied = new List<string>();
+            JsonDeserializationCustomTypesAllowed = new List<string>();
+            JsonDeserializationCustomTypesDenied = new List<string>();
 
-			// disable all custom types by default, either add allow list (or not recommended change default to 'allow')
-			IsCustomTypesDeserializationDisabled = true;
-		}
+            // disable all custom types by default, either add allow list (or not recommended change default to 'allow')
+            IsCustomTypesDeserializationDisabled = true;
+        }
 
-		#region Public Properties
+        #region Public Properties
 
-		internal string TypeJavaScriptProvider
-		{
-			get { return m_TypeJavaScriptProvider; }
-			set { m_TypeJavaScriptProvider = value; }
-		}
+        internal string TypeJavaScriptProvider
+        {
+            get { return m_TypeJavaScriptProvider; }
+            set { m_TypeJavaScriptProvider = value; }
+        }
 
         /// <summary>
         /// Gets or sets the URL namespace mappings.
         /// </summary>
         /// <value>The URL namespace mappings.</value>
 		internal System.Collections.Hashtable UrlNamespaceMappings
-		{
-			get{ return m_UrlNamespaceMappings; }
-			set{ m_UrlNamespaceMappings = value; }
-		}
+        {
+            get { return m_UrlNamespaceMappings; }
+            set { m_UrlNamespaceMappings = value; }
+        }
 
         /// <summary>
         /// Gets or sets a value indicating whether [only allow types in list].
@@ -164,20 +164,20 @@ namespace AjaxPro
         /// 	<c>true</c> if [only allow types in list]; otherwise, <c>false</c>.
         /// </value>
 		internal bool OnlyAllowTypesInList
-		{
-			get { return m_OnlyAllowTypesInList; }
-			set { m_OnlyAllowTypesInList = value; }
-		}
+        {
+            get { return m_IsOnlyAllowTypesInList; }
+            set { m_IsOnlyAllowTypesInList = value; }
+        }
 
         /// <summary>
         /// Gets or sets if debug information should be enabled.
         /// </summary>
         /// <value><c>true</c> if [debug enabled]; otherwise, <c>false</c>.</value>
 		internal bool DebugEnabled
-		{
-			get { return m_DebugEnabled; }
-			set { m_DebugEnabled = value; }
-		}
+        {
+            get { return m_IsDebugEnabled; }
+            set { m_IsDebugEnabled = value; }
+        }
 
         /// <summary>
         /// Gets or sets the use of the AssemblyQualifiedName.
@@ -186,90 +186,96 @@ namespace AjaxPro
         /// 	<c>true</c> if [use assembly qualified name]; otherwise, <c>false</c>.
         /// </value>
 		internal bool UseAssemblyQualifiedName
-		{
-			get { return m_UseAssemblyQualifiedName; }
-			set { m_UseAssemblyQualifiedName = value; }
-		}
+        {
+            get { return m_IsUseAssemblyQualifiedName; }
+            set { m_IsUseAssemblyQualifiedName = value; }
+        }
 
-		internal bool IncludeTypeProperty
-		{
-			get { return m_IncludeTypeProperty; }
-			set { m_IncludeTypeProperty = value; }
-		}
+        internal bool IncludeTypeProperty
+        {
+            get { return m_IsIncludeTypeProperty; }
+            set { m_IsIncludeTypeProperty = value; }
+        }
 
-		internal bool UseSimpleObjectNaming
-		{
-			get { return m_UseSimpleObjectNaming; }
-			set { m_UseSimpleObjectNaming = value; }
-		}
+        internal bool UseSimpleObjectNaming
+        {
+            get { return m_IsUseSimpleObjectNaming; }
+            set { m_IsUseSimpleObjectNaming = value; }
+        }
+
+        internal bool IgnoreNotSupportedProperties
+        {
+            get { return m_IsIgnoreNotSupportedProperties; }
+            set { m_IsIgnoreNotSupportedProperties = value; }
+        }
 
         /// <summary>
         /// Gets or sets several settings that will be used for old styled web applications.
         /// </summary>
         /// <value>The old style.</value>
 		internal System.Collections.Specialized.StringCollection OldStyle
-		{
-			get { return m_OldStyle; }
-			set { m_OldStyle = value; }
-		}
+        {
+            get { return m_OldStyle; }
+            set { m_OldStyle = value; }
+        }
 
         /// <summary>
         /// Gets or sets the encryption.
         /// </summary>
         /// <value>The encryption.</value>
 		internal AjaxSecurity Security
-		{
-			get { return m_AjaxSecurity; }
-			set { m_AjaxSecurity = value; }
-		}
+        {
+            get { return m_AjaxSecurity; }
+            set { m_AjaxSecurity = value; }
+        }
 
         /// <summary>
         /// Gets or sets the token site password.
         /// </summary>
         /// <value>The token site password.</value>
 		internal string TokenSitePassword
-		{
-			get{ return m_TokenSitePassword; }
-			set{ m_TokenSitePassword = value; }
-		}
+        {
+            get { return m_TokenSitePassword; }
+            set { m_TokenSitePassword = value; }
+        }
 
         /// <summary>
         /// Gets or sets the core script.
         /// </summary>
         /// <value>The core script.</value>
 		[Obsolete("The recommended alternative is to configure a scriptReplacement/file in web.config.", true)]
-		internal string CoreScript
-		{
-			get{ return m_CoreScript; }
-			set{ m_CoreScript = value; }
-		}
+        internal string CoreScript
+        {
+            get { return m_CoreScript; }
+            set { m_CoreScript = value; }
+        }
 
         /// <summary>
         /// Gets or sets the script replacements.
         /// </summary>
         /// <value>The script replacements.</value>
 		internal System.Collections.Specialized.StringDictionary ScriptReplacements
-		{
-			get{ return m_ScriptReplacements; }
-			set{ m_ScriptReplacements = value; }
-		}
+        {
+            get { return m_ScriptReplacements; }
+            set { m_ScriptReplacements = value; }
+        }
 
-		public bool IsCustomTypesDeserializationDisabled { get; set; }
+        public bool IsCustomTypesDeserializationDisabled { get; set; }
 
-		public List<string> JsonDeserializationCustomTypesAllowed { get; set; }
-		public List<string> JsonDeserializationCustomTypesDenied { get; set; }
+        public List<string> JsonDeserializationCustomTypesAllowed { get; set; }
+        public List<string> JsonDeserializationCustomTypesDenied { get; set; }
 
-		public string ContentSecurityPolicyNonce { get; set; }
+        public string ContentSecurityPolicyNonce { get; set; }
 
-		public string AppendContentSecurityPolicyNonce()
-		{
-			if (!string.IsNullOrEmpty(ContentSecurityPolicyNonce))
-				return " nounce=\"" + ContentSecurityPolicyNonce + "\"";
+        public string AppendContentSecurityPolicyNonce()
+        {
+            if (!string.IsNullOrEmpty(ContentSecurityPolicyNonce))
+                return " nounce=\"" + ContentSecurityPolicyNonce + "\"";
 
-			return "";
-		}
+            return "";
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 #endif
 }

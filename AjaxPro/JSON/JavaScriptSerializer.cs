@@ -1,7 +1,7 @@
 /*
  * JavaScriptSerializer.cs
  * 
- * Copyright © 2007 Michael Schwarz (http://www.ajaxpro.info).
+ * Copyright © 2023 Michael Schwarz (http://www.ajaxpro.info).
  * All Rights Reserved.
  * 
  * Permission is hereby granted, free of charge, to any person 
@@ -37,6 +37,9 @@
  * MS	06-10-06	fixed write-only property bug
  * MS	07-01-24	fixed bug when trying to use AjaxNonSerializable attribute on properties (workitem #5337)
  * MS	07-04-24	added IncludeTypeProperty to remove __type JSON property
+ * MS   23-05-25    added a configuration to not throw an exception when a property is not supported to read from
+ * 
+ * 
  * 
  */
 using System;
@@ -256,7 +259,18 @@ namespace AjaxPro
 
 						JavaScriptUtil.QuoteString(prop.Name, sb);
 						sb.Append(':');
-						Serialize(mi.Invoke(o, null), sb);
+
+						try
+						{
+							Serialize(mi.Invoke(o, null), sb);
+						}
+						catch (NotSupportedException ex)
+						{
+							if (Utility.Settings.IgnoreNotSupportedProperties)
+								sb.Append("null");
+							else
+								throw new NotSupportedException("SerializeCustomObject failed for type " + t.Name + " and property " + mi.Name + ".", ex);
+						}
 
 						b = false;
 					}

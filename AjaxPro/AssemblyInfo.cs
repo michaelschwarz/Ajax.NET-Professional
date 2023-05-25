@@ -1,7 +1,7 @@
 /*
  * AssemblyInfo.cs
  * 
- * Copyright © 2009 Michael Schwarz (http://www.ajaxpro.info).
+ * Copyright © 2023 Michael Schwarz (http://www.ajaxpro.info).
  * All Rights Reserved.
  * 
  * Permission is hereby granted, free of charge, to any person 
