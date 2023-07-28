@@ -42,7 +42,7 @@ The framework will create proxy JavaScript classes that are used on client-side 
 
 ```C#
 [AjaxPro.AjaxMethod]
-public DateTime GetServerTime()
+public static DateTime GetServerTime()
 {
 	return DateTime.Now;
 }
