@@ -26,6 +26,8 @@
 /* 
  * MS	07-04-12	changed MD5 compute hash (using BitConverter, now)
  * MS	21-12-22	changed hash algorithm from MD5 to SHA256
+ * MS	24-10-10	removed MD5 reference
+ *					changed SHA256 implementation to generate hash, #18
  * 
  */
 using System;
@@ -51,17 +53,15 @@ namespace AjaxPro
 			return GetHash(b);
 		}
 
-        /// <summary>
-        /// Gets the hash.
-        /// </summary>
-        /// <param name="data">The data.</param>
-        /// <returns></returns>
+		/// <summary>
+		/// Gets the hash.
+		/// </summary>
+		/// <param name="data">The data.</param>
+		/// <returns></returns>
 		public static string GetHash(byte[] data)
 		{
-			// This is one implementation of the abstract class MD5.
-			MD5 md5 = new MD5CryptoServiceProvider();
-
-			return BitConverter.ToString(new SHA256Managed().ComputeHash(data)).Replace("-", String.Empty);
+			using (var hash = SHA256.Create())
+				return BitConverter.ToString(hash.ComputeHash(data)).Replace("-", String.Empty);
 		}
 	}
 }
