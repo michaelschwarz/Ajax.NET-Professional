@@ -59,6 +59,7 @@ namespace AjaxPro.Cryptography
 		{
 			switch(algorithmID)
 			{
+#if (UNSAFEENCYPTION)
 				case EncryptionAlgorithm.Des:
 					DES des = new DESCryptoServiceProvider();
 					des.Mode = CipherMode.CBC;
@@ -70,7 +71,7 @@ namespace AjaxPro.Cryptography
 					TripleDES des3 = new TripleDESCryptoServiceProvider();
 					des3.Mode = CipherMode.CBC;
 					return des3.CreateDecryptor(bytesKey, initVec);
-
+#endif
 				case EncryptionAlgorithm.Rc2:
 					RC2 rc2 = new RC2CryptoServiceProvider();
 					rc2.Mode = CipherMode.CBC;

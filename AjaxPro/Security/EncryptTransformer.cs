@@ -25,7 +25,7 @@
  */
 /*
  * MS	06-04-25	enums should have a zero value
- * MS	24-10-10	changed to set DES encryption obsolete
+ * MS	24-10-10	changed to mark unsafe encrpytions to obsolete and support only with compile switch UNSAFEENCYPTION
  * 
  * 
  */
@@ -39,10 +39,10 @@ namespace AjaxPro.Cryptography
     /// </summary>
     public enum EncryptionAlgorithm
     {
-        [Obsolete("Use EncryptionAlgorithm.Aes instead.")]
         /// <summary>
         /// 
         /// </summary>
+        [Obsolete("Use EncryptionAlgorithm.Aes instead.")]
         Des = 0,
 
         /// <summary>
@@ -58,6 +58,7 @@ namespace AjaxPro.Cryptography
         /// <summary>
         /// 
         /// </summary>
+        [Obsolete("Use EncryptionAlgorithm.Aes instead.")]
         TripleDes,
         Aes
     };
@@ -89,6 +90,7 @@ namespace AjaxPro.Cryptography
         {
             switch (algorithmID)
             {
+#if (UNSAFEENCYPTION)
                 case EncryptionAlgorithm.Des:
                     DES des = new DESCryptoServiceProvider();
                     des.Mode = CipherMode.CBC;
@@ -136,7 +138,7 @@ namespace AjaxPro.Cryptography
                         des3.IV = initVec;
                     }
                     return des3.CreateEncryptor();
-
+#endif
                 case EncryptionAlgorithm.Rc2:
                     RC2 rc2 = new RC2CryptoServiceProvider();
                     rc2.Mode = CipherMode.CBC;
