@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\SECURITY.md = ..\SECURITY.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AjaxPro.net2", "AjaxPro.net2.csproj", "{0B9D4A5A-F2B1-493B-878C-D03BF3325401}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AjaxPro.net35", "AjaxPro.net35.csproj", "{0B9D4A5A-F2B1-493B-878C-D03BF3325401}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
