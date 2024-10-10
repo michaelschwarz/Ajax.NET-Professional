@@ -27,6 +27,7 @@
  * MS	06-05-24	initial version
  * MS	06-09-24	use QuoteString instead of Serialize
  * MS	06-09-26	improved performance using StringBuilder
+ * MS   24-10-10    added configuration ExceptionDetailsEnabled to hide exception detials
  * 
  * 
  */
@@ -83,25 +84,33 @@ namespace AjaxPro
             // in the object the callback JavaScript method will get.
 
             sb.Append("{\"Message\":");
-            JavaScriptUtil.QuoteString(ex.Message, sb);
-            sb.Append(",\"Type\":");
-            JavaScriptUtil.QuoteString(o.GetType().FullName, sb);
-#if (!JSONLIB)
-            if (AjaxPro.Utility.Settings.DebugEnabled)
+
+            if (!AjaxPro.Utility.Settings.ExceptionDetailsEnabled)
             {
-                sb.Append(",\"Stack\":");
-                JavaScriptUtil.QuoteString(ex.StackTrace, sb);
-
-                if (ex.TargetSite != null)
-                {
-                    sb.Append(",\"TargetSite\":");
-                    JavaScriptUtil.QuoteString(ex.TargetSite.ToString(), sb);
-                }
-
-                sb.Append(",\"Source\":");
-                JavaScriptUtil.QuoteString(ex.Source, sb);
+                JavaScriptUtil.QuoteString("An error occurred.", sb);
             }
+            else
+            {
+                JavaScriptUtil.QuoteString(ex.Message, sb);
+                sb.Append(",\"Type\":");
+                JavaScriptUtil.QuoteString(o.GetType().FullName, sb);
+#if (!JSONLIB)
+                if (AjaxPro.Utility.Settings.DebugEnabled)
+                {
+                    sb.Append(",\"Stack\":");
+                    JavaScriptUtil.QuoteString(ex.StackTrace, sb);
+
+                    if (ex.TargetSite != null)
+                    {
+                        sb.Append(",\"TargetSite\":");
+                        JavaScriptUtil.QuoteString(ex.TargetSite.ToString(), sb);
+                    }
+
+                    sb.Append(",\"Source\":");
+                    JavaScriptUtil.QuoteString(ex.Source, sb);
+                }
 #endif
+            }
             sb.Append("}");
         }
 

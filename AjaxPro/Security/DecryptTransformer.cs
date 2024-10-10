@@ -23,6 +23,11 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+/*
+ * MS	24-10-10	changed to set DES encryption obsolete
+ * 
+ * 
+ */
 using System;
 using System.Security.Cryptography;
 
@@ -76,7 +81,14 @@ namespace AjaxPro.Cryptography
 					rijndael.Mode = CipherMode.CBC;
 					return rijndael.CreateDecryptor(bytesKey, initVec);
 
-				default:
+                case EncryptionAlgorithm.Aes:
+                    AesCryptoServiceProvider aes = new AesCryptoServiceProvider();
+                    aes.Mode = CipherMode.CBC;
+                    aes.Key = bytesKey;
+                    aes.IV = initVec;
+                    return aes.CreateDecryptor();
+
+                default:
 					throw new CryptographicException("Algorithm ID '" + algorithmID + "' not supported!");
 			}
 		}

@@ -37,6 +37,7 @@
  * MS	21-10-27	added allowed customized types for JSON deserialization
  * MS	21-10-30	added contentSecurityPolicy to specify a nonce for all scripts
  * MS   23-05-25    added a configuration to not throw an exception when a property is not supported to read from
+ * MS   24-10-10    added configuration ExceptionDetailsEnabled to hide exception detials
  * 
  * 
  * 
@@ -161,6 +162,11 @@ namespace AjaxPro
                 {
                     if (n.SelectSingleNode("@enabled") != null && n.SelectSingleNode("@enabled").InnerText == "true")
                         settings.IgnoreNotSupportedProperties = true;
+                }
+                else if (n.Name == "exceptionDetails")
+                {
+                    if (n.SelectSingleNode("@enabled") != null && n.SelectSingleNode("@enabled").InnerText == "true")
+                        settings.ExceptionDetailsEnabled = true;
                 }
                 else if (n.Name == "contentSecurityPolicy")
                 {

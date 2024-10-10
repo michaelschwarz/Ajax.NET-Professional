@@ -174,7 +174,7 @@ Object.extend(AjaxPro, {
 	queue: null,
 	noUtcTime: false,
 	regExDate: function (str, p1, p2, offset, s) {
-		var date = str.substring(1).replace('"', '');
+		var date = str.substring(1).replace(/"/g, '');
 		if (date.substring(0, 7) == "\\\/Date(") {
 			var d = date.match(/Date\((.*?)\)/)[1];
 			return "new Date(" + parseInt(d) + ")";

@@ -38,6 +38,7 @@
  * MS	21-10-30	added contentSecurityPolicy to specify a nonce for all scripts
  * MS	21-11-22	changed to set the default behavior to not allow custom types
  * MS   23-05-25    added a configuration to not throw an exception when a property is not supported to read from
+ * MS   24-10-10    added configuration ExceptionDetailsEnabled to hide exception detials
  * 
  * 
  */
@@ -101,6 +102,7 @@ namespace AjaxPro
         private bool m_IsUseSimpleObjectNaming = false;
         private bool m_IsOnlyAllowTypesInList = false;
         private bool m_IsIgnoreNotSupportedProperties = false;
+        private bool m_ExceptionDetailsEnabled = false;
 
         private System.Collections.Specialized.StringCollection m_OldStyle = new System.Collections.Specialized.StringCollection();
 
@@ -207,6 +209,12 @@ namespace AjaxPro
         {
             get { return m_IsIgnoreNotSupportedProperties; }
             set { m_IsIgnoreNotSupportedProperties = value; }
+        }
+
+        internal bool ExceptionDetailsEnabled
+        {
+            get { return m_ExceptionDetailsEnabled; }
+            set { m_ExceptionDetailsEnabled = value; }
         }
 
         /// <summary>
