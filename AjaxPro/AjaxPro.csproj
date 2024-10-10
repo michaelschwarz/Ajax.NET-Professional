@@ -262,8 +262,6 @@
     <Compile Include="Security\DecryptTransformer.cs" />
     <Compile Include="Security\Encryptor.cs" />
     <Compile Include="Security\EncryptTransformer.cs" />
-    <Compile Include="Security\WebDecrypter.cs" />
-    <Compile Include="Security\WebEncrypter.cs" />
     <Compile Include="Utilities\AjaxSettings.cs">
       <SubType>Code</SubType>
     </Compile>
