@@ -13,19 +13,22 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\SECURITY.md = ..\SECURITY.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AjaxPro.net2", "AjaxPro.net2.csproj", "{0B9D4A5A-F2B1-493B-878C-D03BF3325401}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-		ReleaseNET48|Any CPU = ReleaseNET48|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{9AD42568-07A4-4D8B-9C6D-1FD54683EF4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9AD42568-07A4-4D8B-9C6D-1FD54683EF4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9AD42568-07A4-4D8B-9C6D-1FD54683EF4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9AD42568-07A4-4D8B-9C6D-1FD54683EF4B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9AD42568-07A4-4D8B-9C6D-1FD54683EF4B}.ReleaseNET48|Any CPU.ActiveCfg = ReleaseNET48|Any CPU
-		{9AD42568-07A4-4D8B-9C6D-1FD54683EF4B}.ReleaseNET48|Any CPU.Build.0 = ReleaseNET48|Any CPU
+		{0B9D4A5A-F2B1-493B-878C-D03BF3325401}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B9D4A5A-F2B1-493B-878C-D03BF3325401}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B9D4A5A-F2B1-493B-878C-D03BF3325401}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B9D4A5A-F2B1-493B-878C-D03BF3325401}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-/* Developers of Ajax.NET Professional (AjaxPro)
+/* Contributors of Ajax.NET Professional (AjaxPro)
  * MS	Michael Schwarz
  * TB	Tim Byng			
  * MR	Matthew Raymer
@@ -41,39 +41,41 @@
  * MS	21-11-22	changed default behavior of passing types during deserialization to deny
  * MS	21-11-29	added check for custom type deserialization
  * MS	21-11-30	changed error message for unsupported deserialization types in debug mode
+ * MS	24-10-10	changed to have different titles for each binary
  * 
  */
-using System;
-using System.Security.Permissions;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 
 //
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 //
-#if(JSONLIB)
-	#if(NET20)
-	[assembly: AssemblyTitle("Ajax.NET Professional JSON library for Microsoft.NET 2.0")]
-	#else
-	[assembly: AssemblyTitle("Ajax.NET Professional JSON library for Microsoft.NET 1.1")]
-	#endif
+#if (JSONLIB)
+#if (NET48)
+	[assembly: AssemblyTitle("Ajax.NET Professional JSON library for Microsoft .NET Framework 4.8")]
+#elif (NET20)
+	[assembly: AssemblyTitle("Ajax.NET Professional JSON library for Microsoft .NET Framework 3.5")]
 #else
-	#if(NET20)
-	[assembly: AssemblyTitle("Ajax.NET Professional for Microsoft.NET 2.0")]
-	#else
-	[assembly: AssemblyTitle("Ajax.NET Professional for Microsoft.NET 1.1")]
-	#endif
+	[assembly: AssemblyTitle("Ajax.NET Professional JSON library for Microsoft .NET Framework 1.1")]
+#endif
+#else
+#if (NET48)
+	[assembly: AssemblyTitle("Ajax.NET Professional for Microsoft .NET Framework 4.8")]
+#elif (NET20)
+	[assembly: AssemblyTitle("Ajax.NET Professional for Microsoft .NET Framework 3.5")]
+#else
+	[assembly: AssemblyTitle("Ajax.NET Professional for Microsoft .NET Framework 1.1")]
+#endif
 #endif
 
 [assembly: AssemblyDescription(".NET Library that provides AJAX related methods to simplify the communication between server and client.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Michael Schwarz")]
 [assembly: AssemblyProduct("Ajax.NET Professional")]
-[assembly: AssemblyCopyright("2023, Michael Schwarz")]
+[assembly: AssemblyCopyright("2024, Michael Schwarz")]
 [assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]	
+[assembly: AssemblyCulture("")]
 [assembly: System.Security.AllowPartiallyTrustedCallersAttribute()]
 [assembly: System.Runtime.InteropServices.ComVisible(false)]
 [assembly: System.CLSCompliant(true)]
@@ -122,10 +124,10 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyDelaySign(false)]
 [assembly: AssemblyKeyName("")]
 
-#if(STRONGNAME)
-	#if(NET20)
+#if (STRONGNAME)
+#if (NET20)
 	[assembly: AssemblyKeyFile("michael.schwarz.snk")]
-	#else
+#else
 	[assembly: AssemblyKeyFile("michael.schwarz.snk")]
-	#endif
+#endif
 #endif
