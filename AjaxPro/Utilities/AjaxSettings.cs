@@ -1,7 +1,7 @@
 /*
  * AjaxSettings.cs
  * 
- * Copyright © 2023 Michael Schwarz (http://www.ajaxpro.info).
+ * Copyright ï¿½ 2023 Michael Schwarz (http://www.ajaxpro.info).
  * All Rights Reserved.
  * 
  * Permission is hereby granted, free of charge, to any person 
@@ -100,7 +100,9 @@ namespace AjaxPro
         private bool m_IsUseAssemblyQualifiedName = false;
         private bool m_IsIncludeTypeProperty = false;
         private bool m_IsUseSimpleObjectNaming = false;
-        private bool m_IsOnlyAllowTypesInList = false;
+        // Default to true (deny-by-default): only types explicitly listed in urlNamespaceMappings
+        // are accessible. Set allowListOnly="false" in web.config only if you understand the risk.
+        private bool m_IsOnlyAllowTypesInList = true;
         private bool m_IsIgnoreNotSupportedProperties = false;
         private bool m_ExceptionDetailsEnabled = false;
 

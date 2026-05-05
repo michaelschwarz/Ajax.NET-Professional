@@ -1,7 +1,7 @@
 /*
  * IAjaxProcessor.cs
  * 
- * Copyright © 2023 Michael Schwarz (http://www.ajaxpro.info).
+ * Copyright ï¿½ 2023 Michael Schwarz (http://www.ajaxpro.info).
  * All Rights Reserved.
  * 
  * Permission is hereby granted, free of charge, to any person 
@@ -174,8 +174,14 @@ namespace AjaxPro
 			if(context == null)
 				return false;
 
-			if (Utility.Settings == null || Utility.Settings.Security == null || Utility.Settings.Security.SecurityProvider == null)
+			// If no security section is configured at all, tokens are not required.
+			if (Utility.Settings == null || Utility.Settings.Security == null)
 				return true;
+
+			// Security was configured in web.config but the provider failed to
+			// initialize (e.g. the type could not be loaded). Do not silently allow the request.
+			if (Utility.Settings.Security.SecurityProvider == null)
+				return false;
 
 			if (Utility.Settings.Security.SecurityProvider.AjaxTokenEnabled == false)
 				return true;
