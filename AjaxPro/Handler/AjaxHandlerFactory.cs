@@ -1,7 +1,7 @@
 /*
  * AjaxHandlerFactory.cs
  * 
- * Copyright © 2023 Michael Schwarz (http://www.ajaxpro.info).
+ * Copyright ï¿½ 2023 Michael Schwarz (http://www.ajaxpro.info).
  * All Rights Reserved.
  * 
  * Permission is hereby granted, free of charge, to any person 
@@ -81,6 +81,11 @@ namespace AjaxPro
 
 			Exception typeException = null;
 			bool isInTypesList = false;
+
+			// Reject filenames that contain characters not valid in a .NET type/assembly name.
+			// This prevents path traversal and blocks attempts to load types via crafted URLs.
+			if (!IsValidTypeNameInput(filename))
+				return null;
 
 			try
 			{
@@ -213,6 +218,28 @@ namespace AjaxPro
 			}
 
 			return null;
+		}
+
+		/// <summary>
+		/// Returns true if the string contains only characters that are valid in a .NET type name
+		/// (letters, digits, dot, comma, underscore, space, plus, backtick, brackets).
+		/// Rejects empty strings, strings over 512 characters, and any path/control characters.
+		/// </summary>
+		private static bool IsValidTypeNameInput(string name)
+		{
+			if (string.IsNullOrEmpty(name) || name.Length > 512)
+				return false;
+
+			foreach (char c in name)
+			{
+				if (!char.IsLetterOrDigit(c) &&
+					c != '.' && c != ',' && c != '_' && c != ' ' &&
+					c != '+' && c != '`' && c != '[' && c != ']' &&
+					c != '=' && c != '-')
+					return false;
+			}
+
+			return true;
 		}
 
 		#endregion

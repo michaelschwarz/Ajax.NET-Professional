@@ -1,7 +1,7 @@
 /*
  * JavaScriptDeserializer.cs
  * 
- * Copyright © 2023 Michael Schwarz (http://www.ajaxpro.info).
+ * Copyright ï¿½ 2023 Michael Schwarz (http://www.ajaxpro.info).
  * All Rights Reserved.
  * 
  * Permission is hereby granted, free of charge, to any person 
@@ -143,7 +143,16 @@ namespace AjaxPro
 
 			if (jso != null && jso.Contains("__type"))
 			{
-				Type t = Type.GetType(jso["__type"].ToString());
+				string typeName = jso["__type"].ToString();
+
+				// Validate the type name string before calling Type.GetType().
+				// Type.GetType() can trigger static constructors and module initializers on
+				// gadget types even before the allow-list check would run.
+				SecurityException typeNameEx = null;
+				if (!IsCustomTypeNameDeserializationAllowed(typeName, out typeNameEx) && typeNameEx != null)
+					throw typeNameEx;
+
+				Type t = Type.GetType(typeName);
 				if (type == null || type.IsAssignableFrom(t))
 				{
 					type = t;
@@ -247,6 +256,73 @@ namespace AjaxPro
 					if ((s.EndsWith("*") && type.FullName.StartsWith(s.Substring(0, s.Length - 1), StringComparison.InvariantCultureIgnoreCase)) || s == type.FullName)
 					{
 						ex = new SecurityException(AjaxPro.Utility.Settings.DebugEnabled ? "The type '" + type.Name + "' is not allowed to be deserialized." : "At least one type passed is not allowed to be deserialized.");
+						return false;
+					}
+			}
+
+			return true;
+		}
+
+		/// <summary>
+		/// Validates a type name string against the allow/deny configuration without loading the type.
+		/// Must be called before Type.GetType() to prevent gadget-chain attacks via static constructors.
+		/// </summary>
+		internal static bool IsCustomTypeNameDeserializationAllowed(string typeName, out SecurityException ex)
+		{
+			ex = null;
+
+			if (string.IsNullOrEmpty(typeName))
+				return true;
+
+			// Strip assembly qualification to get just the full type name for matching.
+			// e.g. "MyNamespace.MyClass, MyAssembly, Version=..." -> "MyNamespace.MyClass"
+			// Extra whitespace around the comma (e.g. "MyClass  ,  MyAssembly") is handled by Trim().
+			string fullName = typeName.Trim();
+			int commaIndex = fullName.IndexOf(',');
+			if (commaIndex >= 0)
+				fullName = fullName.Substring(0, commaIndex).Trim();
+
+			// Reject if nothing remains after stripping the assembly part
+			// (e.g. input was "  , SomeDangerousType" with a leading comma).
+			if (string.IsNullOrEmpty(fullName))
+			{
+				ex = new SecurityException("At least one type passed is not allowed to be deserialized.");
+				return false;
+			}
+
+			// Allow the same primitive/system types that the type-object-based check passes through.
+			if (fullName == "System.Boolean" || fullName == "System.Byte" || fullName == "System.SByte" ||
+				fullName == "System.Char" || fullName == "System.Int16" || fullName == "System.UInt16" ||
+				fullName == "System.Int32" || fullName == "System.UInt32" || fullName == "System.Int64" ||
+				fullName == "System.UInt64" || fullName == "System.Single" || fullName == "System.Double" ||
+				fullName == "System.IntPtr" || fullName == "System.UIntPtr" ||
+				fullName == "System.String" || fullName == "System.DateTime" ||
+				fullName == "System.TimeSpan" || fullName == "System.Decimal")
+				return true;
+
+			if (AjaxPro.Utility.Settings.IsCustomTypesDeserializationDisabled)
+			{
+				bool isCustomTypeAllowed = false;
+
+				foreach (var s in AjaxPro.Utility.Settings.JsonDeserializationCustomTypesAllowed)
+					if ((s.EndsWith("*") && fullName.StartsWith(s.Substring(0, s.Length - 1), StringComparison.InvariantCultureIgnoreCase)) || string.Equals(s, fullName, StringComparison.InvariantCultureIgnoreCase))
+					{
+						isCustomTypeAllowed = true;
+						break;
+					}
+
+				if (!isCustomTypeAllowed)
+				{
+					ex = new SecurityException(AjaxPro.Utility.Settings.DebugEnabled ? "The type '" + fullName + "' is not allowed to be deserialized." : "At least one type passed is not allowed to be deserialized.");
+					return false;
+				}
+			}
+			else
+			{
+				foreach (var s in AjaxPro.Utility.Settings.JsonDeserializationCustomTypesDenied)
+					if ((s.EndsWith("*") && fullName.StartsWith(s.Substring(0, s.Length - 1), StringComparison.InvariantCultureIgnoreCase)) || string.Equals(s, fullName, StringComparison.InvariantCultureIgnoreCase))
+					{
+						ex = new SecurityException(AjaxPro.Utility.Settings.DebugEnabled ? "The type '" + fullName + "' is not allowed to be deserialized." : "At least one type passed is not allowed to be deserialized.");
 						return false;
 					}
 			}
