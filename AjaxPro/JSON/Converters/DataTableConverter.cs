@@ -148,6 +148,8 @@ namespace AjaxPro
 			{
 				column = (JavaScriptArray)columns[i];
 
+				JavaScriptDeserializer.ThrowExceptionIfNotCustomTypeNameDeserializationAllowed(column[1].ToString());
+
 				colType = Type.GetType(column[1].ToString(), true);
 				JavaScriptDeserializer.ThrowExceptionIfNotCustomTypeDeserializationAllowed(colType);
 

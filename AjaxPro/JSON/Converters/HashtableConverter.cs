@@ -87,8 +87,16 @@ namespace AjaxPro
 				{
 					aa = (JavaScriptArray)a[i];
 
-					Type keyType = Type.GetType(((JavaScriptString)aa[2]).ToString());
-					Type valueType = Type.GetType(((JavaScriptString)aa[3]).ToString());
+					string keyTypeName = ((JavaScriptString)aa[2]).ToString();
+					string valueTypeName = ((JavaScriptString)aa[3]).ToString();
+
+					// Validate the type names before calling Type.GetType(), which would
+					// already load the assembly named in the request.
+					JavaScriptDeserializer.ThrowExceptionIfNotCustomTypeNameDeserializationAllowed(keyTypeName);
+					JavaScriptDeserializer.ThrowExceptionIfNotCustomTypeNameDeserializationAllowed(valueTypeName);
+
+					Type keyType = Type.GetType(keyTypeName);
+					Type valueType = Type.GetType(valueTypeName);
 
 					JavaScriptDeserializer.ThrowExceptionIfNotCustomTypeDeserializationAllowed(keyType);
 					JavaScriptDeserializer.ThrowExceptionIfNotCustomTypeDeserializationAllowed(valueType);

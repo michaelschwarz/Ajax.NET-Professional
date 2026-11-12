@@ -154,3 +154,22 @@ The following example shows the block-list approach were only the deserializatio
   ...
 </configuration>
 ```
+
+### How type names are matched
+
+The check applies to every type name that is taken from a request: the `__type` property of an object, the key and value types of a `Hashtable` and the column types of a `DataTable`. A type name is validated before the type is loaded.
+
+- An entry is either a full type name (`MyOwnNamespace.MyClass`) or a prefix ending in `*` (`MyOwnNamespace.*`). Entries are compared case-insensitive and without the assembly name.
+- Primitive types, `System.String`, `System.DateTime`, `System.TimeSpan` and `System.Decimal` are always allowed.
+- Arrays are checked by their element type. `MyOwnNamespace.MyClass[]` is allowed if `MyOwnNamespace.MyClass` is allowed.
+- Generic types are checked by the name of the generic type itself, like ``System.Collections.Generic.List`1``, **and** by every generic argument. To accept a `List<MyOwnNamespace.MyClass>` from the client, both names have to be allowed:
+
+```XML
+<jsonDeserializationCustomTypes default="deny">
+	<allow>System.Collections.Generic.List`1</allow>
+	<allow>MyOwnNamespace.*</allow>
+</jsonDeserializationCustomTypes>
+```
+
+- With `default="allow"` a type on the deny list is also rejected if it is used as a generic argument or as the element type of an array.
+- A type name that cannot be found or is malformed is rejected.

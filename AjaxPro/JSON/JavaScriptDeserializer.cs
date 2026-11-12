@@ -148,9 +148,7 @@ namespace AjaxPro
 				// Validate the type name string before calling Type.GetType().
 				// Type.GetType() can trigger static constructors and module initializers on
 				// gadget types even before the allow-list check would run.
-				SecurityException typeNameEx = null;
-				if (!IsCustomTypeNameDeserializationAllowed(typeName, out typeNameEx) && typeNameEx != null)
-					throw typeNameEx;
+				ThrowExceptionIfNotCustomTypeNameDeserializationAllowed(typeName);
 
 				Type t = Type.GetType(typeName);
 				if (type == null || type.IsAssignableFrom(t))
@@ -218,6 +216,12 @@ namespace AjaxPro
 
 		#region Internal Methods
 
+		private const string TypeNotAllowedMessage = "At least one type passed is not allowed to be deserialized.";
+
+		// Type names from a request are short. The limit keeps a deliberately deep
+		// nesting of generic arguments from exhausting the stack.
+		private const int MaxTypeNameNestingDepth = 8;
+
 		internal static void ThrowExceptionIfNotCustomTypeDeserializationAllowed(Type type)
 		{
 			SecurityException ex = null;
@@ -225,47 +229,64 @@ namespace AjaxPro
 				throw ex;
 		}
 
+		internal static void ThrowExceptionIfNotCustomTypeNameDeserializationAllowed(string typeName)
+		{
+			SecurityException ex = null;
+			if (!IsCustomTypeNameDeserializationAllowed(typeName, out ex) && ex != null)
+				throw ex;
+		}
+
+		/// <summary>
+		/// Validates a resolved type against the allow/deny configuration. Arrays are
+		/// checked by their element type, generic types by their generic type definition
+		/// (e.g. "System.Collections.Generic.List`1") and by every generic argument.
+		/// </summary>
 		internal static bool IsCustomTypeDeserializationAllowed(Type type, out SecurityException ex)
 		{
 			ex = null;
+
+			// The type name passed in the request could not be resolved.
+			if (type == null)
+			{
+				ex = new SecurityException(AjaxPro.Utility.Settings.DebugEnabled ? "A type passed could not be found." : TypeNotAllowedMessage);
+				return false;
+			}
+
+			// Arrays, pointers and by-ref types are as safe as their element type.
+			if (type.HasElementType)
+				return IsCustomTypeDeserializationAllowed(type.GetElementType(), out ex);
 
 			// allow all primitive and basic types
 			if (type.IsPrimitive || type == typeof(string) || type == typeof(DateTime) || type == typeof(TimeSpan) || type == typeof(decimal))
 				return true;
 
-			if (AjaxPro.Utility.Settings.IsCustomTypesDeserializationDisabled)
-			{
-				bool isCustomTypeAllowed = false;
+			string fullName = type.FullName;
 
-				foreach (var s in AjaxPro.Utility.Settings.JsonDeserializationCustomTypesAllowed)
-					if ((s.EndsWith("*") && type.FullName.StartsWith(s.Substring(0, s.Length - 1), StringComparison.InvariantCultureIgnoreCase)) || s == type.FullName)
-					{
-						isCustomTypeAllowed = true;
-						break;
-					}
-
-				if (!isCustomTypeAllowed)
-				{
-					ex = new SecurityException(AjaxPro.Utility.Settings.DebugEnabled ? "The type '" + type.Name + "' is not allowed to be deserialized." : "At least one type passed is not allowed to be deserialized.");
-					return false;
-				}
-			}
-			else
+			if (type.IsGenericType && !type.IsGenericTypeDefinition)
 			{
-				foreach (var s in AjaxPro.Utility.Settings.JsonDeserializationCustomTypesDenied)
-					if ((s.EndsWith("*") && type.FullName.StartsWith(s.Substring(0, s.Length - 1), StringComparison.InvariantCultureIgnoreCase)) || s == type.FullName)
-					{
-						ex = new SecurityException(AjaxPro.Utility.Settings.DebugEnabled ? "The type '" + type.Name + "' is not allowed to be deserialized." : "At least one type passed is not allowed to be deserialized.");
+				// Members typed with a generic argument are deserialized as that argument,
+				// so every argument has to be allowed on its own.
+				foreach (Type argument in type.GetGenericArguments())
+					if (!IsCustomTypeDeserializationAllowed(argument, out ex))
 						return false;
-					}
+
+				fullName = type.GetGenericTypeDefinition().FullName;
 			}
 
-			return true;
+			// Open generic parameters have no full name and cannot be created.
+			if (string.IsNullOrEmpty(fullName))
+			{
+				ex = new SecurityException(TypeNotAllowedMessage);
+				return false;
+			}
+
+			return IsCustomTypeFullNameAllowed(fullName, out ex);
 		}
 
 		/// <summary>
 		/// Validates a type name string against the allow/deny configuration without loading the type.
 		/// Must be called before Type.GetType() to prevent gadget-chain attacks via static constructors.
+		/// The name of the type itself and the names of all its generic arguments are validated.
 		/// </summary>
 		internal static bool IsCustomTypeNameDeserializationAllowed(string typeName, out SecurityException ex)
 		{
@@ -274,21 +295,111 @@ namespace AjaxPro
 			if (string.IsNullOrEmpty(typeName))
 				return true;
 
-			// Strip assembly qualification to get just the full type name for matching.
-			// e.g. "MyNamespace.MyClass, MyAssembly, Version=..." -> "MyNamespace.MyClass"
-			// Extra whitespace around the comma (e.g. "MyClass  ,  MyAssembly") is handled by Trim().
-			string fullName = typeName.Trim();
-			int commaIndex = fullName.IndexOf(',');
-			if (commaIndex >= 0)
-				fullName = fullName.Substring(0, commaIndex).Trim();
+			System.Collections.Generic.List<string> fullNames = new System.Collections.Generic.List<string>();
 
-			// Reject if nothing remains after stripping the assembly part
-			// (e.g. input was "  , SomeDangerousType" with a leading comma).
-			if (string.IsNullOrEmpty(fullName))
+			if (!TryGetFullNamesFromTypeName(typeName, fullNames, 0))
 			{
-				ex = new SecurityException("At least one type passed is not allowed to be deserialized.");
+				ex = new SecurityException(TypeNotAllowedMessage);
 				return false;
 			}
+
+			foreach (string fullName in fullNames)
+				if (!IsCustomTypeFullNameAllowed(fullName, out ex))
+					return false;
+
+			return true;
+		}
+
+		/// <summary>
+		/// Collects the full name of the type and of all its generic arguments from a type
+		/// name as accepted by Type.GetType(), without the assembly parts and array suffixes:
+		/// "MyNamespace.MyClass, MyAssembly, Version=..." -> "MyNamespace.MyClass"
+		/// "System.Collections.Generic.List`1[[MyNamespace.MyClass, MyAssembly]][], mscorlib"
+		///     -> "System.Collections.Generic.List`1", "MyNamespace.MyClass"
+		/// </summary>
+		/// <returns>Returns false if the type name is malformed or uses syntax that is not supported.</returns>
+		private static bool TryGetFullNamesFromTypeName(string typeName, System.Collections.Generic.List<string> fullNames, int depth)
+		{
+			if (depth > MaxTypeNameNestingDepth)
+				return false;
+
+			// The name ends at the first generic argument list, array suffix or assembly part.
+			int pos = typeName.IndexOfAny(new char[] { '[', ']', ',' });
+			string fullName = (pos < 0 ? typeName : typeName.Substring(0, pos)).Trim();
+
+			// Reject if nothing remains (e.g. input was "  , SomeDangerousType" with a leading comma),
+			// and reject escaped characters, pointers and by-ref types that are never sent by the client.
+			if (fullName.Length == 0 || fullName.IndexOfAny(new char[] { '\\', '*', '&' }) >= 0)
+				return false;
+
+			fullNames.Add(fullName);
+
+			// Any number of bracket groups can follow the name: one generic argument list
+			// and array suffixes like [] or [,].
+			while (pos >= 0 && pos < typeName.Length && typeName[pos] == '[')
+			{
+				int end = IndexOfClosingBracket(typeName, pos);
+				if (end < 0)
+					return false;
+
+				string group = typeName.Substring(pos + 1, end - pos - 1);
+
+				if (group.Trim(' ', ',', '*').Length > 0)
+				{
+					// A generic argument list: [[Type1, Assembly1],[Type2, Assembly2]] or [Type1,Type2]
+					int start = 0;
+					int nesting = 0;
+
+					for (int i = 0; i <= group.Length; i++)
+					{
+						if (i < group.Length && group[i] == '[') nesting++;
+						else if (i < group.Length && group[i] == ']') nesting--;
+						else if (i == group.Length || (group[i] == ',' && nesting == 0))
+						{
+							string argument = group.Substring(start, i - start).Trim();
+							start = i + 1;
+
+							// An assembly qualified argument is enclosed in its own brackets.
+							if (argument.Length > 1 && argument[0] == '[' && IndexOfClosingBracket(argument, 0) == argument.Length - 1)
+								argument = argument.Substring(1, argument.Length - 2);
+
+							if (!TryGetFullNamesFromTypeName(argument, fullNames, depth + 1))
+								return false;
+						}
+					}
+				}
+
+				pos = end + 1;
+				while (pos < typeName.Length && typeName[pos] == ' ') pos++;
+			}
+
+			// Only the assembly part is allowed to follow.
+			return pos < 0 || pos >= typeName.Length || typeName[pos] == ',';
+		}
+
+		/// <summary>
+		/// Returns the index of the bracket closing the one at the specified position, or -1.
+		/// </summary>
+		private static int IndexOfClosingBracket(string s, int open)
+		{
+			int nesting = 0;
+
+			for (int i = open; i < s.Length; i++)
+			{
+				if (s[i] == '[') nesting++;
+				else if (s[i] == ']' && --nesting == 0) return i;
+			}
+
+			return -1;
+		}
+
+		/// <summary>
+		/// Validates the full name of a single type, without assembly part and generic
+		/// arguments, against the allow/deny configuration.
+		/// </summary>
+		private static bool IsCustomTypeFullNameAllowed(string fullName, out SecurityException ex)
+		{
+			ex = null;
 
 			// Allow the same primitive/system types that the type-object-based check passes through.
 			if (fullName == "System.Boolean" || fullName == "System.Byte" || fullName == "System.SByte" ||
@@ -302,32 +413,39 @@ namespace AjaxPro
 
 			if (AjaxPro.Utility.Settings.IsCustomTypesDeserializationDisabled)
 			{
-				bool isCustomTypeAllowed = false;
-
 				foreach (var s in AjaxPro.Utility.Settings.JsonDeserializationCustomTypesAllowed)
-					if ((s.EndsWith("*") && fullName.StartsWith(s.Substring(0, s.Length - 1), StringComparison.InvariantCultureIgnoreCase)) || string.Equals(s, fullName, StringComparison.InvariantCultureIgnoreCase))
-					{
-						isCustomTypeAllowed = true;
-						break;
-					}
-
-				if (!isCustomTypeAllowed)
-				{
-					ex = new SecurityException(AjaxPro.Utility.Settings.DebugEnabled ? "The type '" + fullName + "' is not allowed to be deserialized." : "At least one type passed is not allowed to be deserialized.");
-					return false;
-				}
+					if (IsMatchingTypeEntry(s, fullName))
+						return true;
 			}
 			else
 			{
+				bool isCustomTypeDenied = false;
+
 				foreach (var s in AjaxPro.Utility.Settings.JsonDeserializationCustomTypesDenied)
-					if ((s.EndsWith("*") && fullName.StartsWith(s.Substring(0, s.Length - 1), StringComparison.InvariantCultureIgnoreCase)) || string.Equals(s, fullName, StringComparison.InvariantCultureIgnoreCase))
+					if (IsMatchingTypeEntry(s, fullName))
 					{
-						ex = new SecurityException(AjaxPro.Utility.Settings.DebugEnabled ? "The type '" + fullName + "' is not allowed to be deserialized." : "At least one type passed is not allowed to be deserialized.");
-						return false;
+						isCustomTypeDenied = true;
+						break;
 					}
+
+				if (!isCustomTypeDenied)
+					return true;
 			}
 
-			return true;
+			ex = new SecurityException(AjaxPro.Utility.Settings.DebugEnabled ? "The type '" + fullName + "' is not allowed to be deserialized." : TypeNotAllowedMessage);
+			return false;
+		}
+
+		/// <summary>
+		/// Compares a full type name with an allow/deny entry, which is either a full
+		/// type name or a prefix ending in * (e.g. "MyNamespace.*").
+		/// </summary>
+		private static bool IsMatchingTypeEntry(string entry, string fullName)
+		{
+			if (entry.EndsWith("*"))
+				return fullName.StartsWith(entry.Substring(0, entry.Length - 1), StringComparison.InvariantCultureIgnoreCase);
+
+			return string.Equals(entry, fullName, StringComparison.InvariantCultureIgnoreCase);
 		}
 
         /// <summary>
